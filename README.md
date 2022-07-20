@@ -1,16 +1,15 @@
 # Stats4SD Laravel Platform Template
-This installation is a 'default' Laravel 8.X installation for Stats4SD projects with a host of configuration and core packages already setup.
+This installation is a 'default' Laravel 9.X installation for Stats4SD projects with a host of configuration and core packages already setup.
 
 It includes the following composer packages:
 
-- Laravel Backpack (backpack/crud)
+- Laravel Backpack 5 (backpack/crud)
 - Backpack's version of the Spatie Permission Manager (backpack/permissionmanager)
 - Laravel Telescope
 
 And the following dev packages for scaffolding and code helpers:
 
 - [barryvdh/laravel-ide-helper](https://github.com/barryvdh/laravel-ide-helper)
-- stats4sd/laravel-ui
 
 
 ## Laravel Backpack for Admin panel
