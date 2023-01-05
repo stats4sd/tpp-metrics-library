@@ -47,7 +47,6 @@ class AppServiceProvider extends ServiceProvider
                 ]),
                 NavigationGroup::make("Properties")
                 ->items([
-                    ...PropertyTypeResource::getNavigationItems(),
                     ...MetricPropertyResource::getNavigationItems(),
                 ]),
             ]);

@@ -23,9 +23,6 @@ class MetricPropertyResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('property_type_id')
-                    ->relationship('propertyType', 'name')
-                    ->required(),
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(255),

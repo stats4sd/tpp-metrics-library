@@ -15,7 +15,6 @@ return new class extends Migration
     {
         Schema::create('metric_properties', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('property_type_id');
             $table->string('name');
             $table->text('description');
             $table->timestamps();
