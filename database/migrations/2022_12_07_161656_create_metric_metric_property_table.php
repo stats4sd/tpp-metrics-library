@@ -15,8 +15,8 @@ return new class extends Migration
     {
         Schema::create('metric_metric_property', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('metric_id');
-            $table->foreignId('metric_property_id');
+            $table->foreignId('metric_id')->constrained('metrics')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreignId('metric_property_id')->constrained('metric_properties')->cascadeOnDelete()->cascadeOnUpdate();
             $table->text('notes')->nullable();
             $table->timestamps();
         });

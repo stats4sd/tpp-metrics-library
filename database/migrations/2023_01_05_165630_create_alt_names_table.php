@@ -13,11 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('topics', function (Blueprint $table) {
+        Schema::create('alt_names', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('metric_id')->constrained('metrics')->cascadeOnDelete()->cascadeOnUpdate();
             $table->string('name');
-            $table->text('description')->nullable();
-            $table->text('notes')->nullable();
+            $table->text('notes')->nullable();;
             $table->timestamps();
         });
     }
@@ -29,6 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('topics');
+        Schema::dropIfExists('alt_names');
     }
 };

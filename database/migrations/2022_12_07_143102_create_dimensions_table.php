@@ -15,9 +15,11 @@ return new class extends Migration
     {
         Schema::create('dimensions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('topic_id')->constrained('topics')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreignId('parent_id')->nullable()->constrained('dimensions')->nullOnDelete()->cascadeOnUpdate();
+            $table->foreignId('topic_id')->constrained('topics')->cascadeOnDelete()->cascadeOnUpdate();
             $table->string('name');
-            $table->text('description');
+            $table->text('description')->nullable();
+            $table->text('notes')->nullable();
             $table->timestamps();
         });
     }
