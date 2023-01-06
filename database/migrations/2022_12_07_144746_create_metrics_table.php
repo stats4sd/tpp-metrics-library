@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('metrics', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('parent_id')->nullable()->constrained('dimensions')->nullOnDelete()->cascadeOnUpdate();
+            $table->foreignId('parent_id')->nullable()->constrained('metrics')->nullOnDelete()->cascadeOnUpdate();
             $table->string('title');
             $table->text('description')->nullable();
             $table->text('references')->nullable();

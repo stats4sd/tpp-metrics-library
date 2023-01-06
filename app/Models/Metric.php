@@ -39,33 +39,33 @@ class Metric extends Model
             ->withPivot('notes');
     }
 
-    public function metricMetricUsers(): BelongsToMany
+    public function metricUsers(): BelongsToMany
     {
-        return $this->belongsToMany(MetricMetricUser::class)
+        return $this->belongsToMany(MetricUser::class)
             ->withPivot('notes');
     }
 
     public function metricTools(): BelongsToMany
     {
-        return $this->belongsToMany(MetricTool::class)
+        return $this->belongsToMany(Tool::class)
             ->withPivot('notes');
     }
 
     public function metricMethods(): BelongsToMany
     {
-        return $this->belongsToMany(MetricMethod::class)
+        return $this->belongsToMany(Method::class)
             ->withPivot('notes');
     }
 
     public function metricFrameworks(): BelongsToMany
     {
-        return $this->belongsToMany(MetricFramework::class)
+        return $this->belongsToMany(Framework::class)
             ->withPivot('notes');
     }
 
     public function metricScales(): BelongsToMany
     {
-        return $this->belongsToMany(MetricScale::class)
+        return $this->belongsToMany(Scale::class)
             ->withPivot('notes', 'commonly_used');
     }
 
