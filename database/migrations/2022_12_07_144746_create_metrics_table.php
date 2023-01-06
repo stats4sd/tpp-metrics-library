@@ -15,9 +15,14 @@ return new class extends Migration
     {
         Schema::create('metrics', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->foreignId('parent_id')->nullable();
-            $table->string('description');
+            $table->foreignId('parent_id')->nullable()->constrained('dimensions')->nullOnDelete()->cascadeOnUpdate();
+            $table->string('title');
+            $table->text('description')->nullable();
+            $table->text('references')->nullable();
+            $table->string('unit_of_measurement');
+            $table->string('study_unit');
+            $table->text('notes')->nullable();
+            $table->text('parent_child_notes')->nullable();
             $table->timestamps();
         });
     }
