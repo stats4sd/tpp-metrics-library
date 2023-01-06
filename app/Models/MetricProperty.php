@@ -2,20 +2,17 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class MetricProperty extends Model
 {
     use HasFactory;
+
     protected $guarded = [];
 
-    public function propertyType()
-    {
-        return $this->belongsTo(PropertyType::class);
-    }
-
-    public function metrics()
+    public function metrics(): BelongsToMany
     {
         return $this->belongsToMany(Metric::class)
             ->withPivot('notes');

@@ -2,8 +2,11 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Metric extends Model
 {
@@ -12,27 +15,62 @@ class Metric extends Model
     protected $guarded = [];
 
 
-    public function parent()
+    public function parent(): BelongsTo
     {
         return $this->belongsTo(__CLASS__, 'parent_id');
     }
 
-    public function metrics()
+    public function metrics(): HasMany
     {
         return $this->hasMany(__CLASS__, 'parent_id');
     }
 
     // class relationships
 
-    public function dimensions()
+    public function dimensions(): BelongsToMany
     {
         return $this->belongsToMany(Dimension::class)
             ->withPivot('notes');
     }
 
-    public function metricProperties()
+    public function metricProperties(): BelongsToMany
     {
         return $this->belongsToMany(MetricProperty::class)
             ->withPivot('notes');
+    }
+
+    public function metricMetricUsers(): BelongsToMany
+    {
+        return $this->belongsToMany(MetricMetricUser::class)
+            ->withPivot('notes');
+    }
+
+    public function metricTools(): BelongsToMany
+    {
+        return $this->belongsToMany(MetricTool::class)
+            ->withPivot('notes');
+    }
+
+    public function metricMethods(): BelongsToMany
+    {
+        return $this->belongsToMany(MetricMethod::class)
+            ->withPivot('notes');
+    }
+
+    public function metricFrameworks(): BelongsToMany
+    {
+        return $this->belongsToMany(MetricFramework::class)
+            ->withPivot('notes');
+    }
+
+    public function metricScales(): BelongsToMany
+    {
+        return $this->belongsToMany(MetricScale::class)
+            ->withPivot('notes', 'commonly_used');
+    }
+
+    public function altNames(): HasMany
+    {
+        return $this->hasMany(AltName::class);
     }
 }
