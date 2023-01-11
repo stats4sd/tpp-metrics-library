@@ -12,9 +12,9 @@ class DimensionFactory extends Factory
     {
         return [
 //            'parent_id' => $this->faker->randomNumber(),
-            'name' => $this->faker->name(),
+            'name' => $this->faker->words(),
             'description' => $this->faker->text(),
-            'notes' => $this->faker->word(),
+            'notes' => $this->faker->text(),
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
 

@@ -10,9 +10,9 @@ class ScaleFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->name(),
+            'name' => $this->faker->words(),
             'description' => $this->faker->text(),
-            'notes' => $this->faker->word(),
+            'notes' => $this->faker->text(),
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
         ];
