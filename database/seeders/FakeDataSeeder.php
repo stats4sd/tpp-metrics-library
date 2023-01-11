@@ -25,7 +25,7 @@ class FakeDataSeeder extends Seeder
     {
         AltName::truncate();
         Dimension::destroy(Dimension::all()->pluck('id')->toArray());
-                Framework::destroy(Framework::all()->pluck('id')->toArray());
+        Framework::destroy(Framework::all()->pluck('id')->toArray());
         Method::destroy(Method::all()->pluck('id')->toArray());
         MetricUser::destroy(MetricUser::all()->pluck('id')->toArray());
         Scale::destroy(Scale::all()->pluck('id')->toArray());
@@ -48,9 +48,8 @@ class FakeDataSeeder extends Seeder
         $tools = Tool::factory()->count(10)->create();
 
 
-
         // randomly link frameworks, methods and tools...
-        foreach($tools as $tool) {
+        foreach ($tools as $tool) {
 
             $tool->frameworks()->sync(
                 $this->getRandomItems($frameworks, 3)
@@ -67,7 +66,10 @@ class FakeDataSeeder extends Seeder
         $metricProperties = MetricProperty::factory()->count(10)->create();
 
 
+        // create 50 metrics
+
         $metrics = Metric::factory()->count(50)
+            // for each related entity type, get 0 - 5 random entries to link to the metric.
             ->hasAttached($this->getRandomItems($dimensions, 5), relationship: 'dimensions')
             ->hasAttached($this->getRandomItems($frameworks, 5), relationship: 'metricFrameworks')
             ->hasAttached($this->getRandomItems($methods, 5), relationship: 'metricMethods')
@@ -75,7 +77,47 @@ class FakeDataSeeder extends Seeder
             ->hasAttached($this->getRandomItems($metricUsers, 5), relationship: 'metricUsers')
             ->hasAttached($this->getRandomItems($scales, 5), relationship: 'metricScales')
             ->hasAttached($this->getRandomItems($metricProperties, 5), relationship: 'metricProperties')
-        ->create();
+            ->create();
+
+        // randomly make some metrics children of other metrics
+
+        foreach ($metrics as $childMetric) {
+
+            // around 20% of metrics should have a parent?
+            if(random_int(1, 10) < 8) {
+                continue;
+            }
+
+            $childMetric->parent_id = $metrics
+                //a metric cannot be its own parent
+                ->filter(fn ($metric) => $metric->id !== $childMetric->id)
+                ->shuffle()
+                ->take(1)
+                ->pluck('id')
+                ->first();
+
+            $childMetric->save();
+        }
+
+        // randomly make some dimensions children of other dimensions
+        foreach ($dimensions as $childDimension) {
+
+            // around 20% of dimensions should have a parent?
+            if(random_int(1, 10) < 8) {
+                continue;
+            }
+
+            $childDimension->parent_id = $dimensions
+                //a dimension cannot be its own parent
+                ->filter(fn ($dimension) => $dimension->id !== $childDimension->id)
+                ->shuffle()
+                ->take(1)
+                ->pluck('id')
+                ->first();
+
+            $childDimension->save();
+        }
+
 
     }
 
