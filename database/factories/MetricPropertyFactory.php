@@ -11,6 +11,7 @@ class MetricPropertyFactory extends Factory
     {
         return [
             'name' => $this->faker->words(3, true),
+            'description' => $this->faker->text(),
             'notes' => $this->faker->text(),
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
