@@ -11,8 +11,7 @@ class DimensionFactory extends Factory
     public function definition(): array
     {
         return [
-//            'parent_id' => $this->faker->randomNumber(),
-            'name' => $this->faker->words(),
+            'name' => $this->faker->words(3, true),
             'description' => $this->faker->text(),
             'notes' => $this->faker->text(),
             'created_at' => Carbon::now(),

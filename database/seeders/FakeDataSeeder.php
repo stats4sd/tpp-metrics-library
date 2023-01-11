@@ -79,6 +79,14 @@ class FakeDataSeeder extends Seeder
             ->hasAttached($this->getRandomItems($metricProperties, 5), relationship: 'metricProperties')
             ->create();
 
+        // create alt names and assign them to random metrics
+
+        $altNames = AltName::factory()
+            ->count(40)
+            ->recycle($metrics)
+            ->create();
+
+
         // randomly make some metrics children of other metrics
 
         foreach ($metrics as $childMetric) {
