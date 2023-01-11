@@ -4,17 +4,16 @@ namespace App\Filament\Resources\MetricResource\Pages;
 
 use App\Filament\Resources\MetricResource;
 use Filament\Pages\Actions;
-use Filament\Resources\Pages\EditRecord;
+use Filament\Resources\Pages\ViewRecord;
 
-class EditMetric extends EditRecord
+class ViewMetric extends ViewRecord
 {
     protected static string $resource = MetricResource::class;
 
     protected function getActions(): array
     {
         return [
-            Actions\ViewAction::make(),
-            Actions\DeleteAction::make(),
+            Actions\EditAction::make(),
         ];
     }
 }

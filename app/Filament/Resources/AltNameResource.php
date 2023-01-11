@@ -2,20 +2,20 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\DimensionResource\Pages;
-use App\Models\Dimension;
+use App\Filament\Resources\AltNameResource\Pages;
+use App\Filament\Resources\AltNameResource\RelationManagers;
+use App\Models\AltName;
 use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
 
-class DimensionResource extends Resource
+class AltNameResource extends Resource
 {
-    protected static ?string $model = Dimension::class;
+    protected static ?string $model = AltName::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-collection';
 
@@ -26,15 +26,6 @@ class DimensionResource extends Resource
                 Section::make('Basic Information')
                     ->schema([
                         TextInput::make('name'),
-                        Select::make('topic_id')->relationship('topic', 'name')
-                            ->createOptionForm([
-                                TextInput::make('name')
-                                    ->required(),
-                                MarkdownEditor::make('description'),
-                                MarkdownEditor::make('notes'),
-
-                            ]),
-                        MarkdownEditor::make('description'),
                         MarkdownEditor::make('notes'),
                     ]),
             ]);
@@ -44,7 +35,7 @@ class DimensionResource extends Resource
     {
         return $table
             ->columns([
-
+                //
             ])
             ->filters([
                 //
@@ -67,9 +58,9 @@ class DimensionResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListDimensions::route('/'),
-            'create' => Pages\CreateDimension::route('/create'),
-            'edit' => Pages\EditDimension::route('/{record}/edit'),
+            'index' => Pages\ListAltNames::route('/'),
+            'create' => Pages\CreateAltName::route('/create'),
+            'edit' => Pages\EditAltName::route('/{record}/edit'),
         ];
     }
 }
