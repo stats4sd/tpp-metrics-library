@@ -3,6 +3,12 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\MetricResource\Pages;
+use App\Filament\Resources\MetricResource\RelationManagers\DimensionsRelationManager;
+use App\Filament\Resources\MetricResource\RelationManagers\MetricFrameworksRelationManager;
+use App\Filament\Resources\MetricResource\RelationManagers\MetricPropertiesRelationManager;
+use App\Filament\Resources\MetricResource\RelationManagers\MetricScalesRelationManager;
+use App\Filament\Resources\MetricResource\RelationManagers\MetricToolsRelationManager;
+use App\Filament\Resources\MetricResource\RelationManagers\MetricUsersRelationManager;
 use App\Models\Metric;
 use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\Section;
@@ -64,7 +70,13 @@ class MetricResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            MetricResource\RelationManagers\AltNamesRelationManager::class,
+            DimensionsRelationManager::class,
+            MetricFrameworksRelationManager::class,
+            MetricPropertiesRelationManager::class,
+            MetricScalesRelationManager::class,
+            MetricToolsRelationManager::class,
+            MetricUsersRelationManager::class,
         ];
     }
 
