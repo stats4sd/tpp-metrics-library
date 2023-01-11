@@ -36,7 +36,7 @@ class ToolResource extends Resource
     {
         return $table
             ->columns([
-                //
+                Tables\Columns\TextColumn::make('name'),
             ])
             ->filters([
                 //
