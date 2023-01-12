@@ -60,23 +60,65 @@ class FakeDataSeeder extends Seeder
             );
         }
 
-        // other entities   r
+        // other entities
         $metricUsers = MetricUser::factory()->count(10)->create();
         $scales = Scale::factory()->count(10)->create();
         $metricProperties = MetricProperty::factory()->count(10)->create();
 
 
         // create 50 metrics
-
         $metrics = Metric::factory()->count(50)
             // for each related entity type, get 0 - 5 random entries to link to the metric.
-            ->hasAttached($this->getRandomItems($dimensions, 5), relationship: 'dimensions')
-            ->hasAttached($this->getRandomItems($frameworks, 5), relationship: 'metricFrameworks')
-            ->hasAttached($this->getRandomItems($methods, 5), relationship: 'metricMethods')
-            ->hasAttached($this->getRandomItems($tools, 5), relationship: 'metricTools')
-            ->hasAttached($this->getRandomItems($metricUsers, 5), relationship: 'metricUsers')
-            ->hasAttached($this->getRandomItems($scales, 5), relationship: 'metricScales')
-            ->hasAttached($this->getRandomItems($metricProperties, 5), relationship: 'metricProperties')
+            ->hasAttached(
+                factory: $this->getRandomItems($dimensions, 5),
+                pivot: function ($metric) {
+                    return [
+                        'notes' => "{$metric->title} notes about the link to a dimension",
+                    ];
+                },
+                relationship: 'dimensions')
+            ->hasAttached(
+                factory: $this->getRandomItems($frameworks, 5),
+                pivot: function ($metric) {
+                    return [
+                        'notes' => "{$metric->title} notes about metricFrameworks relationship"
+                    ];
+                }, relationship: 'metricFrameworks')
+            ->hasAttached(
+                factory: $this->getRandomItems($methods, 5),
+                pivot: function ($metric) {
+                    return [
+                        'notes' => "{$metric->title} notes about metricMethods relationship"
+                    ];
+                }, relationship: 'metricMethods')
+            ->hasAttached(
+                factory: $this->getRandomItems($tools, 5),
+                pivot: function ($metric) {
+                    return [
+                        'notes' => "{$metric->title} notes about metricTools relationship"
+                    ];
+                }, relationship: 'metricTools')
+            ->hasAttached(
+                factory: $this->getRandomItems($metricUsers, 5),
+                pivot: function ($metric) {
+                    return [
+                        'notes' => "{$metric->title} notes about metricUsers relationship"
+                    ];
+                }, relationship: 'metricUsers')
+            ->hasAttached(
+                factory: $this->getRandomItems($scales, 5),
+                pivot: function ($metric) {
+                    return [
+                        'notes' => "{$metric->title} notes about metricScales relationship"
+                    ];
+                }, relationship: 'metricScales')
+            ->hasAttached(
+                factory: $this->getRandomItems($metricProperties, 5),
+                pivot: function ($metric) {
+                    return [
+                        'notes' => "{$metric->title} notes about metricProperties relationship"
+                    ];
+                }, relationship: 'metricProperties')
             ->create();
 
         // create alt names and assign them to random metrics
@@ -92,13 +134,13 @@ class FakeDataSeeder extends Seeder
         foreach ($metrics as $childMetric) {
 
             // around 20% of metrics should have a parent?
-            if(random_int(1, 10) < 8) {
+            if (random_int(1, 10) < 8) {
                 continue;
             }
 
             $childMetric->parent_id = $metrics
                 //a metric cannot be its own parent
-                ->filter(fn ($metric) => $metric->id !== $childMetric->id)
+                ->filter(fn($metric) => $metric->id !== $childMetric->id)
                 ->shuffle()
                 ->take(1)
                 ->pluck('id')
@@ -111,13 +153,13 @@ class FakeDataSeeder extends Seeder
         foreach ($dimensions as $childDimension) {
 
             // around 20% of dimensions should have a parent?
-            if(random_int(1, 10) < 8) {
+            if (random_int(1, 10) < 8) {
                 continue;
             }
 
             $childDimension->parent_id = $dimensions
                 //a dimension cannot be its own parent
-                ->filter(fn ($dimension) => $dimension->id !== $childDimension->id)
+                ->filter(fn($dimension) => $dimension->id !== $childDimension->id)
                 ->shuffle()
                 ->take(1)
                 ->pluck('id')
@@ -125,6 +167,27 @@ class FakeDataSeeder extends Seeder
 
             $childDimension->save();
         }
+
+
+        // add lots of notes to various relationship / pivot tables
+
+//        foreach($metrics as $metric) {
+//            $dimensions = $metrics->dimensions;
+//            foreach($dimensions as $dimension) {
+//
+//            }
+//            $metric->dimensions()->updateExistingPivot();
+//        }
+
+        // dimension_metric
+
+        // framework_tool
+        // method_tool
+        //metric_framework
+        //metric_metric_property
+        //metric_metric_user
+        //metric_scale
+        //metric_tool
 
 
     }
