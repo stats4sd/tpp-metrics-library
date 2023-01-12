@@ -66,63 +66,68 @@ class FakeDataSeeder extends Seeder
         $metricProperties = MetricProperty::factory()->count(10)->create();
 
 
-        // create 50 metrics
-        $metrics = Metric::factory()->count(50)
-            // for each related entity type, get 0 - 5 random entries to link to the metric.
-            ->hasAttached(
-                factory: $this->getRandomItems($dimensions, 5),
-                pivot: function ($metric) {
-                    return [
-                        'notes' => "{$metric->title} notes about the link to a dimension",
-                    ];
-                },
-                relationship: 'dimensions')
-            ->hasAttached(
-                factory: $this->getRandomItems($frameworks, 5),
-                pivot: function ($metric) {
-                    return [
-                        'notes' => "{$metric->title} notes about metricFrameworks relationship"
-                    ];
-                }, relationship: 'metricFrameworks')
-            ->hasAttached(
-                factory: $this->getRandomItems($methods, 5),
-                pivot: function ($metric) {
-                    return [
-                        'notes' => "{$metric->title} notes about metricMethods relationship"
-                    ];
-                }, relationship: 'metricMethods')
-            ->hasAttached(
-                factory: $this->getRandomItems($tools, 5),
-                pivot: function ($metric) {
-                    return [
-                        'notes' => "{$metric->title} notes about metricTools relationship"
-                    ];
-                }, relationship: 'metricTools')
-            ->hasAttached(
-                factory: $this->getRandomItems($metricUsers, 5),
-                pivot: function ($metric) {
-                    return [
-                        'notes' => "{$metric->title} notes about metricUsers relationship"
-                    ];
-                }, relationship: 'metricUsers')
-            ->hasAttached(
-                factory: $this->getRandomItems($scales, 5),
-                pivot: function ($metric) {
-                    return [
-                        'notes' => "{$metric->title} notes about metricScales relationship"
-                    ];
-                }, relationship: 'metricScales')
-            ->hasAttached(
-                factory: $this->getRandomItems($metricProperties, 5),
-                pivot: function ($metric) {
-                    return [
-                        'notes' => "{$metric->title} notes about metricProperties relationship"
-                    ];
-                }, relationship: 'metricProperties')
-            ->create();
+        // create 50 metrics - via for loop instead of factory()->count() so that each metric has a different set of relations.
+        for ($i = 0; $i < 50; $i++) {
+
+            Metric::factory()
+                // for each related entity type, get 0 - 5 random entries to link to the metric.
+                // cannot use recycle as that only picks 1 entry (and no idea how to add to the pivot)
+                ->hasAttached(
+                    factory: $this->getRandomItems($dimensions, 5),
+                    pivot: function ($metric) {
+                        return [
+                            'notes' => "{$metric->title} notes about the link to a dimension",
+                        ];
+                    },
+                    relationship: 'dimensions')
+                ->hasAttached(
+                    factory: $this->getRandomItems($frameworks, 5),
+                    pivot: function ($metric) {
+                        return [
+                            'notes' => "{$metric->title} notes about metricFrameworks relationship"
+                        ];
+                    }, relationship: 'metricFrameworks')
+                ->hasAttached(
+                    factory: $this->getRandomItems($methods, 5),
+                    pivot: function ($metric) {
+                        return [
+                            'notes' => "{$metric->title} notes about metricMethods relationship"
+                        ];
+                    }, relationship: 'metricMethods')
+                ->hasAttached(
+                    factory: $this->getRandomItems($tools, 5),
+                    pivot: function ($metric) {
+                        return [
+                            'notes' => "{$metric->title} notes about metricTools relationship"
+                        ];
+                    }, relationship: 'metricTools')
+                ->hasAttached(
+                    factory: $this->getRandomItems($metricUsers, 5),
+                    pivot: function ($metric) {
+                        return [
+                            'notes' => "{$metric->title} notes about metricUsers relationship"
+                        ];
+                    }, relationship: 'metricUsers')
+                ->hasAttached(
+                    factory: $this->getRandomItems($scales, 5),
+                    pivot: function ($metric) {
+                        return [
+                            'notes' => "{$metric->title} notes about metricScales relationship"
+                        ];
+                    }, relationship: 'metricScales')
+                ->hasAttached(
+                    factory: $this->getRandomItems($metricProperties, 5),
+                    pivot: function ($metric) {
+                        return [
+                            'notes' => "{$metric->title} notes about metricProperties relationship"
+                        ];
+                    }, relationship: 'metricProperties')
+                ->create();
+        }
 
         // create alt names and assign them to random metrics
-
+        $metrics = Metric::all();
+        
         $altNames = AltName::factory()
             ->count(40)
             ->recycle($metrics)
@@ -167,28 +172,6 @@ class FakeDataSeeder extends Seeder
 
             $childDimension->save();
         }
-
-
-        // add lots of notes to various relationship / pivot tables
-
-//        foreach($metrics as $metric) {
-//            $dimensions = $metrics->dimensions;
-//            foreach($dimensions as $dimension) {
-//
-//            }
-//            $metric->dimensions()->updateExistingPivot();
-//        }
-
-        // dimension_metric
-
-        // framework_tool
-        // method_tool
-        //metric_framework
-        //metric_metric_property
-        //metric_metric_user
-        //metric_scale
-        //metric_tool
-
 
     }
 
