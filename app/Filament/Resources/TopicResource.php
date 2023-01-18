@@ -3,7 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\TopicResource\Pages;
-use App\Filament\Resources\TopicResource\RelationManagers;
+use App\Filament\Resources\TopicResource\RelationManagers\DimensionsRelationManager;
 use App\Models\Topic;
 use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\Section;
@@ -53,7 +53,7 @@ class TopicResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            DimensionsRelationManager::class,
         ];
     }
 

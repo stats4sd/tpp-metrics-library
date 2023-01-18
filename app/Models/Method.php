@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Method extends Model
@@ -14,13 +14,13 @@ class Method extends Model
 
     public function metrics(): BelongsToMany
     {
-        return $this->belongsToMany(Metric::class)
+        return $this->belongsToMany(Metric::class, 'metric_method')
             ->withPivot('notes');
     }
 
     public function tools(): BelongsToMany
     {
-        return $this->belongsToMany(Tool::class)
+        return $this->belongsToMany(Tool::class, 'method_tool')
             ->withPivot('notes');
     }
 

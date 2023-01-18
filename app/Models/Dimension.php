@@ -2,17 +2,22 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Dimension extends Model
 {
     use HasFactory;
 
     protected $guarded = [];
+
+    public function getFullNameAttribute()
+    {
+        return $this->topic->name . ' - ' . $this->name;
+    }
 
     public function parent(): BelongsTo
     {
@@ -33,7 +38,7 @@ class Dimension extends Model
 
     public function metrics(): BelongsToMany
     {
-        return $this->belongsToMany(Metric::class)
+        return $this->belongsToMany(Metric::class, 'dimension_metric')
             ->withPivot('notes');
     }
 }

@@ -3,10 +3,10 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\AltNameResource\Pages;
-use App\Filament\Resources\AltNameResource\RelationManagers;
 use App\Models\AltName;
 use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
@@ -25,6 +25,8 @@ class AltNameResource extends Resource
             [
                 Section::make('Basic Information')
                     ->schema([
+                        Select::make('metric_id')
+                        ->relationship('metric', 'title'),
                         TextInput::make('name'),
                         MarkdownEditor::make('notes'),
                     ]),
@@ -50,9 +52,7 @@ class AltNameResource extends Resource
 
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
     public static function getPages(): array

@@ -3,15 +3,13 @@
 namespace App\Filament\Resources\MetricResource\RelationManagers;
 
 use App\Filament\Resources\FrameworkResource;
+use App\Filament\Templates\MetricLinkRelationManager;
 use Filament\Resources\Form;
-use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Resources\Table;
-use Filament\Tables;
 
-class MetricFrameworksRelationManager extends RelationManager
+class MetricFrameworksRelationManager extends MetricLinkRelationManager
 {
     protected static string $relationship = 'metricFrameworks';
-
+    protected static ?string $title = 'Frameworks';
     protected static ?string $recordTitleAttribute = 'name';
 
     public static function form(Form $form): Form
@@ -19,24 +17,4 @@ class MetricFrameworksRelationManager extends RelationManager
         return FrameworkResource::form($form);
     }
 
-    public static function table(Table $table): Table
-    {
-        return $table
-            ->columns([
-                Tables\Columns\TextColumn::make('name'),
-            ])
-            ->filters([
-                //
-            ])
-            ->headerActions([
-                Tables\Actions\CreateAction::make(),
-            ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
-            ])
-            ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
-            ]);
-    }
 }

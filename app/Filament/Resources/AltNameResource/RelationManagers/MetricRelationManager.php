@@ -1,35 +1,36 @@
 <?php
 
-namespace App\Filament\Resources\MetricResource\RelationManagers;
+namespace App\Filament\Resources\AltNameResource\RelationManagers;
 
-use App\Filament\Resources\AltNameResource;
+use App\Filament\Resources\MetricResource;
 use Filament\Resources\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Table;
 use Filament\Tables;
 
-class AltNamesRelationManager extends RelationManager
+class MetricRelationManager extends RelationManager
 {
-    protected static string $relationship = 'altNames';
+    protected static string $relationship = 'metric';
 
-    protected static ?string $recordTitleAttribute = 'name';
+    protected static ?string $recordTitleAttribute = 'title';
 
     public static function form(Form $form): Form
     {
-        return AltNameResource::form($form);
+        return MetricResource::form($form);
     }
 
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name'),
+                Tables\Columns\TextColumn::make('title'),
             ])
             ->filters([
                 //
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make(),
+                Tables\Actions\AttachAction::make(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

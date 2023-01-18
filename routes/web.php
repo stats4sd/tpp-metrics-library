@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     //return redirect(config('backpack.base.route_prefix'));
-    return redirect('/admin');
+    return redirect('/filament');
 });
 
 Route::get(config('backpack.base.route_prefix') . '/login', function () {
@@ -38,5 +38,6 @@ Route::get(config('backpack.base.route_prefix') . '/login', function () {
 // ], function () {
 //     Route::view('dashboard')->name('dashboard');
 // });
+
 
 require __DIR__.'/auth.php';

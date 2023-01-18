@@ -1,35 +1,26 @@
 <?php
 
-namespace App\Filament\Resources\MetricResource\RelationManagers;
+namespace App\Filament\Templates;
 
-use App\Filament\Resources\DimensionResource;
-use App\Filament\Templates\MetricLinkRelationManager;
+use Closure;
 use Filament\Forms\Components\Textarea;
-use Filament\Resources\Form;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Table;
 use Filament\Tables;
+use Illuminate\Contracts\Support\Htmlable;
 
-class DimensionsRelationManager extends MetricLinkRelationManager
+class MetricLinkRelationManager extends RelationManager
 {
-    protected static string $relationship = 'dimensions';
-    protected static ?string $inverseRelationship = 'metrics';
-    protected static ?string $title = 'Dimensions';
 
-    // override default view
-    protected static string $view = 'filament.resources.relation-manager';
-
-    protected static ?string $recordTitleAttribute = 'name';
-
-    public static function form(Form $form): Form
+    protected function getTableHeading(): string|Htmlable|Closure|null
     {
-        return DimensionResource::form($form);
+        return $this->getTitle() . ' for ' . $this->getOwnerRecord()->title;
     }
 
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('topic.name'),
                 Tables\Columns\TextColumn::make('name'),
             ])
             ->filters([
@@ -53,4 +44,5 @@ class DimensionsRelationManager extends MetricLinkRelationManager
                 Tables\Actions\DetachBulkAction::make(),
             ]);
     }
+
 }

@@ -3,14 +3,13 @@
 namespace App\Filament\Resources\MetricResource\RelationManagers;
 
 use App\Filament\Resources\MetricUserResource;
+use App\Filament\Templates\MetricLinkRelationManager;
 use Filament\Resources\Form;
-use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Resources\Table;
-use Filament\Tables;
 
-class MetricUsersRelationManager extends RelationManager
+class MetricUsersRelationManager extends MetricLinkRelationManager
 {
     protected static string $relationship = 'metricUsers';
+    protected static ?string $title = 'User Types';
 
     protected static ?string $recordTitleAttribute = 'name';
 
@@ -19,24 +18,4 @@ class MetricUsersRelationManager extends RelationManager
         return MetricUserResource::form($form);
     }
 
-    public static function table(Table $table): Table
-    {
-        return $table
-            ->columns([
-                Tables\Columns\TextColumn::make('name'),
-            ])
-            ->filters([
-                //
-            ])
-            ->headerActions([
-                Tables\Actions\CreateAction::make(),
-            ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
-            ])
-            ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
-            ]);
-    }
 }

@@ -15,5 +15,16 @@ class ViewMetric extends ViewRecord
         return [
             Actions\EditAction::make(),
         ];
+
+    }
+
+    public function getFormTabLabel(): ?string
+    {
+        return "Metric Metadata";
+    }
+
+    public function hasCombinedRelationManagerTabsWithForm(): bool
+    {
+        return true;
     }
 }

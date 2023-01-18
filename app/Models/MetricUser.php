@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class MetricUser extends Model
@@ -14,7 +14,7 @@ class MetricUser extends Model
 
     public function metrics(): BelongsToMany
     {
-        return $this->belongsToMany(Metric::class)
+        return $this->belongsToMany(Metric::class, 'metric_metric_user')
             ->withPivot('notes');
     }
 
