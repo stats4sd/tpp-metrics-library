@@ -35,13 +35,11 @@ class FakeDataSeeder extends Seeder
     public function run()
     {
         AltName::truncate();
-        Dimension::destroy(Dimension::all()->pluck('id')->toArray());
         Framework::destroy(Framework::all()->pluck('id')->toArray());
         Method::destroy(Method::all()->pluck('id')->toArray());
         MetricUser::destroy(MetricUser::all()->pluck('id')->toArray());
         Scale::destroy(Scale::all()->pluck('id')->toArray());
         Tool::destroy(Tool::all()->pluck('id')->toArray());
-        Topic::destroy(Topic::all()->pluck('id')->toArray());
         MetricProperty::destroy(MetricProperty::all()->pluck('id')->toArray());
         Metric::destroy(Metric::all()->pluck('id')->toArray());
 

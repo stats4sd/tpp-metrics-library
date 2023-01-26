@@ -13,11 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('methods', function (Blueprint $table) {
+        Schema::create('dimensions', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('parent_id')->constrained('dimensions')->nullOnDelete()->cascadeOnUpdate();
+            $table->foreignId('topic_id')->constrained('topics')->cascadeOnDelete()->cascadeOnUpdate();
             $table->string('name');
             $table->text('definition')->nullable();
-            $table->text('notes')->nullable();;
+            $table->text('notes')->nullable();
             $table->timestamps();
         });
     }
@@ -29,6 +31,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('methods');
+        Schema::dropIfExists('dimensions');
     }
 };

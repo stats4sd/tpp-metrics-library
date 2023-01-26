@@ -39,34 +39,62 @@ class Metric extends Model
             ->withPivot('notes');
     }
 
-    public function metricUsers(): BelongsToMany
+
+    // Metric Users
+    public function collectors(): BelongsToMany
     {
         return $this->belongsToMany(MetricUser::class)
-            ->withPivot('notes');
+            ->wherePivot('type', '=', 'collector')
+            ->withPivot('notes', 'type');
     }
 
-    public function metricTools(): BelongsToMany
+    public function decisionMakers(): BelongsToMany
+    {
+        return $this->belongsToMany(MetricUser::class)
+            ->wherePivot('type', '=', 'decision maker')
+            ->withPivot('notes', 'type');
+    }
+
+    public function impactedBy(): BelongsToMany
+    {
+        return $this->belongsToMany(MetricUser::class)
+            ->wherePivot('type', '=', 'impacted')
+            ->withPivot('notes', 'type');
+    }
+
+
+
+    public function tools(): BelongsToMany
     {
         return $this->belongsToMany(Tool::class)
             ->withPivot('notes');
     }
 
-    public function metricMethods(): BelongsToMany
+    public function methods(): BelongsToMany
     {
         return $this->belongsToMany(Method::class, 'metric_method')
             ->withPivot('notes');
     }
 
-    public function metricFrameworks(): BelongsToMany
+    public function frameworks(): BelongsToMany
     {
         return $this->belongsToMany(Framework::class, 'metric_framework')
             ->withPivot('notes');
     }
 
-    public function metricScales(): BelongsToMany
+    public function scaleDecision(): BelongsToMany
     {
         return $this->belongsToMany(Scale::class)
-            ->withPivot('notes', 'commonly_used');
+            ->wherePivot('type', '=', 'decision making')
+            ->withPivot('notes', 'commonly_used', 'type');
+    }
+
+    public function scaleMeasurement(): BelongsToMany
+    {
+        return $this->belongsToMany(Scale::class)
+            ->wherePivot('type', '=', 'measurement')
+            ->withPivot('notes', 'commonly_used', 'type');
+
     }
 
     public function altNames(): HasMany
