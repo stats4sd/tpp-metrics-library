@@ -14,6 +14,7 @@ use App\Models\Metric;
 use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Form;
@@ -34,18 +35,21 @@ class MetricResource extends Resource
         return $form
             ->schema([
 
-                Section::make('Basic Information')
+                Section::make('Metric Information')
                     ->schema([
                         TextInput::make('title'),
-                        MarkdownEditor::make('description'),
                         Repeater::make('altNames')
-                        ->relationship()
-                        ->schema([
-                            TextInput::make('name')->inlineLabel(),
-                            Textarea::make('notes')->inlineLabel(),
-                        ])
-                        ->collapsed(),
+                            ->relationship()
+                            ->schema([
+                                TextInput::make('name')->inlineLabel(),
+                                Textarea::make('notes')->inlineLabel(),
+                            ])
+                            ->collapsed(),
+                        Select::make('developer')
                     ]),
+                // topics, dimensions, sub-dimensions = new tab
+                // scales, tools, frameworks = new tab
+
                 Section::make('Details')
                     ->schema([
                         TextInput::make('unit_of_measurement'),
@@ -67,9 +71,9 @@ class MetricResource extends Resource
                 TextColumn::make('updated_at')->dateTime(),
                 TextColumn::make('unit_of_measurement'),
             ])
-//            ->filters([
-//                //
-//            ])
+            //            ->filters([
+            //                //
+            //            ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),

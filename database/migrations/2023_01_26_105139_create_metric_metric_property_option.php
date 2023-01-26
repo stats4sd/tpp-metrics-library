@@ -13,12 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('metric_scale', function (Blueprint $table) {
+        Schema::create('metric_metric_property_option', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('metric_id')->constrained('metrics')->cascadeOnDelete()->cascadeOnUpdate();
-            $table->foreignId('scale_id')->constrained('scales')->cascadeOnDelete()->cascadeOnUpdate();
-            $table->boolean('commonly_used')->default(false);
-            $table->text('notes')->nullable();
+            $table->foreignId('metric_id');
+            $table->foreignId('metric_property_option_id');
             $table->timestamps();
         });
     }
@@ -30,6 +28,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('metric_scale');
+        Schema::dropIfExists('metric_metric_property_option');
     }
 };

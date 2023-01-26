@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('metric_framework', function (Blueprint $table) {
             $table->id();
             $table->foreignId('metric_id')->constrained('metrics')->cascadeOnDelete()->cascadeOnUpdate();
-            $table->foreignId('framework')->constrained('frameworks')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreignId('framework_id')->constrained('frameworks')->cascadeOnDelete()->cascadeOnUpdate();
             $table->text('notes')->nullable();
             $table->timestamps();
         });

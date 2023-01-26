@@ -29,5 +29,4 @@ class Tool extends Model
         return $this->belongsToMany(Framework::class, 'framework_tool')
             ->withPivot('notes');
     }
-
 }
