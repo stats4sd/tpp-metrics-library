@@ -1,7 +1,6 @@
 <?php
 
 namespace Database\Seeders;
-
 use App\Models\AltName;
 use App\Models\Dimension;
 use App\Models\Framework;
@@ -13,10 +12,20 @@ use App\Models\MetricUser;
 use App\Models\Scale;
 use App\Models\Tool;
 use App\Models\Topic;
+use Faker\Generator;
+use Illuminate\Container\Container;
 use Illuminate\Database\Seeder;
 
 class FakeDataSeeder extends Seeder
 {
+
+    protected Generator $faker;
+
+    public function __construct()
+    {
+        $this->faker = Container::getInstance()->make(Generator::class);
+    }
+
     /**
      * Run the database seeds.
      *
@@ -52,14 +61,23 @@ class FakeDataSeeder extends Seeder
         // randomly link frameworks, methods and tools...
         foreach ($tools as $tool) {
 
-            $tool->frameworks()->sync(
-                $this->getRandomItems($frameworks, 3)
-            );
+            $sync = $this->getRandomItems($frameworks, 3);
+            $syncWithNotes = [];
+            foreach ($sync as $item) {
+                $syncWithNotes[$item] = ['notes' => $this->faker->paragraph()];
+            }
 
-            $tool->methods()->sync(
-                $this->getRandomItems($methods, 3)
-            );
+            $tool->frameworks()->sync($syncWithNotes);
+
+            $sync = $this->getRandomItems($methods, 3);
+            $syncWithNotes = [];
+            foreach ($sync as $item) {
+                $syncWithNotes[$item] = ['notes' => $this->faker->paragraph()];
+            }
+
+            $tool->methods()->sync($syncWithNotes);
         }
+
 
         // other entities
         $metricUsers = MetricUser::factory()->count(10)->create();
