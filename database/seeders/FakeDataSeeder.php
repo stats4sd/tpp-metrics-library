@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 use App\Models\AltName;
+use App\Models\Developer;
 use App\Models\Dimension;
 use App\Models\Framework;
 use App\Models\Method;
@@ -82,6 +83,8 @@ class FakeDataSeeder extends Seeder
         // other entities
         $metricUsers = MetricUser::factory()->count(10)->create();
         $scales = Scale::factory()->count(10)->create();
+        $developers = Developer::factory()->count(50)->create();
+
 
         $metricProperties = MetricProperty::factory()
             ->count(10)
@@ -144,8 +147,9 @@ class FakeDataSeeder extends Seeder
                         return [
                             'notes' => "{$metric->title} notes about metricProperties relationship"
                         ];
-                    }, relationship: 'metricProperties')
-                ->create();
+                    }, relationship: 'metricProperties'
+                )
+                ->create(['developer_id' => $developers->shuffle()->first()->id]);
         }
 
         // create alt names and assign them to random metrics
@@ -199,7 +203,7 @@ class FakeDataSeeder extends Seeder
     }
 
     /** Gets random items from the collection as an array of IDs (for syncing via many-many relationships) */
-    public function getRandomItems($collection, $max)
+    public function getRandomItems($collection, $max): array
     {
         $count = random_int(0, $max);
 

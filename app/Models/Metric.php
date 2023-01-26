@@ -73,4 +73,9 @@ class Metric extends Model
     {
         return $this->hasMany(AltName::class);
     }
+
+    public function developer(): BelongsTo
+    {
+        return $this->belongsTo(Developer::class);
+    }
 }
