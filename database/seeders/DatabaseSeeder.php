@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\Dimension;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -22,9 +21,6 @@ class DatabaseSeeder extends Seeder
 
         $this->call(TopicSeeder::class);
         $this->call(DimensionSeeder::class);
-
-        if(Dimension::count() === 0) {
-            $dimensions =0;
-        }
+        $this->call(MetricPropertySeeder::class);
     }
 }

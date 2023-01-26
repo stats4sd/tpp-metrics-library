@@ -12,33 +12,50 @@ class DimensionSeeder extends Seeder
         $notes = 'Need to review dimension definition';
         $definition = 'Related to ';
 
-        $dimensions = [
-            'Productivity (inc. stability)',
-            'Animal health & welfare',
-            'Synergy/positive interactions',
-            'Profitability & returns',
-            'Economic diversity & resilience',
-            'Resource use efficiency (inc. recycling)',
-            'Human health',
-            'Food security & nutrition',
-            'Participation & agency',
-            'Fairness & equity',
-            'Responsible governance',
-            'Connectivity & local economy',
-            'Social values & diets',
-            'Soil health',
-            'Water resources',
-            'Air & climate',
-            'Biodiversity',
+        $dimensionTopics = [
+            5 => [
+
+                'Productivity (inc. stability)',
+                'Animal health & welfare',
+                'Synergy/positive interactions',
+            ],
+            4 => [
+
+                'Profitability & returns',
+                'Economic diversity & resilience',
+                'Resource use efficiency (inc. recycling)',
+            ],
+            3 => [
+
+                'Human health',
+                'Food security & nutrition',
+            ],
+            2 => [
+
+                'Participation & agency',
+                'Fairness & equity',
+                'Responsible governance',
+                'Connectivity & local economy',
+                'Social values & diets',
+            ],
+            1 => [
+                'Soil health',
+                'Water resources',
+                'Air & climate',
+                'Biodiversity',
+            ]
         ];
 
 
-        foreach($dimensions as $dimension) {
-            Dimension::create([
-                'name' => $dimension,
-                'definition' => $definition . $dimension,
-                'notes' => $notes,
-            ]);
+        foreach ($dimensionTopics as $topicId => $dimensions) {
+
+            foreach ($dimensions as $dimension)
+                Dimension::create([
+                    'topic_id' => $topicId,
+                    'name' => $dimension,
+                    'definition' => $definition . $dimension,
+                    'notes' => $notes,
+                ]);
         }
     }
 }

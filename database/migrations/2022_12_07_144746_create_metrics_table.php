@@ -40,7 +40,7 @@ return new class extends Migration
             $table->text('pros_cons')->nullable();
 
             // 5.b
-            $table->text('copmutation_methods')->nullable();
+            $table->text('computation_methods')->nullable();
 
             // 5.c
             $table->boolean('scalable')->nullable();

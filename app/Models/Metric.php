@@ -25,7 +25,13 @@ class Metric extends Model
         return $this->hasMany(__CLASS__, 'parent_id');
     }
 
-    // class relationships
+    // relationships
+    public function topics(): BelongsToMany
+    {
+        return $this->belongsToMany(Topic::class)
+            ->withPivot('notes');
+    }
+
 
     public function dimensions(): BelongsToMany
     {
@@ -33,11 +39,73 @@ class Metric extends Model
             ->withPivot('notes');
     }
 
+    public function subDimensions(): BelongsToMany
+    {
+        return $this->belongsToMany(SubDimension::class)
+            ->withPivot('notes');
+    }
+
+    public function scaleDecision(): BelongsToMany
+    {
+        return $this->belongsToMany(Scale::class)
+            ->wherePivot('type', '=', 'decision making')
+            ->withPivot('notes', 'commonly_used', 'type');
+    }
+
+    public function scaleMeasurement(): BelongsToMany
+    {
+        return $this->belongsToMany(Scale::class)
+            ->wherePivot('type', '=', 'measurement')
+            ->withPivot('notes', 'commonly_used', 'type');
+
+    }
+
+    public function scaleReporting(): BelongsToMany
+    {
+        return $this->belongsToMany(Scale::class)
+            ->wherePivot('type', '=', 'reporting')
+            ->withPivot('notes', 'type');
+    }
+
+    public function tools(): BelongsToMany
+    {
+        return $this->belongsToMany(Tool::class)
+            ->withPivot('notes');
+    }
+
+    public function frameworks(): BelongsToMany
+    {
+        return $this->belongsToMany(Framework::class, 'metric_framework')
+            ->withPivot('notes');
+    }
+
+    public function units(): BelongsToMany
+    {
+        return $this->belongsToMany(Unit::class, 'metric_unit')
+            ->withPivot('notes');
+    }
+
+    public function complimentaryMetrics(): BelongsToMany
+    {
+        return $this->belongsToMany(__CLASS__)
+            ->withPivot('notes');
+    }
+
+
+
     public function metricProperties(): BelongsToMany
     {
         return $this->belongsToMany(MetricProperty::class)
+            ->using(MetricPropertyLink::class)
             ->withPivot('notes');
     }
+
+    public function collectionMethods(): HasMany
+    {
+        return $this->hasMany(CollectionMethod::class);
+
+    }
+
 
 
     // Metric Users
@@ -64,38 +132,8 @@ class Metric extends Model
 
 
 
-    public function tools(): BelongsToMany
-    {
-        return $this->belongsToMany(Tool::class)
-            ->withPivot('notes');
-    }
 
-    public function methods(): BelongsToMany
-    {
-        return $this->belongsToMany(Method::class, 'metric_method')
-            ->withPivot('notes');
-    }
 
-    public function frameworks(): BelongsToMany
-    {
-        return $this->belongsToMany(Framework::class, 'metric_framework')
-            ->withPivot('notes');
-    }
-
-    public function scaleDecision(): BelongsToMany
-    {
-        return $this->belongsToMany(Scale::class)
-            ->wherePivot('type', '=', 'decision making')
-            ->withPivot('notes', 'commonly_used', 'type');
-    }
-
-    public function scaleMeasurement(): BelongsToMany
-    {
-        return $this->belongsToMany(Scale::class)
-            ->wherePivot('type', '=', 'measurement')
-            ->withPivot('notes', 'commonly_used', 'type');
-
-    }
 
     public function altNames(): HasMany
     {
@@ -105,5 +143,17 @@ class Metric extends Model
     public function developer(): BelongsTo
     {
         return $this->belongsTo(Developer::class);
+    }
+
+    public function farmingSystems(): BelongsToMany
+    {
+        return $this->belongsToMany(FarmingSystem::class)
+            ->withPivot('notes');
+    }
+
+    public function geographies(): BelongsToMany
+    {
+        return $this->belongsToMany(Geography::class)
+            ->withPivot('notes');
     }
 }
