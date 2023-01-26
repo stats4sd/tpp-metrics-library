@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('metric_id')->constrained('metrics')->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreignId('scale_id')->constrained('scales')->cascadeOnDelete()->cascadeOnUpdate();
-            $table->boolean('commonly_used');
+            $table->boolean('commonly_used')->default(false);
             $table->text('notes')->nullable();
             $table->timestamps();
         });

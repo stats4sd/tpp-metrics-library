@@ -2,11 +2,11 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Metric extends Model
 {
@@ -53,13 +53,13 @@ class Metric extends Model
 
     public function metricMethods(): BelongsToMany
     {
-        return $this->belongsToMany(Method::class)
+        return $this->belongsToMany(Method::class, 'metric_method')
             ->withPivot('notes');
     }
 
     public function metricFrameworks(): BelongsToMany
     {
-        return $this->belongsToMany(Framework::class)
+        return $this->belongsToMany(Framework::class, 'metric_framework')
             ->withPivot('notes');
     }
 
