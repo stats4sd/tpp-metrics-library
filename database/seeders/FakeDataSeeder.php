@@ -8,6 +8,7 @@ use App\Models\Framework;
 use App\Models\Method;
 use App\Models\Metric;
 use App\Models\MetricProperty;
+use App\Models\MetricPropertyOption;
 use App\Models\MetricUser;
 use App\Models\Scale;
 use App\Models\Tool;
@@ -63,7 +64,11 @@ class FakeDataSeeder extends Seeder
         // other entities
         $metricUsers = MetricUser::factory()->count(10)->create();
         $scales = Scale::factory()->count(10)->create();
-        $metricProperties = MetricProperty::factory()->count(10)->create();
+
+        $metricProperties = MetricProperty::factory()
+            ->count(10)
+            ->has(MetricPropertyOption::factory()->count(5))
+            ->create();
 
 
         // create 50 metrics - via for loop instead of factory()->count() so that each metric has a different set of relations.
@@ -127,7 +132,7 @@ class FakeDataSeeder extends Seeder
 
         // create alt names and assign them to random metrics
         $metrics = Metric::all();
-        
+
         $altNames = AltName::factory()
             ->count(40)
             ->recycle($metrics)
