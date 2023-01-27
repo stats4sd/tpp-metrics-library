@@ -45,11 +45,7 @@ class Metric extends Model
     // 0.d Dimensions
     public function dimensions(): BelongsToMany
     {
-<<<<<<< HEAD
-        return $this->belongsToMany(Dimension::class, 'dimension_metric')
-=======
         return $this->belongsToMany(Dimension::class, 'metric_dimension')
->>>>>>> main
             ->withPivot('notes');
     }
 
