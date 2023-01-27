@@ -13,10 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('metric_metric_property_option', function (Blueprint $table) {
+        Schema::create('property_option_property_link', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('metric_id');
-            $table->foreignId('metric_property_option_id');
+            $table->foreignId('linked_id');
+            $table->foreignId('property_option_id');
+            $table->text('notes')->nullable();
             $table->timestamps();
         });
     }
@@ -28,6 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('metric_metric_property_option');
+        Schema::dropIfExists('property_option_property_link');
     }
 };

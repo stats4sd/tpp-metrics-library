@@ -4,9 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-class Tool extends Model
+class SubDimension extends Model
 {
     use HasFactory;
 
@@ -14,13 +15,13 @@ class Tool extends Model
 
     public function metrics(): BelongsToMany
     {
-        return $this->belongsToMany(Metric::class, 'metric_tool')
+        return $this->belongsToMany(Metric::class, 'metric_sub_dimension')
             ->withPivot('notes');
     }
 
-    public function frameworks(): BelongsToMany
+
+    public function dimension(): BelongsTo
     {
-        return $this->belongsToMany(Framework::class, 'framework_tool')
-            ->withPivot('notes');
+        return $this->belongsTo(Dimension::class);
     }
 }

@@ -6,22 +6,22 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Dimension extends Model
+class PropertyOption extends Model
 {
     use HasFactory;
 
     protected $guarded = [];
 
-    public function metrics(): BelongsToMany
+
+    public function property(): BelongsTo
     {
-        return $this->belongsToMany(Metric::class, 'metric_dimension')
-            ->withPivot('notes');
+        return $this->belongsTo(Property::class);
     }
 
-    public function topic(): BelongsTo
+    public function propertyLnks(): BelongsToMany
     {
-        return $this->belongsTo(Topic::class);
+        return $this->belongsToMany(PropertyLink::class, 'property_option_property_link');
     }
+
 }

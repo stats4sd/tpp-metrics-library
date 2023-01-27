@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-class Tool extends Model
+class Geography extends Model
 {
     use HasFactory;
 
@@ -14,13 +14,7 @@ class Tool extends Model
 
     public function metrics(): BelongsToMany
     {
-        return $this->belongsToMany(Metric::class, 'metric_tool')
-            ->withPivot('notes');
-    }
-
-    public function frameworks(): BelongsToMany
-    {
-        return $this->belongsToMany(Framework::class, 'framework_tool')
+        return $this->belongsToMany(Metric::class, 'metric_geography')
             ->withPivot('notes');
     }
 }

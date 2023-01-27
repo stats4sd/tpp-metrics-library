@@ -13,10 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('method_tool', function (Blueprint $table) {
+        Schema::create('property_options', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('method_id')->constrained('methods')->cascadeOnDelete()->cascadeOnUpdate();
-            $table->foreignId('tool_id')->constrained('tools')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreignId('property_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
+            $table->string('name');
             $table->text('notes')->nullable();
             $table->timestamps();
         });
@@ -29,6 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('method_tool');
+        Schema::dropIfExists('property_options');
     }
 };

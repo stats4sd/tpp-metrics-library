@@ -15,7 +15,7 @@ use Filament\Tables;
 
 class MetricPropertyResource extends Resource
 {
-    protected static ?string $model = MetricProperty::class;
+    protected static ?string $model = Property::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-collection';
 

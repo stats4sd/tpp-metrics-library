@@ -13,11 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('methods', function (Blueprint $table) {
+        Schema::create('property_links', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->text('description')->nullable();
-            $table->text('notes')->nullable();;
+            $table->foreignId('linked_id');
+            $table->foreignId('linked_type');
+            $table->foreignId('property_id')->constrained('properties')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->text('notes')->nullable();
             $table->timestamps();
         });
     }
@@ -29,6 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('methods');
+        Schema::dropIfExists('property_links');
     }
 };

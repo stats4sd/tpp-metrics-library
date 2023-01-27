@@ -13,11 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('tools', function (Blueprint $table) {
+        Schema::create('sub_dimensions', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('parent_id')->nullable()->constrained('sub_dimensions')->nullOnDelete()->cascadeOnUpdate();
+            $table->foreignId('dimension_id')->constrained('dimensions')->cascadeOnDelete()->cascadeOnUpdate();
             $table->string('name');
-            $table->text('description')->nullable();
-            $table->text('notes')->nullable();;
+            $table->text('definition')->nullable();
+            $table->text('notes')->nullable();
             $table->timestamps();
         });
     }
@@ -29,6 +31,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('tools');
+        Schema::dropIfExists('dimensions');
     }
 };

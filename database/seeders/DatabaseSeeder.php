@@ -18,5 +18,9 @@ class DatabaseSeeder extends Seeder
         if (config('app.env') === "local") {
             $this->call(TestSeeder::class);
         }
+
+        $this->call(TopicSeeder::class);
+        $this->call(DimensionSeeder::class);
+        $this->call(MetricPropertySeeder::class);
     }
 }

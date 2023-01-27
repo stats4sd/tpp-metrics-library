@@ -13,11 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('frameworks', function (Blueprint $table) {
+        Schema::create('metric_sub_dimension', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->text('description')->nullable();
-            $table->text('notes')->nullable();;
+            $table->foreignId('sub_dimension_id')->constrained('sub_dimensions')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreignId('metric_id')->constrained('metrics')->onDelete('cascade')->onUpdate('cascade');
+            $table->text('notes')->nullable();
             $table->timestamps();
         });
     }
@@ -29,6 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('frameworks');
+        Schema::dropIfExists('dimension_metric');
     }
 };

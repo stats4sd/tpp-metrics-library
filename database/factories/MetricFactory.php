@@ -11,10 +11,9 @@ class MetricFactory extends Factory
     {
         return [
             'title' => $this->faker->words(3, true),
-            'description' => $this->faker->text(),
-            'references' => $this->faker->sentences(2, true),
-            'unit_of_measurement' => $this->faker->words(2, true),
-            'study_unit' => $this->faker->word(),
+            'definition' => $this->faker->text(),
+            'concept' => $this->faker->paragraph(),
+            'scale_notes' => $this->faker->paragraph(),
             'notes' => $this->faker->text(),
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
