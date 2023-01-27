@@ -11,6 +11,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
 {
+    use CrudTrait;
     use HasFactory, Notifiable, CrudTrait, HasRoles;
 
     /**
