@@ -13,9 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('frequencies', function (Blueprint $table) {
+        Schema::create('metric_dimension', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->foreignId('dimension_id')->constrained('dimensions')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreignId('metric_id')->constrained('metrics')->onDelete('cascade')->onUpdate('cascade');
             $table->text('notes')->nullable();
             $table->timestamps();
         });
@@ -28,6 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('frequencies');
+        Schema::dropIfExists('dimension_metric');
     }
 };

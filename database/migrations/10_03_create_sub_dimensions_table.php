@@ -13,10 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('metric_metric_property', function (Blueprint $table) {
+        Schema::create('sub_dimensions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('metric_id')->constrained('metrics')->cascadeOnDelete()->cascadeOnUpdate();
-            $table->foreignId('metric_property_id')->constrained('metric_properties')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreignId('parent_id')->nullable()->constrained('dimensions')->nullOnDelete()->cascadeOnUpdate();
+            $table->foreignId('dimension_id')->constrained('dimensions')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->string('name');
+            $table->text('definition')->nullable();
             $table->text('notes')->nullable();
             $table->timestamps();
         });
@@ -29,6 +31,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('metric_metric_property');
+        Schema::dropIfExists('dimensions');
     }
 };

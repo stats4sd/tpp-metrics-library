@@ -13,9 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('dimension_metric', function (Blueprint $table) {
+        Schema::create('metric_sub_dimension', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('dimension_id')->constrained('dimensions')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreignId('sub_dimension_id')->constrained('sub_dimensions')->onDelete('cascade')->onUpdate('cascade');
             $table->foreignId('metric_id')->constrained('metrics')->onDelete('cascade')->onUpdate('cascade');
             $table->text('notes')->nullable();
             $table->timestamps();

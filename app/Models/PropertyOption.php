@@ -7,20 +7,21 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-class MetricPropertyOption extends Model
+class PropertyOption extends Model
 {
     use HasFactory;
 
     protected $guarded = [];
 
-    public function metricProperty(): BelongsTo
+
+    public function property(): BelongsTo
     {
-        return $this->belongsTo(MetricProperty::class);
+        return $this->belongsTo(Property::class);
     }
 
-    public function metrics(): BelongsToMany
+    public function propertyLnks(): BelongsToMany
     {
-        return $this->belongsToMany(Metric::class, 'metric_metric_property_option');
+        return $this->belongsToMany(PropertyLink::class, 'property_option_property_link');
     }
 
 }

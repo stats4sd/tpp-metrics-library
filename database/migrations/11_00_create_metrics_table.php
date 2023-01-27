@@ -32,20 +32,6 @@ return new class extends Migration
 
             $table->text('notes')->nullable();
 
-            // 4 Data
-            $table->foreignId('data_availability_id')->nullable();
-            $table->text('data_availability_notes')->nullable();
-
-            // 5.a
-            $table->text('pros_cons')->nullable();
-
-            // 5.b
-            $table->text('computation_methods')->nullable();
-
-            // 5.c
-            $table->boolean('scalable')->nullable();
-            $table->text('scalable_notes')->nullable();
-
             $table->timestamps();
 
         });

@@ -13,10 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('metric_unit', function (Blueprint $table) {
+        Schema::create('metric_farming_system', function (Blueprint $table) {
             $table->id();
             $table->foreignId('metric_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
-            $table->foreignId('unit_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreignId('farming_system_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
+            $table->text('notes')->nullable();
             $table->timestamps();
         });
     }
@@ -28,6 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('metric_unit');
+        Schema::dropIfExists('metric_farming_system');
     }
 };

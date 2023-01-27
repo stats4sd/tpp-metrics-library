@@ -17,7 +17,9 @@ class SubDimensionFactory extends Factory
     public function definition()
     {
         return [
-            //
+            'name' => $this->faker->word(),
+            'definition' => $this->faker->paragraph(),
+            'notes' => $this->faker->paragraph(),
         ];
     }
 }

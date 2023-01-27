@@ -4,7 +4,7 @@ namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class MetricPropertyOptionFactory extends Factory
+class PropertyOptionFactory extends Factory
 {
     public function definition(): array
     {

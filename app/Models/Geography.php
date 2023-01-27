@@ -14,7 +14,7 @@ class Geography extends Model
 
     public function metrics(): BelongsToMany
     {
-        return $this->belongsToMany(Metric::class)
+        return $this->belongsToMany(Metric::class, 'metric_geography')
             ->withPivot('notes');
     }
 }

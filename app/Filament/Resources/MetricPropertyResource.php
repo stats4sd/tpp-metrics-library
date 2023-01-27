@@ -3,19 +3,16 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\MetricPropertyResource\Pages;
-use App\Filament\Resources\MetricPropertyResource\RelationManagers;
-use App\Models\MetricProperty;
+use App\Models\Property;
 use Filament\Forms;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class MetricPropertyResource extends Resource
 {
-    protected static ?string $model = MetricProperty::class;
+    protected static ?string $model = Property::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-collection';
 

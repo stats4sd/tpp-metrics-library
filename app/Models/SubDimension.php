@@ -13,13 +13,16 @@ class SubDimension extends Model
 
     protected $guarded = [];
 
+    public function metrics(): BelongsToMany
+    {
+        return $this->belongsToMany(Metric::class, 'metric_sub_dimension')
+            ->withPivot('notes');
+    }
+
+
     public function dimension(): BelongsTo
     {
         return $this->belongsTo(Dimension::class);
     }
 
-    public function metrics(): BelongsToMany
-    {
-        return $this->belongsToMany(Metric::class);
-    }
 }
