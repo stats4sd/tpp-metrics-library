@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('sub_dimensions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('parent_id')->nullable()->constrained('dimensions')->nullOnDelete()->cascadeOnUpdate();
+            $table->foreignId('parent_id')->nullable()->constrained('sub_dimensions')->nullOnDelete()->cascadeOnUpdate();
             $table->foreignId('dimension_id')->constrained('dimensions')->cascadeOnDelete()->cascadeOnUpdate();
             $table->string('name');
             $table->text('definition')->nullable();
