@@ -198,9 +198,9 @@ class FakeDataSeeder extends Seeder
                         ];
                     }, relationship: 'geographies'
                 )
-                ->hasDataSources(3)
-                ->hasComputationGuidance(2)
-                ->hasReferences(3)
+                ->hasDataSources(3, ['reference_type' => 'data source'])
+                ->hasComputationGuidance(2, ['reference_type' => 'computation guidance'])
+                ->hasReferences(3, ['reference_type' => 'reference'])
                 ->create(['developer_id' => $developers->shuffle()->first()->id]);
         }
 

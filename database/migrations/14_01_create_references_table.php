@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('url')->nullable();
-            $table->string('notes')->nullable();
+            $table->text('notes')->nullable();
 
             $table->string('referencable_type')->comment('The model type this reference is linked to');
             $table->string('referencable_id')->comment('The model ID this reference is linked to');

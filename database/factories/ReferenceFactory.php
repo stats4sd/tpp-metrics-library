@@ -17,8 +17,9 @@ class ReferenceFactory extends Factory
     public function definition()
     {
         return [
-            'name' => $this->faker->words(5),
-            'url' => $this->faker->url()[0],
+            'name' => $this->faker->words(5, true),
+            'url' => $this->faker->words(1, true),
+            'reference_type' => 'reference',
             'notes' => $this->faker->paragraph(),
         ];
     }
