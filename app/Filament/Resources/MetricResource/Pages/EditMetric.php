@@ -10,10 +10,20 @@ class EditMetric extends EditRecord
 {
     protected static string $resource = MetricResource::class;
 
+    public function getFormTabLabel(): string
+    {
+        return 'Core Info';
+    }
+
     protected function getActions(): array
     {
         return [
             Actions\DeleteAction::make(),
         ];
+    }
+
+    public function hasCombinedRelationManagerTabsWithForm(): bool
+    {
+        return true;
     }
 }
