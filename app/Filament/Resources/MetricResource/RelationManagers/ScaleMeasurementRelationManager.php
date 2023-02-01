@@ -11,8 +11,19 @@ use Filament\Tables;
 class ScaleMeasurementRelationManager extends RelationManager
 {
     protected static string $relationship = 'scaleMeasurement';
+    protected static ?string $inverseRelationship = 'metricMeasurement';
 
     protected static ?string $recordTitleAttribute = 'name';
+
+    public function getTableDescription(): string
+    {
+        return 'The scale(s) at which this metric is measured.';
+    }
+
+    public function isTablePaginationEnabled(): bool
+    {
+        return false;
+    }
 
     public static function form(Form $form): Form
     {
@@ -21,6 +32,13 @@ class ScaleMeasurementRelationManager extends RelationManager
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(255),
+                Forms\Components\Placeholder::make('Notes')
+                    ->content('Add any extra information about how/why this metric can be measured at this scale.'),
+                Forms\Components\Textarea::make('notes'),
+                Forms\Components\Checkbox::make('commonly_used')
+                    ->label('Is the metric commonly used at this scale?'),
+                Forms\Components\Hidden::make('type')
+                    ->default('measurement'),
             ]);
     }
 
@@ -28,20 +46,38 @@ class ScaleMeasurementRelationManager extends RelationManager
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name'),
+                Tables\Columns\TextColumn::make('name')
+                    ->label('Scale'),
+                Tables\Columns\IconColumn::make('commonly_used')
+                    ->boolean()
             ])
             ->filters([
                 //
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
+                Tables\Actions\CreateAction::make()
+                    ->label('Create New Scale'),
+                Tables\Actions\AttachAction::make('Attach Existing')
+                    ->preloadRecordSelect()
+                    ->recordSelect(fn(Forms\Components\Select $select) => $select->multiple())
+                    ->form(fn(Tables\Actions\AttachAction $action): array => [
+                        $action->getRecordSelect(),
+                        Forms\Components\Placeholder::make('Notes')
+                            ->content('Add any extra information about how/why the metric(s) can be measured at this scale. These notes will be linked to *all* the chosen metrics above'),
+                        Forms\Components\Textarea::make('notes'),
+                        Forms\Components\Checkbox::make('commonly_used')
+                            ->label('Is the metric commonly used at this scale?'),
+                        Forms\Components\Hidden::make('type')
+                            ->default('measurement'),
+
+                    ])
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DetachAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+                Tables\Actions\DetachBulkAction::make(),
             ]);
     }
 }

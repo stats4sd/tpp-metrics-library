@@ -134,7 +134,7 @@ class Metric extends Model
     public function impactedBy(): BelongsToMany
     {
         return $this->belongsToMany(MetricUser::class)
-            ->wherePivot('type', '=', 'impacted')
+            ->wherePivot('type', '=', 'impacted by')
             ->withPivot('notes', 'type', 'id');
     }
 

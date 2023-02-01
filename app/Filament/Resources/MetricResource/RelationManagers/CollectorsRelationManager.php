@@ -11,7 +11,7 @@ use Filament\Tables;
 class CollectorsRelationManager extends RelationManager
 {
     protected static string $relationship = 'collectors';
-
+    protected static ?string $inverseRelationship = 'metricCollectors';
     protected static ?string $recordTitleAttribute = 'name';
 
     public function getTableDescription(): string
@@ -45,14 +45,14 @@ class CollectorsRelationManager extends RelationManager
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
-                ->label('Category of user')
+                    ->label('Category of user')
             ])
             ->filters([
                 //
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make()
-                ->label('Create New'),
+                    ->label('Create New'),
                 Tables\Actions\AttachAction::make()
                     ->label('Attach Existing')
                     ->preloadRecordSelect()
@@ -70,7 +70,7 @@ class CollectorsRelationManager extends RelationManager
                 Tables\Actions\DetachAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+                Tables\Actions\DetachBulkAction::make(),
             ]);
     }
 }
