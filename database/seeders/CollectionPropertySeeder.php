@@ -17,6 +17,7 @@ class CollectionPropertySeeder extends Seeder
     {
 
         Property::create([
+            'code' => '4.a.a',
             'name' => 'Equipment Needed',
             'definition' => 'What equipment is needed.',
             'notes' => 'to review',
@@ -42,6 +43,7 @@ class CollectionPropertySeeder extends Seeder
         ]);
 
         Property::create([
+            'code' => '4.a.b',
             'name' => 'Expertise (Collection)',
             'definition' => 'What expertise / training is needed? Can anyone collect it or does it require expertise?',
             'notes' => 'to review',
@@ -67,6 +69,7 @@ class CollectionPropertySeeder extends Seeder
         ]);
 
         Property::create([
+            'code' => '4.a.c',
             'name' => 'Expertise (Analysis)',
             'definition' => 'What expertise/training is needed? Can anyone collect it or does it require expertise?',
             'notes' => 'to review',
@@ -92,6 +95,7 @@ class CollectionPropertySeeder extends Seeder
         ]);
 
         Property::create([
+            'code' => '4.a.d',
             'name' => 'Cost',
             'definition' => 'Any information on minimal costs. Is it rapid or time consuming to collect / analyse? Average / range of cost or relative cost to similar metrics?',
             'notes' => 'to review',
@@ -117,6 +121,7 @@ class CollectionPropertySeeder extends Seeder
         ]);
 
         Property::create([
+            'code' => '4.a.e',
             'name' => 'Time to collect',
             'definition' => 'Any information of time requirements',
             'notes' => 'to review',
@@ -142,6 +147,7 @@ class CollectionPropertySeeder extends Seeder
         ]);
 
         Property::create([
+            'code' => '4.a.f',
             'name' => 'Sampling',
             'definition' => 'Common sampling methods',
             'notes' => 'to review',
@@ -150,6 +156,7 @@ class CollectionPropertySeeder extends Seeder
         ]);
 
         Property::create([
+            'code' => '4.a.g',
             'name' => 'Timing of sampling',
             'definition' => 'When to take samples',
             'notes' => 'to review',
@@ -158,6 +165,7 @@ class CollectionPropertySeeder extends Seeder
         ]);
 
         Property::create([
+            'code' => '4.a.h',
             'name' => 'Frequency of collection',
             'definition' => 'Common frequency of collection (this will also be influenced by responsivity)',
             'notes' => 'to review',

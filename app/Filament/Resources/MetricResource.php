@@ -18,10 +18,17 @@ use App\Filament\Resources\MetricResource\RelationManagers\SubDimensionsRelation
 use App\Filament\Resources\MetricResource\RelationManagers\ToolsRelationManager;
 use App\Filament\Resources\MetricResource\RelationManagers\TopicsRelationManager;
 use App\Filament\Resources\MetricResource\RelationManagers\UnitsRelationManager;
+use App\Models\Dimension;
 use App\Models\Metric;
-use Filament\Forms\Components\Card;
+use App\Models\Property;
+use App\Models\PropertyOption;
+use App\Models\SubDimension;
+use App\Models\Topic;
 use Filament\Forms\Components\CheckboxList;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Form;
@@ -41,14 +48,19 @@ class MetricResource extends Resource
         return $form
             ->schema([
 
-                Card::make(
-                    [
+                Section::make('Basic Info')
+                    ->schema([
 
                         /** 0.a Title */
-                        TextInput::make('title'),
-
+                        TextInput::make('title')
+                            ->required()
+                            ->inlineLabel()
+                            ->helperText('The identifying name for the metric'),
+                        \Filament\Forms\Components\Placeholder::make('-'),
                         /** 0.b Alt Names */
                         Repeater::make('altNames')
+                            ->defaultItems(0)
+                            ->collapsed()
                             ->label('Alternative Names')
                             ->relationship()
                             ->schema([
@@ -56,14 +68,115 @@ class MetricResource extends Resource
                                 Textarea::make('notes')
                                     ->helperText('E.g. Where is this name used? Who uses it? Is it a common name, or only occasionally used?'),
                             ])
-                            ->createItemButtonLabel('Add new name'),
-                    ]),
-                Card::make([
-                    CheckboxList::make('topics')
-                        ->relationship('topics', 'name')
-                        ->columns(2),
-                ]),
+                            ->createItemButtonLabel('Add new name')
+                            ->itemLabel(fn(array $state): ?string => $state['name'] ?? '(new name)'),
 
+                        Select::make('developer_id')
+                            ->relationship('developer', 'name')
+                            ->createOptionForm([
+                                TextInput::make('name'),
+                                Textarea::make('notes')
+                            ])
+
+                    ]),
+                Section::make('Topics and Dimensions')
+                    ->schema([
+                        CheckboxList::make('topics')
+                            ->relationship('topics', 'name')
+                            ->columns(2)
+                            ->options(Topic::orderBy('id')->get()->pluck('name', 'id')->toArray())
+                            ->reactive(),
+
+                        \Filament\Forms\Components\Placeholder::make('Dimensions')
+                            ->content('Select one or more Topics to see available dimensions')
+                            ->hidden(fn(callable $get) => $get('topics') !== []),
+
+                        CheckboxList::make('dimensions')
+                            ->hidden(fn(callable $get) => $get('topics') === [])
+                            ->relationship('dimensions', 'name')
+                            ->columns(3)
+                            ->options(fn(callable $get) => Dimension::whereIn('topic_id', $get('topics'))
+                                ->orderBy('topic_id')
+                                ->get()
+                                ->pluck('name', 'id')->toArray()
+                            )
+                            ->reactive(),
+
+                        \Filament\Forms\Components\Placeholder::make('Sub Dimensions')
+                            ->content('Select one or more Dimensions before selecting sub-dimensions')
+                            ->hidden(fn(callable $get) => $get('dimensions') !== []),
+
+                        Select::make('subDimensions')
+                            ->hidden(fn(callable $get) => $get('dimensions') === [])
+                            ->relationship('subDimensions', 'name')
+                            ->options(fn(callable $get) => SubDimension::whereIn('dimension_id', $get('dimensions'))
+                                ->orderBy('dimension_id')
+                                ->get()
+                                ->pluck('name', 'id')->toArray()
+                            )
+                            ->createOptionForm([
+                                Select::make('dimension_id')
+                                    ->relationship('dimension', 'name'),
+                                TextInput::make('name'),
+                                Textarea::make('notes'),
+                            ])
+                            ->multiple(),
+
+                    ]),
+
+
+                Section::make('Description')
+                    ->schema([
+                        Textarea::make('definition')
+                            ->inlineLabel()
+                            ->helperText('brief description of the metric and what it measures'),
+
+                        Textarea::make('concept')
+                            ->inlineLabel()
+                            ->helperText('Description of the metric\'s relevance to assessing ag/food system performance'),
+
+                    ]),
+
+                Section::make('Properties')
+                    ->schema(function () {
+                        $props = Property::where('default_type', '=', Metric::class)->get();
+
+                        return $props->map(function ($property) {
+                            if ($property->free_text) {
+                                return Textarea::make('property_' . $property->id)
+                                    ->label($property->name)
+                                    ->inlineLabel()
+                                    ->helperText($property->definition);
+                            }
+
+                            $component = Select::make('property_' . $property->id)
+                                ->label($property->name)
+                                ->multiple($property->select_multiple)
+                                ->options(fn() => PropertyOption::where('property_id', '=', $property->id)
+                                    ->pluck('name', 'id')->toArray());
+
+                            if ($property->editable_options) {
+                                $component = $component->createOptionForm([
+                                    TextInput::make('name'),
+                                    Textarea::make('notes'),
+                                    Hidden::make('property_id')
+                                        ->default($property->id)
+                                ])
+                                    ->createOptionUsing(function ($data): ?string {
+                                        return (string) PropertyOption::create($data)->id;
+                                        // TODO: figure out why $propertyOption here is *all* options, not the created one!
+//
+//                                        return PropertyOption::where('name', $data['name'])
+//                                            ->where('property_id', $data['property_id'])
+//                                            ->pluck('name', 'id')->toArray();
+
+                                });
+                            }
+
+                            return $component;
+
+                        })->toArray();
+                    })
 
             ]);
 
@@ -131,8 +244,8 @@ class MetricResource extends Resource
     {
         return [
             'index' => Pages\ListMetrics::route('/'),
-            'view' => Pages\ViewMetric::route('/{record}'),
             'create' => Pages\CreateMetric::route('/create'),
+            'view' => Pages\ViewMetric::route('/{record}'),
             'edit' => Pages\EditMetric::route('/{record}/edit'),
         ];
     }

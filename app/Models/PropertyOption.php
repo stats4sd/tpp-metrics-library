@@ -19,9 +19,9 @@ class PropertyOption extends Model
         return $this->belongsTo(Property::class);
     }
 
-    public function propertyLnks(): BelongsToMany
+    public function propertyLinks(): BelongsToMany
     {
-        return $this->belongsToMany(PropertyLink::class, 'property_option_property_link');
+        return $this->belongsToMany(PropertyLink::class, 'property_option_property_link', 'linked_id', 'property_option_id');
     }
 
 }

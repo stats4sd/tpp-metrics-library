@@ -11,6 +11,7 @@ use App\Filament\Resources\PropertyTypeResource;
 use App\Filament\Resources\ScaleResource;
 use App\Filament\Resources\ToolResource;
 use App\Filament\Resources\TopicResource;
+use Filament\Facades\Filament;
 use Illuminate\Support\ServiceProvider;
 use pxlrbt\FilamentEnvironmentIndicator\FilamentEnvironmentIndicator;
 
@@ -33,6 +34,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        Filament::serving(function () {
+            Filament::registerViteTheme('resources/css/filament.css');
+        });
+
         FilamentEnvironmentIndicator::configureUsing(function (FilamentEnvironmentIndicator $indicator) {
             $indicator->visible = fn() => auth()->user()?->hasRole('admin');
         }, isImportant: true);

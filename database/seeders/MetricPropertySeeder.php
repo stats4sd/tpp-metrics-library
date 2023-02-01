@@ -334,21 +334,6 @@ level performance?',
             ],
         ]);
 
-        Property::create([
-            'code' => '1.d',
-            'name' => 'Units of Measure',
-            'definition' => 'The units in which the metric is usually expressed',
-            'editable_options' => true,
-            'select_multiple' => true,
-            'default_type' => Metric::class,
-        ])->propertyOptions()->createMany([
-            [
-                'name' => 'g/kg',
-            ],
-            [
-                'name' => '%',
-            ],
-        ]);
 
 
     }

@@ -10,7 +10,6 @@ use App\Models\Framework;
 use App\Models\Geography;
 use App\Models\Metric;
 use App\Models\MetricUser;
-use App\Models\Property;
 use App\Models\Scale;
 use App\Models\SubDimension;
 use App\Models\Tool;
@@ -45,7 +44,6 @@ class FakeDataSeeder extends Seeder
         MetricUser::destroy(MetricUser::all()->pluck('id')->toArray());
         Scale::destroy(Scale::all()->pluck('id')->toArray());
         Tool::destroy(Tool::all()->pluck('id')->toArray());
-        Property::destroy(Property::all()->pluck('id')->toArray());
         Metric::destroy(Metric::all()->pluck('id')->toArray());
         SubDimension::destroy(SubDimension::all()->pluck('id')->toArray());
 

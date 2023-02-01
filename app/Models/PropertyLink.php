@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
@@ -9,18 +10,18 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 class PropertyLink extends Pivot
 {
 
+    protected $table = 'property_links';
 
     public function propertyOptions(): BelongsToMany
     {
-        return $this->belongsToMany(PropertyOption::class, 'property_option_property_link')
+        return $this->belongsToMany(PropertyOption::class, 'property_option_property_link', 'property_option_id', 'linked_id')
             ->withPivot('notes');
     }
 
-    public function propertyLinkReference()
+    public function property(): BelongsTo
     {
-
+        return $this->belongsTo(Property::class, 'property_id', 'id');
     }
-
 
 
 

@@ -32,7 +32,12 @@ class Metric extends Model
 
     public function complimentaryMetrics(): BelongsToMany
     {
-        return $this->belongsToMany(__CLASS__, 'metric_metric_table', 'metric_id', 'related_id');
+        return $this->belongsToMany(__CLASS__, 'metric_metric', 'metric_id', 'related_id');
+    }
+
+    public function inverseComplimentaryMetrics(): BelongsToMany
+    {
+        return $this->belongsToMany(__CLASS__, 'metric_metric', 'related_id', 'metric_id');
     }
 
     // 0.c Topics
@@ -105,7 +110,7 @@ class Metric extends Model
     // 3. - Metric  Properties
     public function properties(): MorphToMany
     {
-        return $this->morphToMany(Property::class, 'property_link')
+        return $this->morphToMany(Property::class, 'linked', 'property_links')
             ->withPivot('notes');
     }
 
@@ -187,6 +192,8 @@ class Metric extends Model
             ->where('references.type',  '=' , 'reference');
 
     }
+
+
 
 
 }

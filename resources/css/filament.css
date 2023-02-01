@@ -1,0 +1,11 @@
+@import '../../vendor/filament/filament/resources/css/app.css';
+
+
+.filament-forms-field-wrapper-label {
+    font-size-adjust: 0.6;
+
+}
+
+.filament-forms-field-wrapper-label {
+    margin-bottom: 20px !important;
+}
