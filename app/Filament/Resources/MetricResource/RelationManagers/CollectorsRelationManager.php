@@ -7,14 +7,22 @@ use Filament\Resources\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Table;
 use Filament\Tables;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class CollectorsRelationManager extends RelationManager
 {
     protected static string $relationship = 'collectors';
 
     protected static ?string $recordTitleAttribute = 'name';
+
+    public function getTableDescription(): string
+    {
+        return 'What sort of users would be involved in collecting the data to calculate this metric?';
+    }
+
+    public function isTablePaginationEnabled(): bool
+    {
+        return false;
+    }
 
     public static function form(Form $form): Form
     {
@@ -23,6 +31,12 @@ class CollectorsRelationManager extends RelationManager
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(255),
+                Forms\Components\Placeholder::make('Notes')
+                    ->content('Add any extra information about how/why this type of user is a "collector" of this metric.'),
+                Forms\Components\Textarea::make('notes'),
+                Forms\Components\Hidden::make('type')
+                    ->default('collector')
+
             ]);
     }
 
@@ -30,20 +44,33 @@ class CollectorsRelationManager extends RelationManager
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name'),
+                Tables\Columns\TextColumn::make('name')
+                ->label('Category of user')
             ])
             ->filters([
                 //
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
+                Tables\Actions\CreateAction::make()
+                ->label('Create New'),
+                Tables\Actions\AttachAction::make()
+                    ->label('Attach Existing')
+                    ->preloadRecordSelect()
+                    ->form(fn(Tables\Actions\AttachAction $action): array => [
+                        $action->getRecordSelect(),
+                        Forms\Components\Placeholder::make('Notes')
+                            ->content('Add any extra information about how/why this type of user is a "collector" of this metric.'),
+                        Forms\Components\Textarea::make('notes'),
+                        Forms\Components\Hidden::make('type')
+                            ->default('collector')
+                    ]),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\DetachAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
             ]);
-    }    
+    }
 }

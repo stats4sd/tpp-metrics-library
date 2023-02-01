@@ -3,14 +3,29 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\MetricResource\Pages;
+use App\Filament\Resources\MetricResource\RelationManagers\CollectorsRelationManager;
+use App\Filament\Resources\MetricResource\RelationManagers\ComplimentaryMetricsRelationManager;
+use App\Filament\Resources\MetricResource\RelationManagers\DecisionMakerRelationManager;
 use App\Filament\Resources\MetricResource\RelationManagers\DimensionsRelationManager;
+use App\Filament\Resources\MetricResource\RelationManagers\FarmingSystemsRelationManager;
+use App\Filament\Resources\MetricResource\RelationManagers\FrameworksRelationManager;
+use App\Filament\Resources\MetricResource\RelationManagers\GeographiesRelationManager;
+use App\Filament\Resources\MetricResource\RelationManagers\ImpactedByRelationManager;
+use App\Filament\Resources\MetricResource\RelationManagers\ScaleDecisionRelationManager;
+use App\Filament\Resources\MetricResource\RelationManagers\ScaleMeasurementRelationManager;
+use App\Filament\Resources\MetricResource\RelationManagers\ScaleReportingRelationManager;
+use App\Filament\Resources\MetricResource\RelationManagers\SubDimensionsRelationManager;
+use App\Filament\Resources\MetricResource\RelationManagers\ToolsRelationManager;
+use App\Filament\Resources\MetricResource\RelationManagers\TopicsRelationManager;
+use App\Filament\Resources\MetricResource\RelationManagers\UnitsRelationManager;
 use App\Models\Metric;
+use Filament\Forms\Components\Card;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Form;
+use Filament\Resources\RelationManagers\RelationGroup;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
@@ -26,8 +41,8 @@ class MetricResource extends Resource
         return $form
             ->schema([
 
-                Section::make('Name(s)')
-                    ->schema([
+                Card::make(
+                    [
 
                         /** 0.a Title */
                         TextInput::make('title'),
@@ -41,15 +56,14 @@ class MetricResource extends Resource
                                 Textarea::make('notes')
                                     ->helperText('E.g. Where is this name used? Who uses it? Is it a common name, or only occasionally used?'),
                             ])
-                        ->createItemButtonLabel('Add new name'),
+                            ->createItemButtonLabel('Add new name'),
                     ]),
-                Section::make('Context')
-                    ->schema([
-                        CheckboxList::make('topics')
-                            ->relationship('topics', 'name')
-                            ->columns(2),
-                    ]),
-                Section::make('Links')
+                Card::make([
+                    CheckboxList::make('topics')
+                        ->relationship('topics', 'name')
+                        ->columns(2),
+                ]),
+
 
             ]);
 
@@ -76,7 +90,40 @@ class MetricResource extends Resource
     public static function getRelations(): array
     {
         return [
-            DimensionsRelationManager::class,
+
+            RelationGroup::make('Topics', [
+                TopicsRelationManager::class,
+                DimensionsRelationManager::class,
+                SubDimensionsRelationManager::class,
+            ]),
+
+            RelationGroup::make('Scales', [
+                ScaleDecisionRelationManager::class,
+                ScaleMeasurementRelationManager::class,
+                ScaleReportingRelationManager::class,
+            ]),
+
+            RelationGroup::make('Users', [
+                CollectorsRelationManager::class,
+                DecisionMakerRelationManager::class,
+                ImpactedByRelationManager::class,
+            ]),
+
+
+            RelationGroup::make('Tools and Frameworks', [
+                ToolsRelationManager::class,
+                FrameworksRelationManager::class,
+                UnitsRelationManager::class,
+            ]),
+
+            ComplimentaryMetricsRelationManager::class,
+
+            RelationGroup::make('Systems and Geographies', [
+                FarmingSystemsRelationManager::class,
+                GeographiesRelationManager::class,
+            ]),
+
+
         ];
     }
 

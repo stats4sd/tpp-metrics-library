@@ -19,6 +19,7 @@ return new class extends Migration
             $table->foreignId('scale_id')->constrained('scales')->cascadeOnDelete()->cascadeOnUpdate();
             $table->boolean('commonly_used')->default(false);
             $table->text('notes')->nullable();
+            $table->text('type')->nullable()->comment('should be "measuring, reporting or decision-making"');
             $table->timestamps();
         });
     }

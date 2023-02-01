@@ -121,21 +121,21 @@ class Metric extends Model
     {
         return $this->belongsToMany(MetricUser::class)
             ->wherePivot('type', '=', 'collector')
-            ->withPivot('notes', 'type');
+            ->withPivot('notes', 'type', 'id');
     }
 
     public function decisionMakers(): BelongsToMany
     {
         return $this->belongsToMany(MetricUser::class)
             ->wherePivot('type', '=', 'decision maker')
-            ->withPivot('notes', 'type');
+            ->withPivot('notes', 'type', 'id');
     }
 
     public function impactedBy(): BelongsToMany
     {
         return $this->belongsToMany(MetricUser::class)
             ->wherePivot('type', '=', 'impacted')
-            ->withPivot('notes', 'type');
+            ->withPivot('notes', 'type', 'id');
     }
 
     // ************************************** //

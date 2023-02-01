@@ -7,14 +7,24 @@ use Filament\Resources\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Table;
 use Filament\Tables;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class DecisionMakerRelationManager extends RelationManager
 {
-    protected static string $relationship = 'decisionMaker';
-
+    protected static string $relationship = 'decisionMakers';
+    protected static ?string $inverseRelationship = 'metricDecisionMakers';
     protected static ?string $recordTitleAttribute = 'name';
+
+//    protected bool $allowsDuplicates = true;
+
+    public function getTableDescription(): string
+    {
+        return 'What sort of users would be making decisions based on this metric?';
+    }
+
+    public function isTablePaginationEnabled(): bool
+    {
+        return false;
+    }
 
     public static function form(Form $form): Form
     {
@@ -23,6 +33,11 @@ class DecisionMakerRelationManager extends RelationManager
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(255),
+                Forms\Components\Placeholder::make('Notes')
+                    ->content('Add any extra information about how/why this type of user is a "decision-maker" for this metric'),
+                Forms\Components\Textarea::make('notes'),
+                Forms\Components\Hidden::make('type')
+                    ->default('decision maker'),
             ]);
     }
 
@@ -30,20 +45,34 @@ class DecisionMakerRelationManager extends RelationManager
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name'),
+                Tables\Columns\TextColumn::make('name')
+                    ->label('Category of user'),
             ])
             ->filters([
                 //
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
+                Tables\Actions\CreateAction::make()
+                    ->label('Creeate New'),
+                Tables\Actions\AttachAction::make()
+//                    ->recordSelectOptionsQuery(fn(Builder $query) => $query->whereDoesntHave('type', '!=', 'decision maker'))
+                    ->label('Attach Existing')
+                    ->preloadRecordSelect()
+                    ->form(fn(Tables\Actions\AttachAction $action): array => [
+                        $action->getRecordSelect(),
+                        Forms\Components\Placeholder::make('Notes')
+                            ->content('Add any extra information about how/why this type of user is a "decision-maker" for this metric'),
+                        Forms\Components\Textarea::make('notes'),
+                        Forms\Components\Hidden::make('type')
+                            ->default('decision maker'),
+                    ])
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\DetachAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
             ]);
-    }    
+    }
 }

@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->text('definition')->nullable();
-            $table->text('notes')->nullable();;
+            $table->text('notes')->nullable();
             $table->timestamps();
         });
     }

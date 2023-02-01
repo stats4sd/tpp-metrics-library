@@ -8,9 +8,9 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Table;
 use Filament\Tables;
 
-class ScaleDecisionRelationManager extends RelationManager
+class TopicsRelationManager extends RelationManager
 {
-    protected static string $relationship = 'scaleDecision';
+    protected static string $relationship = 'topics';
 
     protected static ?string $recordTitleAttribute = 'name';
 

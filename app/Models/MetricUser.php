@@ -15,7 +15,15 @@ class MetricUser extends Model
     public function metrics(): BelongsToMany
     {
         return $this->belongsToMany(Metric::class, 'metric_metric_user')
-            ->withPivot('notes');
+            ->withPivot('notes', 'type', 'id');
+    }
+
+    public function metricDecisionMakers(): BelongsToMany
+    {
+        return $this->belongsToMany(Metric::class,
+        'metric_metric_user')
+        ->withPivot('notes', 'type', 'id')
+        ->wherePivot('type', '=', 'decision maker');
     }
 
 }

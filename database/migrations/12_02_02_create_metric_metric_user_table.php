@@ -18,6 +18,7 @@ return new class extends Migration
             $table->foreignId('metric_id')->constrained('metrics')->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreignId('metric_user_id')->constrained('metric_users')->cascadeOnDelete()->cascadeOnUpdate();
             $table->text('notes')->nullable();
+            $table->string('type')->nullable();
             $table->timestamps();
         });
     }

@@ -10,6 +10,11 @@ class EditMetric extends EditRecord
 {
     protected static string $resource = MetricResource::class;
 
+    public function getTitle(): string
+    {
+        return "Reviewing {$this->getRecord()?->title}";
+    }   
+
     public function getFormTabLabel(): string
     {
         return 'Core Info';
