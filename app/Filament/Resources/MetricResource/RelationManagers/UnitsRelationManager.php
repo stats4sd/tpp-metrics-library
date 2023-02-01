@@ -12,7 +12,18 @@ class UnitsRelationManager extends RelationManager
 {
     protected static string $relationship = 'units';
 
-    protected static ?string $recordTitleAttribute = 'name';
+    protected static ?string $recordTitleAttribute = 'label';
+
+
+            public function getTableDescription(): string
+    {
+        return 'The units in which the metric is usually expressed';
+    }
+
+    public function isTablePaginationEnabled(): bool
+    {
+        return false;
+    }
 
     public static function form(Form $form): Form
     {
@@ -21,6 +32,12 @@ class UnitsRelationManager extends RelationManager
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(255),
+                                Forms\Components\TextInput::make('symbol')
+            ->required()
+            ->maxLength(255),
+                                Forms\Components\Placeholder::make('Notes')
+                    ->content('Add any extra information about the relationship between this unit and the metric'),
+                Forms\Components\Textarea::make('notes'),
             ]);
     }
 
@@ -33,8 +50,18 @@ class UnitsRelationManager extends RelationManager
             ->filters([
                 //
             ])
-            ->headerActions([
-                Tables\Actions\CreateAction::make(),
+           ->headerActions([
+                Tables\Actions\CreateAction::make()
+                    ->label('Create new Unit'),
+                Tables\Actions\AttachAction::make('Attach Existing')
+                    ->preloadRecordSelect()
+                    ->recordSelect(fn(Forms\Components\Select $select) => $select->multiple())
+                    ->form(fn(Tables\Actions\AttachAction $action): array => [
+                        $action->getRecordSelect(),
+                        Forms\Components\Placeholder::make('Notes')
+                    ->content('Add any extra information about the relationship between this unit and the metric'),
+                Forms\Components\Textarea::make('notes'),
+                    ]),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

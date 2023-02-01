@@ -11,6 +11,14 @@ class Unit extends Model
     use HasFactory;
 
     protected $guarded = [];
+//
+//    protected function label(): Attribute
+//    {
+//        return Attribute::make(
+//            get: fn($value) => "{$this->name} ( {$this->synbol} )",
+//        );
+//
+//    }
 
     public function metrics(): BelongsToMany
     {
