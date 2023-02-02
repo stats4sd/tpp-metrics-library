@@ -7,9 +7,9 @@ use App\Filament\Resources\PropertyResource\RelationManagers;
 use App\Models\CollectionMethod;
 use App\Models\Metric;
 use App\Models\Property;
-use Filament\Forms\Components\Card;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -27,32 +27,40 @@ class PropertyResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->schema(
-
-                Card::make([
-                    TextInput::make('code')->required(),
-                    TextInput::make('name')->required(),
-                    Textarea::make('definition'),
-                    Checkbox::make('select_multiple')
-                        ->label('Can users choose multiple options for this property?'),
-                    Checkbox::make('free_text')
-                        ->label('Is this a free text property?'),
-                    Repeater::make('propertyOptions')
-                        ->defaultItems(0)
-                        ->relationship('propertyOptions')
-                        ->schema([
-                            TextInput::make('name'),
-                            Textarea::make('notes'),
-                        ]),
-                    Select::make('default_type')
-                        ->label('Should this be automatically shown for new Metrics or Collection Methods?')
-                        ->options([
-                            Metric::class => Metric::class,
-                            CollectionMethod::class => CollectionMethod::class,
-                        ]),
-
-                ])
-            );
+            ->schema([
+                Section::make('Core Info')
+                    ->schema([
+                        TextInput::make('code')->required(),
+                        TextInput::make('name')->required(),
+                        Textarea::make('definition'),
+                    ]),
+                Section::make('Values')
+                    ->schema([
+                        Checkbox::make('free_text')
+                            ->label('Is this a free text property?')
+                            ->reactive(),
+                        Checkbox::make('select_multiple')
+                            ->label('Can users choose multiple options for this property?')
+                            ->hidden(fn(callable $get) => $get('free_text') === true),
+                        Checkbox::make('editable_options')
+                            ->label('Can users add new options for this property?')
+                            ->hidden(fn(callable $get) => $get('free_text') === true),
+                        Repeater::make('propertyOptions')
+                            ->defaultItems(0)
+                            ->relationship('propertyOptions')
+                            ->schema([
+                                TextInput::make('name'),
+                                Textarea::make('notes'),
+                            ])
+                            ->hidden(fn(callable $get) => $get('free_text') === true),
+                        Select::make('default_type')
+                            ->label('Should this be automatically shown for new Metrics or Collection Methods?')
+                            ->options([
+                                Metric::class => Metric::class,
+                                CollectionMethod::class => CollectionMethod::class,
+                            ]),
+                    ]),
+            ]);
     }
 
     public static function table(Table $table): Table

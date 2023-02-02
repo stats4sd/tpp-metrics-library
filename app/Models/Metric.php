@@ -83,7 +83,7 @@ class Metric extends Model
     {
         return $this->belongsToMany(Scale::class, 'metric_scale')
             ->wherePivot('type', '=', 'reporting')
-            ->withPivot('notes', 'type');
+            ->withPivot('notes', 'type', 'commonly_used');
     }
 
     // 0.g Tools

@@ -24,6 +24,8 @@ use App\Models\Property;
 use App\Models\PropertyOption;
 use App\Models\SubDimension;
 use App\Models\Topic;
+use Awcodes\FilamentBadgeableColumn\Components\Badge;
+use Awcodes\FilamentBadgeableColumn\Components\BadgeableColumn;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Repeater;
@@ -57,6 +59,7 @@ class MetricResource extends Resource
                             ->inlineLabel()
                             ->helperText('The identifying name for the metric'),
                         \Filament\Forms\Components\Placeholder::make('-'),
+
                         /** 0.b Alt Names */
                         Repeater::make('altNames')
                             ->defaultItems(0)
@@ -71,6 +74,7 @@ class MetricResource extends Resource
                             ->createItemButtonLabel('Add new name')
                             ->itemLabel(fn(array $state): ?string => $state['name'] ?? '(new name)'),
 
+                        /** 0.i Developer */
                         Select::make('developer_id')
                             ->relationship('developer', 'name')
                             ->createOptionForm([
@@ -79,14 +83,18 @@ class MetricResource extends Resource
                             ])
 
                     ]),
+
                 Section::make('Topics and Dimensions')
                     ->schema([
+
+                        /** 0.c Topics */
                         CheckboxList::make('topics')
                             ->relationship('topics', 'name')
                             ->columns(2)
                             ->options(Topic::orderBy('id')->get()->pluck('name', 'id')->toArray())
                             ->reactive(),
 
+                        /** 0.d Dimensions */
                         \Filament\Forms\Components\Placeholder::make('Dimensions')
                             ->content('Select one or more Topics to see available dimensions')
                             ->hidden(fn(callable $get) => $get('topics') !== []),
@@ -102,6 +110,7 @@ class MetricResource extends Resource
                             )
                             ->reactive(),
 
+                        /** 0.e sub-dimensions */
                         \Filament\Forms\Components\Placeholder::make('Sub Dimensions')
                             ->content('Select one or more Dimensions before selecting sub-dimensions')
                             ->hidden(fn(callable $get) => $get('dimensions') !== []),
@@ -163,14 +172,14 @@ class MetricResource extends Resource
                                         ->default($property->id)
                                 ])
                                     ->createOptionUsing(function ($data): ?string {
-                                        return (string) PropertyOption::create($data)->id;
+                                        return (string)PropertyOption::create($data)->id;
                                         // TODO: figure out why $propertyOption here is *all* options, not the created one!
 //
 //                                        return PropertyOption::where('name', $data['name'])
 //                                            ->where('property_id', $data['property_id'])
 //                                            ->pluck('name', 'id')->toArray();
 
-                                });
+                                    });
                             }
 
                             return $component;
@@ -186,21 +195,27 @@ class MetricResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('title'),
+                BadgeableColumn::make('title')
+                    ->badges(function ($record): array {
+                        return $record->topics->map(function ($topic) {
+                            return Badge::make($topic->id)
+                                ->label($topic->name)
+                                ->color('success');
+                        })->toArray();
+
+                    }),
+                Tables\Columns\TextColumn::make('developer.name'),
+                Tables\Columns\TextColumn::make('updated_at')
+                    ->label('Last Updated')
             ])
-            ->filters([
-                //
-            ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\ViewAction::make(),
-            ])
-            ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
-            ]);
+            ->filters([])
+            ->actions([Tables\Actions\EditAction::make(),
+                Tables\Actions\ViewAction::make(),])
+            ->bulkActions([Tables\Actions\DeleteBulkAction::make(),]);
     }
 
-    public static function getRelations(): array
+    public
+    static function getRelations(): array
     {
         return [
 
@@ -240,7 +255,8 @@ class MetricResource extends Resource
         ];
     }
 
-    public static function getPages(): array
+    public
+    static function getPages(): array
     {
         return [
             'index' => Pages\ListMetrics::route('/'),
