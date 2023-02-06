@@ -2,8 +2,8 @@
 
 namespace App\Filament\Templates;
 
+use App\Filament\Form\Textarea;
 use Closure;
-use Filament\Forms\Components\Textarea;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Table;
 use Filament\Tables;

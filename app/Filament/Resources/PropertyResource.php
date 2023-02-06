@@ -2,17 +2,17 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Form\Checkbox;
+use App\Filament\Form\Repeater;
+use App\Filament\Form\Section;
+use App\Filament\Form\Select;
+use App\Filament\Form\Textarea;
+use App\Filament\Form\TextInput;
 use App\Filament\Resources\PropertyResource\Pages;
 use App\Filament\Resources\PropertyResource\RelationManagers;
 use App\Models\CollectionMethod;
 use App\Models\Metric;
 use App\Models\Property;
-use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;

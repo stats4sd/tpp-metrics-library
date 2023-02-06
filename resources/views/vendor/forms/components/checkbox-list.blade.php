@@ -1,3 +1,11 @@
+@php
+    $affixLabelClasses = [
+        'whitespace-nowrap group-focus-within:text-primary-500 text-sm align-middle h-full',
+        'text-gray-400' => ! $errors->has($getStatePath()),
+        'text-danger-400' => $errors->has($getStatePath()),
+    ];
+@endphp
+
 <x-dynamic-component
     :component="$getFieldWrapperView()"
     :id="$getId()"
@@ -130,17 +138,17 @@
                             type="checkbox"
                             value="{{ $optionValue }}"
                             dusk="filament.forms.{{ $getStatePath() }}"
-                            {{ $applyStateBindingModifiers('wire:model') }}="{{ $getStatePath() }}"
-                            {{ $getExtraAttributeBag()->class([
-                                'text-primary-600 transition duration-75 rounded shadow-sm focus:border-primary-500 focus:ring-2 focus:ring-primary-500 disabled:opacity-70',
-                                'dark:bg-gray-700 dark:checked:bg-primary-500' => config('forms.dark_mode'),
-                                'border-gray-300' => ! $errors->has($getStatePath()),
-                                'dark:border-gray-600' => (! $errors->has($getStatePath())) && config('forms.dark_mode'),
-                                'border-danger-300 ring-danger-500' => $errors->has($getStatePath()),
-                                'dark:border-danger-400 dark:ring-danger-400' => $errors->has($getStatePath()) && config('forms.dark_mode'),
-                            ])->merge([
-                                'disabled' => $isDisabled(),
-                            ]) }}
+                        {{ $applyStateBindingModifiers('wire:model') }}="{{ $getStatePath() }}"
+                        {{ $getExtraAttributeBag()->class([
+                            'text-primary-600 transition duration-75 rounded shadow-sm focus:border-primary-500 focus:ring-2 focus:ring-primary-500 disabled:opacity-70',
+                            'dark:bg-gray-700 dark:checked:bg-primary-500' => config('forms.dark_mode'),
+                            'border-gray-300' => ! $errors->has($getStatePath()),
+                            'dark:border-gray-600' => (! $errors->has($getStatePath())) && config('forms.dark_mode'),
+                            'border-danger-300 ring-danger-500' => $errors->has($getStatePath()),
+                            'dark:border-danger-400 dark:ring-danger-400' => $errors->has($getStatePath()) && config('forms.dark_mode'),
+                        ])->merge([
+                            'disabled' => $isDisabled(),
+                        ]) }}
                         />
 
                         <span @class([
@@ -154,6 +162,19 @@
             @empty
                 <div wire:key="{{ $this->id }}.{{ $getStatePath() }}.{{ $field::class }}.empty"></div>
             @endforelse
+
+            <div class="flex content-center items-center">
+
+            @if ($label = $getSuffixLabel())
+                <span @class($affixLabelClasses)>
+                {{ $label }}
+            </span>
+            @endif
+
+            @if (($suffixAction = $getSuffixAction()) && (! $suffixAction->isHidden()))
+                {{ $suffixAction }}
+            @endif
+            </div>
         </x-filament-support::grid>
 
         @if ($isSearchable())
@@ -168,5 +189,7 @@
                 {{ $getNoSearchResultsMessage() }}
             </div>
         @endif
+
+
     </div>
 </x-dynamic-component>

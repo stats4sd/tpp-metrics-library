@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Components;
+namespace App\Filament\Form\Components;
 
 use Closure;
 use Filament\Forms\Components\Concerns\CanBeCloned;

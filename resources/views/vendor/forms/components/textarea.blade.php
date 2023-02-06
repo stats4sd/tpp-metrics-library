@@ -11,6 +11,8 @@
     :required="$isRequired()"
     :state-path="$getStatePath()"
 >
+    <div class="flex">
+
     <textarea
         {!! ($autocapitalize = $getAutocapitalize()) ? "autocapitalize=\"{$autocapitalize}\"" : null !!}
         {!! ($autocomplete = $getAutocomplete()) ? "autocomplete=\"{$autocomplete}\"" : null !!}
@@ -45,5 +47,10 @@
             style="height: 150px"
             {{ $getExtraAlpineAttributeBag() }}
         @endif
-    ></textarea>
+        ></textarea>
+
+        @if (($suffixAction = $getSuffixAction()) && (! $suffixAction->isHidden()))
+            {{ $suffixAction }}
+        @endif
+    </div>
 </x-dynamic-component>

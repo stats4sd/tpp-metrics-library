@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Form\Components\CheckboxList;
+use App\Filament\Form\Components\Textarea;
 use App\Filament\Resources\MetricResource\Pages;
 use App\Filament\Resources\MetricResource\RelationManagers\CollectorsRelationManager;
 use App\Filament\Resources\MetricResource\RelationManagers\ComplimentaryMetricsRelationManager;
@@ -27,11 +29,10 @@ use App\Models\SubDimension;
 use App\Models\Topic;
 use Awcodes\FilamentBadgeableColumn\Components\Badge;
 use Awcodes\FilamentBadgeableColumn\Components\BadgeableColumn;
-use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Form;
 use Filament\Resources\RelationManagers\RelationGroup;
@@ -62,10 +63,10 @@ class MetricResource extends Resource
                             ->helperText('The identifying name for the metric')
                             ->suffixAction(self::makeDiscussionPointAction()),
 
-                        \Filament\Forms\Components\Placeholder::make('-'),
+                        Placeholder::make('-'),
 
                         /** 0.b Alt Names */
-                        \App\Filament\Components\Repeater::make('altNames')
+                        \App\Filament\Form\Components\Repeater::make('altNames')
                             ->defaultItems(0)
                             ->collapsed()
                             ->label('Alternative Names')
@@ -98,10 +99,12 @@ class MetricResource extends Resource
                             ->relationship('topics', 'name')
                             ->columns(2)
                             ->options(Topic::orderBy('id')->get()->pluck('name', 'id')->toArray())
-                            ->reactive(),
+                            ->reactive()
+                            ->suffix('Add discussion point')
+                            ->suffixAction(self::makeDiscussionPointAction()),
 
                         /** 0.d Dimensions */
-                        \Filament\Forms\Components\Placeholder::make('Dimensions')
+                        Placeholder::make('Dimensions')
                             ->content('Select one or more Topics to see available dimensions')
                             ->hidden(fn(callable $get) => $get('topics') !== []),
 
@@ -114,10 +117,12 @@ class MetricResource extends Resource
                                 ->get()
                                 ->pluck('name', 'id')->toArray()
                             )
-                            ->reactive(),
+                            ->reactive()
+                            ->suffix('Add discussion point')
+                            ->suffixAction(self::makeDiscussionPointAction()),
 
                         /** 0.e sub-dimensions */
-                        \Filament\Forms\Components\Placeholder::make('Sub Dimensions')
+                        Placeholder::make('Sub Dimensions')
                             ->content('Select one or more Dimensions before selecting sub-dimensions')
                             ->hidden(fn(callable $get) => $get('dimensions') !== []),
 
@@ -135,7 +140,8 @@ class MetricResource extends Resource
                                 TextInput::make('name'),
                                 Textarea::make('notes'),
                             ])
-                            ->multiple(),
+                            ->multiple()
+                            ->suffixAction(self::makeDiscussionPointAction()),
 
                     ]),
 
@@ -144,11 +150,13 @@ class MetricResource extends Resource
                     ->schema([
                         Textarea::make('definition')
                             ->inlineLabel()
-                            ->helperText('brief description of the metric and what it measures'),
+                            ->helperText('brief description of the metric and what it measures')
+                            ->suffixAction(self::makeDiscussionPointAction()),
 
                         Textarea::make('concept')
                             ->inlineLabel()
-                            ->helperText('Description of the metric\'s relevance to assessing ag/food system performance'),
+                            ->helperText('Description of the metric\'s relevance to assessing ag/food system performance')
+                            ->suffixAction(self::makeDiscussionPointAction()),
 
                     ]),
 
@@ -161,14 +169,17 @@ class MetricResource extends Resource
                                 return Textarea::make('property_' . $property->id)
                                     ->label($property->name)
                                     ->inlineLabel()
-                                    ->helperText($property->definition);
+                                    ->helperText($property->definition)
+                                    ->suffixAction(self::makeDiscussionPointAction());
+
                             }
 
                             $component = Select::make('property_' . $property->id)
                                 ->label($property->name)
                                 ->multiple($property->select_multiple)
                                 ->options(fn() => PropertyOption::where('property_id', '=', $property->id)
-                                    ->pluck('name', 'id')->toArray());
+                                    ->pluck('name', 'id')->toArray())
+                                ->suffixAction(self::makeDiscussionPointAction());
 
                             if ($property->editable_options) {
                                 $component = $component->createOptionForm([

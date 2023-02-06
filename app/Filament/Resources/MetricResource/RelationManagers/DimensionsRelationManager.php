@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\MetricResource\RelationManagers;
 
-use Filament\Forms;
 use Filament\Resources\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Table;
@@ -33,7 +32,7 @@ class DimensionsRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
+                \App\Filament\Form\TextInput::make('name')
                     ->required()
                     ->maxLength(255),
             ]);

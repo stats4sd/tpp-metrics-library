@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\MetricResource\RelationManagers;
 
-use Filament\Forms;
 use Filament\Resources\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Table;
@@ -29,15 +28,15 @@ class UnitsRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
+                \App\Filament\Form\TextInput::make('name')
                     ->required()
                     ->maxLength(255),
-                                Forms\Components\TextInput::make('symbol')
+                                \App\Filament\Form\TextInput::make('symbol')
             ->required()
             ->maxLength(255),
-                                Forms\Components\Placeholder::make('Notes')
+                                \App\Filament\Form\Placeholder::make('Notes')
                     ->content('Add any extra information about the relationship between this unit and the metric'),
-                Forms\Components\Textarea::make('notes'),
+                \App\Filament\Form\Textarea::make('notes'),
             ]);
     }
 
@@ -55,12 +54,12 @@ class UnitsRelationManager extends RelationManager
                     ->label('Create new Unit'),
                 Tables\Actions\AttachAction::make('Attach Existing')
                     ->preloadRecordSelect()
-                    ->recordSelect(fn(Forms\Components\Select $select) => $select->multiple())
+                    ->recordSelect(fn(\App\Filament\Form\Select $select) => $select->multiple())
                     ->form(fn(Tables\Actions\AttachAction $action): array => [
                         $action->getRecordSelect(),
-                        Forms\Components\Placeholder::make('Notes')
+                        \App\Filament\Form\Placeholder::make('Notes')
                     ->content('Add any extra information about the relationship between this unit and the metric'),
-                Forms\Components\Textarea::make('notes'),
+                \App\Filament\Form\Textarea::make('notes'),
                     ]),
             ])
             ->actions([

@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\MetricResource\RelationManagers;
 
-use Filament\Forms;
 use Filament\Resources\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Table;
@@ -30,13 +29,13 @@ class DecisionMakerRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
+                \App\Filament\Form\TextInput::make('name')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\Placeholder::make('Notes')
+                \App\Filament\Form\Placeholder::make('Notes')
                     ->content('Add any extra information about how/why this type of user is a "decision-maker" for this metric'),
-                Forms\Components\Textarea::make('notes'),
-                Forms\Components\Hidden::make('type')
+                \App\Filament\Form\Textarea::make('notes'),
+                \App\Filament\Form\Hidden::make('type')
                     ->default('decision maker'),
             ]);
     }
@@ -60,10 +59,10 @@ class DecisionMakerRelationManager extends RelationManager
                     ->preloadRecordSelect()
                     ->form(fn(Tables\Actions\AttachAction $action): array => [
                         $action->getRecordSelect(),
-                        Forms\Components\Placeholder::make('Notes')
+                        \App\Filament\Form\Placeholder::make('Notes')
                             ->content('Add any extra information about how/why this type of user is a "decision-maker" for this metric'),
-                        Forms\Components\Textarea::make('notes'),
-                        Forms\Components\Hidden::make('type')
+                        \App\Filament\Form\Textarea::make('notes'),
+                        \App\Filament\Form\Hidden::make('type')
                             ->default('decision maker'),
                     ])
             ])

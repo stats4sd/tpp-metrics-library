@@ -2,11 +2,11 @@
 
 namespace App\Filament\Resources\Traits;
 
+use App\Filament\Form\Components\Textarea;
 use App\Models\DiscussionPoint;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Components\Textarea;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\HtmlString;
 
@@ -16,6 +16,7 @@ trait HasDiscussionPoints
     public static function makeDiscussionPointAction(): \Closure
     {
         return fn(): Action => Action::make('test')
+            ->label('Add discussion point')
             ->tooltip(fn(): string => "Add discussion point about this")
             ->icon('heroicon-s-external-link')
             ->form(function (Action $action): array {

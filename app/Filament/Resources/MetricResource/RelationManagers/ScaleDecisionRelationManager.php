@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\MetricResource\RelationManagers;
 
-use Filament\Forms;
 use Filament\Resources\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Table;
@@ -29,15 +28,15 @@ class ScaleDecisionRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
+                \App\Filament\Form\TextInput::make('name')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\Placeholder::make('Notes')
+                \App\Filament\Form\Placeholder::make('Notes')
                     ->content('Add any extra information about how/why this metric can be used at this scale to make decisions'),
-                Forms\Components\Textarea::make('notes'),
-                Forms\Components\Checkbox::make('commonly_used')
+                \App\Filament\Form\Textarea::make('notes'),
+                \App\Filament\Form\Checkbox::make('commonly_used')
                     ->label('Is the metric commonly used at this scale?'),
-                Forms\Components\Hidden::make('type')
+                \App\Filament\Form\Hidden::make('type')
                     ->default('decision making')
 
 
@@ -61,15 +60,15 @@ class ScaleDecisionRelationManager extends RelationManager
                     ->label('Create New Scale'),
                 Tables\Actions\AttachAction::make('Attach Existing')
                     ->preloadRecordSelect()
-                    ->recordSelect(fn(Forms\Components\Select $select) => $select->multiple())
+                    ->recordSelect(fn(\App\Filament\Form\Select $select) => $select->multiple())
                     ->form(fn(Tables\Actions\AttachAction $action): array => [
                         $action->getRecordSelect(),
-                        Forms\Components\Placeholder::make('Notes')
+                        \App\Filament\Form\Placeholder::make('Notes')
                             ->content('Add any extra information about how/why this metric can be used at this scale to make decisions'),
-                        Forms\Components\Textarea::make('notes'),
-                        Forms\Components\Checkbox::make('commonly_used')
+                        \App\Filament\Form\Textarea::make('notes'),
+                        \App\Filament\Form\Checkbox::make('commonly_used')
                             ->label('Is the metric commonly used at this scale?'),
-                        Forms\Components\Hidden::make('type')
+                        \App\Filament\Form\Hidden::make('type')
                             ->default('decision making'),
                     ]),
             ])
