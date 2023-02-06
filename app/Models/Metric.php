@@ -193,7 +193,10 @@ class Metric extends Model
 
     }
 
-
+    public function discussionPoints(): MorphMany
+    {
+        return $this->morphMany(DiscussionPoint::class, 'subject');
+    }
 
 
 }

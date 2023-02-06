@@ -18,6 +18,7 @@ use App\Filament\Resources\MetricResource\RelationManagers\SubDimensionsRelation
 use App\Filament\Resources\MetricResource\RelationManagers\ToolsRelationManager;
 use App\Filament\Resources\MetricResource\RelationManagers\TopicsRelationManager;
 use App\Filament\Resources\MetricResource\RelationManagers\UnitsRelationManager;
+use App\Filament\Resources\Traits\HasDiscussionPoints;
 use App\Models\Dimension;
 use App\Models\Metric;
 use App\Models\Property;
@@ -28,7 +29,6 @@ use Awcodes\FilamentBadgeableColumn\Components\Badge;
 use Awcodes\FilamentBadgeableColumn\Components\BadgeableColumn;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -41,6 +41,8 @@ use Filament\Tables;
 
 class MetricResource extends Resource
 {
+    use HasDiscussionPoints;
+
     protected static ?string $model = Metric::class;
     protected static ?string $navigationIcon = 'heroicon-o-collection';
 
@@ -57,11 +59,13 @@ class MetricResource extends Resource
                         TextInput::make('title')
                             ->required()
                             ->inlineLabel()
-                            ->helperText('The identifying name for the metric'),
+                            ->helperText('The identifying name for the metric')
+                            ->suffixAction(self::makeDiscussionPointAction()),
+
                         \Filament\Forms\Components\Placeholder::make('-'),
 
                         /** 0.b Alt Names */
-                        Repeater::make('altNames')
+                        \App\Filament\Components\Repeater::make('altNames')
                             ->defaultItems(0)
                             ->collapsed()
                             ->label('Alternative Names')
@@ -72,7 +76,8 @@ class MetricResource extends Resource
                                     ->helperText('E.g. Where is this name used? Who uses it? Is it a common name, or only occasionally used?'),
                             ])
                             ->createItemButtonLabel('Add new name')
-                            ->itemLabel(fn(array $state): ?string => $state['name'] ?? '(new name)'),
+                            ->itemLabel(fn(array $state): ?string => $state['name'] ?? '(new name)')
+                            ->suffixAction(self::makeDiscussionPointAction()),
 
                         /** 0.i Developer */
                         Select::make('developer_id')
@@ -81,6 +86,7 @@ class MetricResource extends Resource
                                 TextInput::make('name'),
                                 Textarea::make('notes')
                             ])
+                            ->suffixAction(self::makeDiscussionPointAction()),
 
                     ]),
 
