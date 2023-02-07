@@ -3,9 +3,11 @@
 namespace App\Filament\Resources\MetricResource\RelationManagers;
 
 use App\Filament\Form\Components\Textarea;
+use App\Models\Scale;
+use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Form;
@@ -31,14 +33,21 @@ class ScaleReportingRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                TextInput::make('name')
-                    ->required()
-                    ->maxLength(255),
-                Placeholder::make('Notes')
-                    ->content('Add any extra information about how/why this metric is reported at this scale'),
-                Textarea::make('notes'),
+                Section::make('Scale')
+                    ->schema([
+
+                        TextInput::make('name')
+                            ->inlineLabel()
+                            ->disabled(),
+                        Textarea::make('definition')
+                            ->inlineLabel()
+                            ->disabled(),
+                    ]),
+                Textarea::make('notes')
+                    ->inlineLabel()
+                    ->label('Add any extra information about how/why this metric can be used at this scale to make decisions'),
                 Checkbox::make('commonly_used')
-                    ->label('Is the metric commonly reported at this scale?'),
+                    ->label('Is the metric commonly used at this scale?'),
                 Hidden::make('type')
                     ->default('reporting')
             ]);
@@ -56,23 +65,40 @@ class ScaleReportingRelationManager extends RelationManager
             ->filters([
                 //
             ])
-->headerActions([
-                Tables\Actions\AttachAction::make('Attach Existing')
+            ->headerActions([
+                Tables\Actions\AttachAction::make('Attach')
                     ->preloadRecordSelect()
-                    ->recordSelect(fn(Select $select) => $select->multiple())
+                    ->recordSelect(fn(Select $select) => $select
+                        ->multiple()
+                        ->createOptionForm([
+                            TextInput::make('name')
+                                ->required()
+                                ->inlineLabel()
+                                ->maxLength(255),
+                            Textarea::make('definition')
+                                ->inlineLabel(),
+                            Textarea::make('notes')
+                                ->inlineLabel()
+                                ->label('Notes about this scale')
+                                ->hint('This is not about how the scale relates to the current metric, but about the definition of the scale itself.'),
+                        ])
+                        ->createOptionAction(fn(Action $action) => $action->modalHeading('Create Scale Entry'))
+                        ->createOptionUsing(fn(array $data) => Scale::create($data)->id)
+                    )
                     ->form(fn(Tables\Actions\AttachAction $action): array => [
-                        $action->getRecordSelect(),
-                        Placeholder::make('Notes')
-                            ->content('Add any extra information about how/why this metric can be reported at this scale'),
-                        Textarea::make('notes'),
+                        $action->getRecordSelect()
+                            ->autofocus(false),
+                        Textarea::make('notes')
+                            ->label('Add any extra information about how/why this metric can be used at this scale to make decisions'),
                         Checkbox::make('commonly_used')
-                            ->label('Is the metric commonly reported on at this scale?'),
+                            ->label('Is the metric commonly used at this scale?'),
                         Hidden::make('type')
                             ->default('reporting'),
                     ]),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->modalHeading('Edit Link between scale and metric'),
                 Tables\Actions\DetachAction::make(),
             ])
             ->bulkActions([
