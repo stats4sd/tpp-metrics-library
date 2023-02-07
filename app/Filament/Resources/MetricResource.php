@@ -3,7 +3,6 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Form\Components\CheckboxList;
-use App\Filament\Form\Components\Repeater;
 use App\Filament\Form\Components\Select;
 use App\Filament\Form\Components\Textarea;
 use App\Filament\Resources\MetricResource\Pages;
@@ -32,6 +31,7 @@ use App\Models\SubDimension;
 use App\Models\Topic;
 use Awcodes\FilamentBadgeableColumn\Components\Badge;
 use Awcodes\FilamentBadgeableColumn\Components\BadgeableColumn;
+use Awcodes\FilamentTableRepeater\Components\TableRepeater;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Placeholder;
@@ -74,20 +74,24 @@ class MetricResource extends Resource
                                 Placeholder::make('-'),
 
                                 /** 0.b Alt Names */
-                                Repeater::make('altNames')
-                                    ->defaultItems(0)
-                                    ->collapsed()
+                                TableRepeater::make('altNames')
                                     ->label('0.b. Alternative Names')
+                                    ->defaultItems(0)
+                                    ->hideLabels()
                                     ->hint('Any other names the metric is known by')
                                     ->relationship()
                                     ->schema([
-                                        TextInput::make('name'),
-                                        Textarea::make('notes')
+                                        TextInput::make('name')
+                                        ->helperText('The alternate name'),
+                                        TextInput::make('notes')
                                             ->helperText('E.g. Where is this name used? Who uses it? Is it a common name, or only occasionally used?'),
                                     ])
+                                    ->columnWidths([
+                                        'name' => '250px',
+                                        ])
                                     ->createItemButtonLabel('Add new name')
-                                    ->itemLabel(fn(array $state): ?string => $state['name'] ?? '(new name)')
-                                    ->suffixAction(self::makeDiscussionPointAction()),
+                                    ->itemLabel(fn(array $state): ?string => $state['name'] ?? '(new name)'),
+
 
                                 /** 0.i Developer */
                                 Select::make('developer_id')

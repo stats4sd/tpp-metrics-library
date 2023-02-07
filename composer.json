@@ -7,6 +7,7 @@
     "require": {
         "php": "^8.1",
         "awcodes/filament-badgeable-column": "dev-badges-with-closure",
+        "awcodes/filament-table-repeater": "^1.1",
         "backpack/crud": "^5.1.0",
         "backpack/permissionmanager": "^6.0",
         "fideloper/proxy": "^4.4",
