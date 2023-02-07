@@ -54,51 +54,59 @@ class EditMetric extends EditRecord
 
         foreach ($properties as $property) {
 
-            // handle free text
-
+            // handle free text notes fields
             if ($property->free_text) {
-                $data['property_' . $property->id] = $property->pivot->notes ?? null;
-                continue;
+                $data['property_notes_' . $property->id] = $property->pivot->notes ?? null;
+
             }
 
-            if ($property->select_multiple) {
+            // handle select fields
+            if ($property->select_options) {
+
+                if ($property->select_multiple) {
+                    $data['property_' . $property->id] = $property
+                        ->propertyLinks
+                        ->where('linked_id', $metric->id)
+                        ->where('linked_type', Metric::class)
+                        ->first()
+                        ?->propertyOptions
+                        ->pluck('id')
+                        ->toArray();
+
+                    continue;
+                }
+
+                // final case of single select
+
                 $data['property_' . $property->id] = $property
-                    ->propertyLinks
-                    ->where('linked_id', $metric->id)
-                    ->where('linked_type', Metric::class)
-                    ->first()
-                    ?->propertyOptions
-                    ->pluck('id')
-                    ->toArray();
+                        ->propertyLinks
+                        ->where('linked_id', $metric->id)
+                        ->where('linked_type', Metric::class)
+                        ->first()
+                        ?->propertyOptions
+                        // there should be only one (or none)
+                        ->first()
+                        ?->id ?? null;
 
-                continue;
             }
-
-            // final case of single select
-
-            $data['property_' . $property->id] = $property
-                    ->propertyLinks
-                    ->where('linked_id', $metric->id)
-                    ->where('linked_type', Metric::class)
-                    ->first()
-                    ?->propertyOptions
-                    // there should be only one (or none)
-                    ->first()
-                    ?->id ?? null;
-            continue;
         }
 
         return $data;
 
     }
 
-    public function handleRecordUpdate(Model $record, array $data): Model
+    public function handleRecordUpdate(Metric|Model $record, array $data): Model
     {
         $propertiesOfMetrics = Property::where('default_type', Metric::class)->get();
 
         $propertyKeys = $propertiesOfMetrics->map(fn($prop) => 'property_' . $prop->id)->toArray();
+        $propertyNotesKeys = $propertiesOfMetrics->map(fn($prop) => 'property_notes_' . $prop->id)->toArray();
 
-        $metricData = collect($data)->except($propertyKeys)->toArray();
+        $metricData = collect($data)->except(array_merge($propertyKeys, $propertyNotesKeys))->toArray();
+
+        $propertyData = collect($data)->only($propertyKeys);
+        $propertyNotesData = collect($data)->only($propertyNotesKeys);
+
 
         // update metric with metric-level data
         $record->update($metricData);
@@ -110,25 +118,34 @@ class EditMetric extends EditRecord
 
         $record->properties()->syncWithoutDetaching($propertiesOfMetrics->pluck('id')->toArray());
 
-        foreach($propertyData as $key => $value) {
+        // go through and add any prop values from the creation form (if they exist)
+        foreach ($propertyData as $key => $value) {
+
             $propertyId = str_replace('property_', '', $key);
 
             $link = PropertyLink::where('property_id', $propertyId)
                 ->where('linked_id', $record->id)
                 ->where('linked_type', Metric::class)
-                ->first(); // there should only be one!
+                ->first();
 
-            // handle select multiples
-            if (is_array($value)) {
-                //sync all values with $link
-                $link->propertyOptions()->sync($value);
-                continue;
+            // handle select multiples and select_ones by ensuring Value is an array
+
+            if ($value && !is_array($value)) {
+                $value = [$value];
             }
 
-            // handle select one
-            if ($value && !Property::find($propertyId)->free_text) {
-                $link->propertyOptions()->sync([$value]);
-            }
+            $link->propertyOptions()->sync($value);
+
+        }
+
+        // handle adding of property notes to property_links
+        foreach ($propertyNotesData as $key => $value) {
+            $propertyId = str_replace('property_notes_', '', $key);
+
+            $link = PropertyLink::where('property_id', $propertyId)
+                ->where('linked_id', $record->id)
+                ->where('linked_type', Metric::class)
+                ->first();
 
             // handle free-text by putting the free-text into the 'notes' of the property_link table
             $record->properties()->updateExistingPivot($propertyId, [

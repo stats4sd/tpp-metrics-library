@@ -57,7 +57,7 @@ class CreateMetric extends CreateRecord
             }
 
 
-            $link->propertyOptions()->sync([$value]);
+            $link->propertyOptions()->sync($value);
 
         }
 
