@@ -22,7 +22,7 @@ return new class extends Migration
 
             // 0 - metric information
             $table->string('title');
-            $table->foreignId('developer_id');
+            $table->foreignId('developer_id')->nullable();
 
             // 1 - Metric Description
             $table->text('definition')->nullable();

@@ -13,24 +13,32 @@ class CreateMetric extends CreateRecord
 {
     protected static string $resource = MetricResource::class;
 
+    protected static ?string $title = "Create a new metric entry";
+
+    public function getSubheading(): string
+    {
+        return "Enter details of the new metric entry below. The minimum required is the title. Everything else can be added later.";
+    }
 
     protected function handleRecordCreation(array $data): Model
     {
         // find the property keys
-        $propertyKeys = preg_grep("/property_/", array_keys($data));
+        $propertiesOfMetrics = Property::where('default_type', Metric::class)->get();
+
+
+        $propertyKeys = $propertiesOfMetrics->map(fn($prop) => 'property_' . $prop->id)->toArray();
 
         $metricData = collect($data)->except($propertyKeys)->toArray();
         $propertyData = collect($data)->only($propertyKeys);
 
-        //create the new metric (Dont save it for now)
+        //create the new metric
         $metric = Metric::create($metricData);
 
-        // sync properties
-        $propertyIds = collect($propertyKeys)->map(fn($key) => str_replace('property_', '', $key))->toArray();
+        // setup 'empty' links between the metric and *all* properties that should be linked to metrics by default.
+        $metric->properties()->sync($propertiesOfMetrics->pluck('id')->toArray());
 
-        $metric->properties()->sync($propertyIds);
-
-        foreach($propertyData as $key  => $value) {
+        // go through and add any prop values from the creation form (if they exist)
+        foreach ($propertyData as $key => $value) {
 
             $propertyId = str_replace('property_', '', $key);
 
@@ -40,16 +48,14 @@ class CreateMetric extends CreateRecord
                 ->first();
 
             // handle select multiples
-            if(is_array($value)) {
+            if (is_array($value)) {
                 //sync all values with $link
                 $link->propertyOptions()->sync($value);
                 continue;
             }
 
             // handle select one
-            if(!Property::find($propertyId)->free_text && $value !== null) {
-
-
+            if ($value && !Property::find($propertyId)->free_text) {
                 $link->propertyOptions()->sync([$value]);
             }
 

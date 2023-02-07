@@ -43,6 +43,7 @@ use Filament\Resources\RelationManagers\RelationGroup;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
+use Illuminate\Support\HtmlString;
 
 class MetricResource extends Resource
 {
@@ -82,19 +83,22 @@ class MetricResource extends Resource
                                     ->relationship()
                                     ->schema([
                                         TextInput::make('name')
-                                        ->helperText('The alternate name'),
+                                            ->helperText('The alternate name'),
                                         TextInput::make('notes')
                                             ->helperText('E.g. Where is this name used? Who uses it? Is it a common name, or only occasionally used?'),
                                     ])
                                     ->columnWidths([
                                         'name' => '250px',
-                                        ])
+                                    ])
                                     ->createItemButtonLabel('Add new name')
                                     ->itemLabel(fn(array $state): ?string => $state['name'] ?? '(new name)'),
 
+                                Placeholder::make('-')
+                                    ->content(new HtmlString('<hr/>')),
 
                                 /** 0.i Developer */
                                 Select::make('developer_id')
+                                    ->inlineLabel()
                                     ->label('0.i. Developer')
                                     ->hint('Who is responsible for having developed this metric?')
                                     ->relationship('developer', 'name')
@@ -119,6 +123,7 @@ class MetricResource extends Resource
                             ]),
 
                         Tab::make('Topics and Dimensions')
+                            ->hiddenOn(Pages\CreateMetric::class)
                             ->schema([
 
                                 /** 0.c Topics */
@@ -168,7 +173,11 @@ class MetricResource extends Resource
                                     )
                                     ->createOptionForm([
                                         Select::make('dimension_id')
+                                            ->required()
                                             ->relationship('dimension', 'name'),
+                                        Select::make('parent_id')
+                                        ->relationship('parent', 'name')
+                                        ->label('Is this is a descendant of another sub-dimension?'),
                                         TextInput::make('name'),
                                         Textarea::make('notes'),
                                     ])
@@ -177,6 +186,7 @@ class MetricResource extends Resource
                                     ->suffixAction(self::makeDiscussionPointAction()),
                             ]),
                         Tab::make('Properties')
+//                            ->hiddenOn(Pages\CreateMetricetric::class)
                             ->schema(function () {
                                 $props = Property::where('default_type', '=', Metric::class)->get();
 
@@ -187,7 +197,6 @@ class MetricResource extends Resource
                                             ->inlineLabel()
                                             ->helperText($property->definition)
                                             ->suffixAction(self::makeDiscussionPointAction());
-
                                     }
 
                                     $component = Select::make('property_' . $property->id)

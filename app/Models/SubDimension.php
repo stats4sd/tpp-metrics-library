@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class SubDimension extends Model
 {
@@ -19,9 +20,18 @@ class SubDimension extends Model
             ->withPivot('notes');
     }
 
-
     public function dimension(): BelongsTo
     {
         return $this->belongsTo(Dimension::class);
+    }
+
+    public function parent(): BelongsTo
+    {
+        return $this->belongsTo(__CLASS__, 'parent_id');
+    }
+
+    public function children(): HasMany
+    {
+        return $this->hasMany(__CLASS__, 'parent_id');
     }
 }
