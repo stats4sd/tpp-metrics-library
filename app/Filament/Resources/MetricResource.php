@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Form\Components\CheckboxList;
+use App\Filament\Form\Components\Repeater;
 use App\Filament\Form\Components\Textarea;
 use App\Filament\Resources\MetricResource\Pages;
 use App\Filament\Resources\MetricResource\RelationManagers\CollectorsRelationManager;
@@ -13,6 +14,7 @@ use App\Filament\Resources\MetricResource\RelationManagers\FarmingSystemsRelatio
 use App\Filament\Resources\MetricResource\RelationManagers\FrameworksRelationManager;
 use App\Filament\Resources\MetricResource\RelationManagers\GeographiesRelationManager;
 use App\Filament\Resources\MetricResource\RelationManagers\ImpactedByRelationManager;
+use App\Filament\Resources\MetricResource\RelationManagers\ParentChildMetricsRelationManager;
 use App\Filament\Resources\MetricResource\RelationManagers\ScaleDecisionRelationManager;
 use App\Filament\Resources\MetricResource\RelationManagers\ScaleMeasurementRelationManager;
 use App\Filament\Resources\MetricResource\RelationManagers\ScaleReportingRelationManager;
@@ -66,7 +68,7 @@ class MetricResource extends Resource
                         Placeholder::make('-'),
 
                         /** 0.b Alt Names */
-                        \App\Filament\Form\Components\Repeater::make('altNames')
+                        Repeater::make('altNames')
                             ->defaultItems(0)
                             ->collapsed()
                             ->label('Alternative Names')
@@ -258,7 +260,10 @@ class MetricResource extends Resource
                 UnitsRelationManager::class,
             ]),
 
-            ComplimentaryMetricsRelationManager::class,
+            RelationGroup::make('Related Metrics', [
+                ComplimentaryMetricsRelationManager::class,
+                ParentChildMetricsRelationManager::class,
+            ]),
 
             RelationGroup::make('Systems and Geographies', [
                 FarmingSystemsRelationManager::class,

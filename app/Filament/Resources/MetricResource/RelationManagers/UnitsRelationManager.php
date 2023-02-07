@@ -2,6 +2,10 @@
 
 namespace App\Filament\Resources\MetricResource\RelationManagers;
 
+use App\Filament\Form\Components\Textarea;
+use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Resources\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Table;
@@ -14,7 +18,7 @@ class UnitsRelationManager extends RelationManager
     protected static ?string $recordTitleAttribute = 'label';
 
 
-            public function getTableDescription(): string
+    public function getTableDescription(): string
     {
         return 'The units in which the metric is usually expressed';
     }
@@ -28,15 +32,15 @@ class UnitsRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                \App\Filament\Form\TextInput::make('name')
+                TextInput::make('name')
                     ->required()
                     ->maxLength(255),
-                                \App\Filament\Form\TextInput::make('symbol')
-            ->required()
-            ->maxLength(255),
-                                \App\Filament\Form\Placeholder::make('Notes')
-                    ->content('Add any extra information about the relationship between this unit and the metric'),
-                \App\Filament\Form\Textarea::make('notes'),
+                TextInput::make('symbol')
+                    ->required()
+                    ->maxLength(255),
+                Placeholder::make('Notes')
+        ->content('Add any extra information about the relationship between this unit and the metric'),
+                Textarea::make('notes'),
             ]);
     }
 
@@ -49,25 +53,25 @@ class UnitsRelationManager extends RelationManager
             ->filters([
                 //
             ])
-           ->headerActions([
+            ->headerActions([
                 Tables\Actions\CreateAction::make()
                     ->label('Create new Unit'),
                 Tables\Actions\AttachAction::make('Attach Existing')
                     ->preloadRecordSelect()
-                    ->recordSelect(fn(\App\Filament\Form\Select $select) => $select->multiple())
+                    ->recordSelect(fn(Select $select) => $select->multiple())
                     ->form(fn(Tables\Actions\AttachAction $action): array => [
-                        $action->getRecordSelect(),
-                        \App\Filament\Form\Placeholder::make('Notes')
-                    ->content('Add any extra information about the relationship between this unit and the metric'),
-                \App\Filament\Form\Textarea::make('notes'),
+        $action->getRecordSelect(),
+        Placeholder::make('Notes')
+        ->content('Add any extra information about the relationship between this unit and the metric'),
+                Textarea::make('notes'),
                     ]),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DetachAction::make(),
-            ])
-            ->bulkActions([
-                Tables\Actions\DetachBulkAction::make(),
-            ]);
+        Tables\Actions\EditAction::make(),
+        Tables\Actions\DetachAction::make(),
+    ])
+        ->bulkActions([
+            Tables\Actions\DetachBulkAction::make(),
+        ]);
     }
 }

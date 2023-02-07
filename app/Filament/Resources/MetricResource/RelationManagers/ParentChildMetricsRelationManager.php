@@ -3,24 +3,22 @@
 namespace App\Filament\Resources\MetricResource\RelationManagers;
 
 use App\Filament\Form\Components\Textarea;
-use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Table;
 use Filament\Tables;
 
-class ComplimentaryMetricsRelationManager extends RelationManager
+class ParentChildMetricsRelationManager extends RelationManager
 {
-    protected static string $relationship = 'complimentaryMetrics';
-    protected static ?string $inverseRelationship = 'inverseComplimentaryMetrics';
+    protected static string $relationship = 'relatedMetrics';
+    protected static ?string $inverseRelationship = 'parent';
 
     protected static ?string $recordTitleAttribute = 'title';
 
     public function getTableDescription(): string
     {
-        return "Other metrics that are peers of this metric. Perhaps they are often used together, or perhaps they are a measure of similar things or used for similar purposes.";
+        return "Other metrics that are descendents of this metric. For example, they could be metrics that measure a subset of what this metric is measuring, or a more context-specific version of this metric.";
     }
 
     public static function form(Form $form): Form
@@ -43,15 +41,12 @@ class ComplimentaryMetricsRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                Tables\Actions\AttachAction::make()
+                Tables\Actions\AssociateAction::make()
                     ->label('Attach Metric')
                     ->preloadRecordSelect()
-                    ->recordSelect(fn(Select $select) => $select->multiple())
-                    ->form(fn(Tables\Actions\AttachAction $action): array => [
+                    ->form(fn(Tables\Actions\AssociateAction $action): array => [
                         $action->getRecordSelect(),
-                        Placeholder::make('Notes')
-                            ->content('Add any extra information about why this metric compliments the other'),
-                        Textarea::make('notes'),
+                        Textarea::make('notes')->hint('Add any extra information about why this metric compliments the other'),
                     ])
             ])
             ->actions([

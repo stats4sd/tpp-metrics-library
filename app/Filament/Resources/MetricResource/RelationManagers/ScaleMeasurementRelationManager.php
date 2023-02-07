@@ -2,6 +2,12 @@
 
 namespace App\Filament\Resources\MetricResource\RelationManagers;
 
+use App\Filament\Form\Components\Textarea;
+use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Resources\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Table;
@@ -28,15 +34,15 @@ class ScaleMeasurementRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                \App\Filament\Form\TextInput::make('name')
+                TextInput::make('name')
                     ->required()
                     ->maxLength(255),
-                \App\Filament\Form\Placeholder::make('Notes')
+                Placeholder::make('Notes')
                     ->content('Add any extra information about how/why this metric can be measured at this scale.'),
-                \App\Filament\Form\Textarea::make('notes'),
-                \App\Filament\Form\Checkbox::make('commonly_used')
+                Textarea::make('notes'),
+                Checkbox::make('commonly_used')
                     ->label('Is the metric commonly used at this scale?'),
-                \App\Filament\Form\Hidden::make('type')
+                Hidden::make('type')
                     ->default('measurement'),
             ]);
     }
@@ -58,15 +64,15 @@ class ScaleMeasurementRelationManager extends RelationManager
                     ->label('Create New Scale'),
                 Tables\Actions\AttachAction::make('Attach Existing')
                     ->preloadRecordSelect()
-                    ->recordSelect(fn(\App\Filament\Form\Select $select) => $select->multiple())
+                    ->recordSelect(fn(Select $select) => $select->multiple())
                     ->form(fn(Tables\Actions\AttachAction $action): array => [
                         $action->getRecordSelect(),
-                        \App\Filament\Form\Placeholder::make('Notes')
+                        Placeholder::make('Notes')
                             ->content('Add any extra information about how/why the metric(s) can be measured at this scale. These notes will be linked to *all* the chosen metrics above'),
-                        \App\Filament\Form\Textarea::make('notes'),
-                        \App\Filament\Form\Checkbox::make('commonly_used')
+                        Textarea::make('notes'),
+                        Checkbox::make('commonly_used')
                             ->label('Is the metric commonly used at this scale?'),
-                        \App\Filament\Form\Hidden::make('type')
+                        Hidden::make('type')
                             ->default('measurement'),
 
                     ])

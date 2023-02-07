@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\MetricResource\RelationManagers;
 
+use Filament\Forms\Components\TextInput;
 use Filament\Resources\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Table;
@@ -17,7 +18,7 @@ class FarmingSystemsRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                \App\Filament\Form\TextInput::make('name')
+                TextInput::make('name')
                     ->required()
                     ->maxLength(255),
             ]);

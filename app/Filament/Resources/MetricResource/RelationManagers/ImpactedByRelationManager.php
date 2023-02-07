@@ -2,6 +2,10 @@
 
 namespace App\Filament\Resources\MetricResource\RelationManagers;
 
+use App\Filament\Form\Components\Textarea;
+use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\TextInput;
 use Filament\Resources\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Table;
@@ -27,13 +31,13 @@ class ImpactedByRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                \App\Filament\Form\TextInput::make('name')
+                TextInput::make('name')
                     ->required()
                     ->maxLength(255),
-                \App\Filament\Form\Placeholder::make('Notes')
+                Placeholder::make('Notes')
                     ->content('Any extra information about how/why this type of user is impacted by the results of this metric'),
-                \App\Filament\Form\Textarea::make('notes'),
-                \App\Filament\Form\Hidden::make('type')
+                Textarea::make('notes'),
+                Hidden::make('type')
                     ->default('impacted by'),
             ]);
     }
@@ -47,7 +51,7 @@ class ImpactedByRelationManager extends RelationManager
             ->filters([
                 //
             ])
-            ->headerActions([
+            ->headerActions(actions: [
                 Tables\Actions\CreateAction::make()
                     ->label('Create New'),
                 Tables\Actions\AttachAction::make()
@@ -55,10 +59,10 @@ class ImpactedByRelationManager extends RelationManager
                     ->preloadRecordSelect()
                     ->form(fn(Tables\Actions\AttachAction $action): array => [
                         $action->getRecordSelect(),
-                        \App\Filament\Form\Placeholder::make('Notes')
+                        Placeholder::make('Notes')
                             ->content('Any extra information about how/why this type of user is impacted by the results of this metric'),
-                        \App\Filament\Form\Textarea::make('notes'),
-                        \App\Filament\Form\Hidden::make('type')
+                        Textarea::make('notes'),
+                        Hidden::make('type')
                             ->default('impacted by'),
                     ])
             ])
