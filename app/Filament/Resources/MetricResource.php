@@ -176,6 +176,7 @@ class MetricResource extends Resource
 
                             $component = Select::make('property_' . $property->id)
                                 ->label($property->name)
+                                ->inlineLabel()
                                 ->multiple($property->select_multiple)
                                 ->options(fn() => PropertyOption::where('property_id', '=', $property->id)
                                     ->pluck('name', 'id')->toArray())
@@ -183,19 +184,15 @@ class MetricResource extends Resource
 
                             if ($property->editable_options) {
                                 $component = $component->createOptionForm([
-                                    TextInput::make('name'),
-                                    Textarea::make('notes'),
+                                    TextInput::make('name')
+                                    ->label("Enter the name of the new option for {$property->name}"),
+                                    Textarea::make('notes')
+                                    ->label('Add any notes about this option.'),
                                     Hidden::make('property_id')
                                         ->default($property->id)
                                 ])
                                     ->createOptionUsing(function ($data): ?string {
-                                        return (string)PropertyOption::create($data)->id;
-                                        // TODO: figure out why $propertyOption here is *all* options, not the created one!
-//
-//                                        return PropertyOption::where('name', $data['name'])
-//                                            ->where('property_id', $data['property_id'])
-//                                            ->pluck('name', 'id')->toArray();
-
+                                        return (string) PropertyOption::create($data)->id;
                                     });
                             }
 

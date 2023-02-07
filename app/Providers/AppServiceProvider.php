@@ -12,7 +12,6 @@ use App\Filament\Resources\ScaleResource;
 use App\Filament\Resources\ToolResource;
 use App\Filament\Resources\TopicResource;
 use Filament\Facades\Filament;
-use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 use pxlrbt\FilamentEnvironmentIndicator\FilamentEnvironmentIndicator;
 
@@ -42,12 +41,6 @@ class AppServiceProvider extends ServiceProvider
         FilamentEnvironmentIndicator::configureUsing(function (FilamentEnvironmentIndicator $indicator) {
             $indicator->visible = fn() => auth()->user()?->hasRole('admin');
         }, isImportant: true);
-
-
-        Filament::registerRenderHook(
-            'user-menu.start',
-            fn(): string => Blade::render('@livewire(\'add-discussion-point\')'),
-        );
 
 //        Filament::navigation(function (NavigationBuilder $builder): NavigationBuilder {
 //            return $builder
