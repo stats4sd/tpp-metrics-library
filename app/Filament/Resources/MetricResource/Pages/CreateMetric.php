@@ -27,9 +27,12 @@ class CreateMetric extends CreateRecord
 
 
         $propertyKeys = $propertiesOfMetrics->map(fn($prop) => 'property_' . $prop->id)->toArray();
+        $propertyNotesKeys = $propertiesOfMetrics->map(fn($prop) => 'property_notes_' . $prop->id)->toArray();
 
-        $metricData = collect($data)->except($propertyKeys)->toArray();
+        $metricData = collect($data)->except(array_merge($propertyKeys, $propertyNotesKeys))->toArray();
+
         $propertyData = collect($data)->only($propertyKeys);
+        $propertyNotesData = collect($data)->only($propertyNotesKeys);
 
         //create the new metric
         $metric = Metric::create($metricData);
@@ -47,23 +50,30 @@ class CreateMetric extends CreateRecord
                 ->where('linked_type', Metric::class)
                 ->first();
 
-            // handle select multiples
-            if (is_array($value)) {
-                //sync all values with $link
-                $link->propertyOptions()->sync($value);
-                continue;
+            // handle select multiples and select_ones by ensuring Value is an array
+
+            if (!is_array($value)) {
+                $value = [$value];
             }
 
-            // handle select one
-            if ($value && !Property::find($propertyId)->free_text) {
-                $link->propertyOptions()->sync([$value]);
-            }
+
+            $link->propertyOptions()->sync([$value]);
+
+        }
+
+        // handle adding of property notes to property_links
+        foreach ($propertyNotesData as $key => $value) {
+            $propertyId = str_replace('property_notes_', '', $key);
+
+            $link = PropertyLink::where('property_id', $propertyId)
+                ->where('linked_id', $metric->id)
+                ->where('linked_type', Metric::class)
+                ->first();
 
             // handle free-text by putting the free-text into the 'notes' of the property_link table
             $metric->properties()->updateExistingPivot($propertyId, [
                 'notes' => $value
             ]);
-
         }
 
         return $metric;

@@ -176,8 +176,8 @@ class MetricResource extends Resource
                                             ->required()
                                             ->relationship('dimension', 'name'),
                                         Select::make('parent_id')
-                                        ->relationship('parent', 'name')
-                                        ->label('Is this is a descendant of another sub-dimension?'),
+                                            ->relationship('parent', 'name')
+                                            ->label('Is this is a descendant of another sub-dimension?'),
                                         TextInput::make('name'),
                                         Textarea::make('notes'),
                                     ])
@@ -186,44 +186,71 @@ class MetricResource extends Resource
                                     ->suffixAction(self::makeDiscussionPointAction()),
                             ]),
                         Tab::make('Properties')
-//                            ->hiddenOn(Pages\CreateMetricetric::class)
+                            ->hiddenOn(Pages\CreateMetric::class)
                             ->schema(function () {
                                 $props = Property::where('default_type', '=', Metric::class)->get();
 
                                 return $props->map(function ($property) {
-                                    if ($property->free_text) {
-                                        return Textarea::make('property_' . $property->id)
+
+                                    // a single property can include 1 or 2 fields (a select and a free-text).
+                                    $components = [];
+
+
+                                    if ($property->select_options) {
+
+                                        $component = Select::make('property_' . $property->id)
                                             ->label($property->code . ' - ' . $property->name)
                                             ->inlineLabel()
-                                            ->helperText($property->definition)
+                                            ->hint($property->definition)
+                                            ->multiple($property->select_multiple)
+                                            ->options(fn() => PropertyOption::where('property_id', '=', $property->id)
+                                                ->pluck('name', 'id')->toArray())
                                             ->suffixAction(self::makeDiscussionPointAction());
+
+                                        if ($property->editable_options) {
+                                            $component = $component->createOptionForm([
+                                                TextInput::make('name')
+                                                    ->label("Enter the name of the new option for {$property->name}"),
+                                                Textarea::make('notes')
+                                                    ->label('Add any notes about this option.'),
+                                                Hidden::make('property_id')
+                                                    ->default($property->id)
+                                            ])
+                                                ->createOptionUsing(function ($data): ?string {
+                                                    return (string)PropertyOption::create($data)->id;
+                                                });
+                                        }
+
+                                        $components[] = $component;
+
                                     }
 
-                                    $component = Select::make('property_' . $property->id)
-                                        ->label($property->code . ' - ' . $property->name)
-                                        ->inlineLabel()
-                                        ->multiple($property->select_multiple)
-                                        ->options(fn() => PropertyOption::where('property_id', '=', $property->id)
-                                            ->pluck('name', 'id')->toArray())
-                                        ->suffixAction(self::makeDiscussionPointAction());
+                                    if ($property->free_text) {
 
-                                    if ($property->editable_options) {
-                                        $component = $component->createOptionForm([
-                                            TextInput::make('name')
-                                                ->label("Enter the name of the new option for {$property->name}"),
-                                            Textarea::make('notes')
-                                                ->label('Add any notes about this option.'),
-                                            Hidden::make('property_id')
-                                                ->default($property->id)
-                                        ])
-                                            ->createOptionUsing(function ($data): ?string {
-                                                return (string)PropertyOption::create($data)->id;
-                                            });
+                                        $label = $property->code . ' - ' . $property->name;
+                                        $hint = $property->definition;
+                                        // change some field attributes if a select field also exists
+                                        if($property->select_options) {
+                                            $label = $label . ': Additional Notes';
+                                            $hint = ''; // no need to repeat the hint
+                                        }
+
+                                        $component = Textarea::make('property_notes_' . $property->id)
+                                            ->label($label)
+                                            ->inlineLabel()
+                                            ->hint($hint);
+
+                                        if(!$property->select_options) {
+                                            $component = $component->suffixAction(self::makeDiscussionPointAction());
+                                        }
+
+                                        $components[] = $component;
                                     }
 
-                                    return $component;
 
-                                })->toArray();
+                                    return $components;
+
+                                })->flatten()->toArray();
                             })
                     ])
             ]);
