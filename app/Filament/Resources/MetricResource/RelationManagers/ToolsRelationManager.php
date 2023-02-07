@@ -14,8 +14,9 @@ use Filament\Tables;
 class ToolsRelationManager extends RelationManager
 {
     protected static string $relationship = 'tools';
-
     protected static ?string $recordTitleAttribute = 'name';
+
+    protected static ?string $title = '0.g. Tools';
 
     public function getTableDescription(): string
     {
@@ -52,8 +53,6 @@ class ToolsRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make()
-                    ->label('Create new Tool'),
                 Tables\Actions\AttachAction::make('Attach Existing')
                     ->preloadRecordSelect()
                     ->recordSelect(fn(Select $select) => $select->multiple())

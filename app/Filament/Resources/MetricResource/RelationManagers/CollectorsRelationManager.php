@@ -3,8 +3,10 @@
 namespace App\Filament\Resources\MetricResource\RelationManagers;
 
 use App\Filament\Form\Components\Textarea;
+use App\Models\MetricUser;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Form;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -16,6 +18,8 @@ class CollectorsRelationManager extends RelationManager
     protected static string $relationship = 'collectors';
     protected static ?string $inverseRelationship = 'metricCollectors';
     protected static ?string $recordTitleAttribute = 'name';
+
+    protected static ?string $title = "6.a.a. Collectors";
 
     public function getTableDescription(): string
     {
@@ -54,11 +58,21 @@ class CollectorsRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make()
-                    ->label('Create New'),
                 Tables\Actions\AttachAction::make()
-                    ->label('Attach Existing')
+                    ->label('Attach')
                     ->preloadRecordSelect()
+                    ->recordSelect(fn(Select $select) => $select
+                        ->createOptionForm([
+                            TextInput::make('name')
+                                ->required()
+                                ->label('Type of user'),
+                            Textarea::make('definition')
+                                ->label('Definition of this user type'),
+                            Textarea::make('notes')
+                                ->label('Notes about this type of user')
+                                ->hint('Not specifically about why they are linked to this metric'),
+                        ])
+                        ->createOptionUsing(fn($data): string => MetricUser::create($data)->id))
                     ->form(fn(Tables\Actions\AttachAction $action): array => [
                         $action->getRecordSelect(),
                         Placeholder::make('Notes')

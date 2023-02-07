@@ -17,6 +17,8 @@ class ImpactedByRelationManager extends RelationManager
     protected static ?string $inverseRelationship = 'metricImpactedBy';
     protected static ?string $recordTitleAttribute = 'name';
 
+    protected static ?string $title = "6.a.c. Impacted Users";
+
     public function getTableDescription(): string
     {
         return 'Who does the results of this metric impact / affect?';
@@ -52,8 +54,6 @@ class ImpactedByRelationManager extends RelationManager
                 //
             ])
             ->headerActions(actions: [
-                Tables\Actions\CreateAction::make()
-                    ->label('Create New'),
                 Tables\Actions\AttachAction::make()
                     ->label('Attach Existing')
                     ->preloadRecordSelect()

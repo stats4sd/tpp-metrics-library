@@ -14,9 +14,9 @@ use Filament\Tables;
 class UnitsRelationManager extends RelationManager
 {
     protected static string $relationship = 'units';
-
     protected static ?string $recordTitleAttribute = 'label';
 
+    protected static ?string $title = "1.d. Units of Measure";
 
     public function getTableDescription(): string
     {
@@ -54,8 +54,6 @@ class UnitsRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make()
-                    ->label('Create new Unit'),
                 Tables\Actions\AttachAction::make('Attach Existing')
                     ->preloadRecordSelect()
                     ->recordSelect(fn(Select $select) => $select->multiple())

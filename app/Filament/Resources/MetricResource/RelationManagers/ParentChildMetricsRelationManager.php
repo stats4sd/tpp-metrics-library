@@ -16,9 +16,11 @@ class ParentChildMetricsRelationManager extends RelationManager
 
     protected static ?string $recordTitleAttribute = 'title';
 
+    protected static ?string $title = "1.f. Derived / Related Metrics";
+
     public function getTableDescription(): string
     {
-        return "Other metrics that are descendents of this metric. For example, they could be metrics that measure a subset of what this metric is measuring, or a more context-specific version of this metric.";
+        return "Other metrics that are derived from or closely related to this metric. For example, they could be metrics that measure a subset of what this metric is measuring, or a more context-specific version of this metric.";
     }
 
     public static function form(Form $form): Form

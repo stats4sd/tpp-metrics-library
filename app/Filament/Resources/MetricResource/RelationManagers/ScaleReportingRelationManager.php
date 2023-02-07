@@ -20,9 +20,11 @@ class ScaleReportingRelationManager extends RelationManager
 
     protected static ?string $recordTitleAttribute = 'name';
 
+    protected static ?string $title = "1.e. Scales for Reporting";
+
     public function getTableDescription(): string
     {
-        return 'The scale(s) at which this metric is reported at.';
+        return 'The scale(s) at which this metric is commonly quoted.';
     }
 
     public static function form(Form $form): Form
@@ -55,8 +57,6 @@ class ScaleReportingRelationManager extends RelationManager
                 //
             ])
 ->headerActions([
-                Tables\Actions\CreateAction::make()
-                    ->label('Create New Scale'),
                 Tables\Actions\AttachAction::make('Attach Existing')
                     ->preloadRecordSelect()
                     ->recordSelect(fn(Select $select) => $select->multiple())

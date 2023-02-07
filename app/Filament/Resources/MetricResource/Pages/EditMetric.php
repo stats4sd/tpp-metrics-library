@@ -16,9 +16,18 @@ class EditMetric extends EditRecord
         return "Reviewing {$this->getRecord()?->title}";
     }
 
+    public function getSubheading(): string
+    {
+        if ($metric = $this->getRecord()) {
+            return "Last Updated on {$metric->updated_at}";
+        }
+
+        return '';
+    }
+
     public function getFormTabLabel(): string
     {
-        return 'Core Info';
+        return 'Metric';
     }
 
     protected function getActions(): array

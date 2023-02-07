@@ -20,6 +20,8 @@ class ScaleDecisionRelationManager extends RelationManager
 
     protected static ?string $recordTitleAttribute = 'name';
 
+    protected static ?string $title = '0.f. Scales for Decision Making';
+
     public function getTableDescription(): string
     {
         return 'The scale(s) at which this metric can be used to make decisions.';
@@ -62,8 +64,6 @@ class ScaleDecisionRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make()
-                    ->label('Create New Scale'),
                 Tables\Actions\AttachAction::make('Attach Existing')
                     ->preloadRecordSelect()
                     ->recordSelect(fn(Select $select) => $select->multiple())

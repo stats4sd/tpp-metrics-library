@@ -18,9 +18,11 @@ class ComplimentaryMetricsRelationManager extends RelationManager
 
     protected static ?string $recordTitleAttribute = 'title';
 
+    protected static ?string $title = "1.g. Complimentary Metrics";
+
     public function getTableDescription(): string
     {
-        return "Other metrics that are peers of this metric. Perhaps they are often used together, or perhaps they are a measure of similar things or used for similar purposes.";
+        return "Other metrics that are peers of this metric. Perhaps they are often used/collected together, or perhaps they are a measure of similar things or used for similar purposes.";
     }
 
     public static function form(Form $form): Form

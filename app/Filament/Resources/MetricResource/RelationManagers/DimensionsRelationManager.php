@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\MetricResource\RelationManagers;
 
+use App\Filament\Form\Components\Textarea;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Form;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -49,9 +51,24 @@ class DimensionsRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
                 Tables\Actions\AttachAction::make()
-                ->preloadRecordSelect(),
+                    ->preloadRecordSelect()
+                    ->recordSelect(fn(Select $select) => $select
+                        ->multiple()
+                        ->createOptionForm([
+                            Select::make('topic_id')
+                                ->relationship('topic', 'name'),
+                            TextInput::make('name')
+                                ->label('Enter the name of the new dimension'),
+                            Textarea::make('notes')
+                                ->label('Add any notes about this dimension'),
+                        ])
+                    )
+                    ->form(fn(Tables\Actions\AttachAction $action): array => [
+                        $action->getRecordSelect(),
+                        Textarea::make('notes')
+                            ->hint('Add any extra information about how/why this metric is linked to this dimension.'),
+                    ]),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

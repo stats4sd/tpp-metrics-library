@@ -11,8 +11,9 @@ use Filament\Tables;
 class FarmingSystemsRelationManager extends RelationManager
 {
     protected static string $relationship = 'farmingSystems';
-
     protected static ?string $recordTitleAttribute = 'name';
+
+    protected static ?string $title = "6.b. Farming Systems";
 
     public static function form(Form $form): Form
     {
@@ -34,7 +35,6 @@ class FarmingSystemsRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

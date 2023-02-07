@@ -134,7 +134,7 @@
         @endif
 
 
-        @if (($createOptionAction = $getCreateOptionAction()) && (! $suffixAction->isHidden()))
+        @if (($createOptionAction = $getCreateOptionAction()) && (! $suffixAction->isHidden()) && ($suffixAction->getLabel() !== 'Create option'))
             {{ $createOptionAction }}
         @endif
     </div>

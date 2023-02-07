@@ -17,8 +17,9 @@ class ScaleMeasurementRelationManager extends RelationManager
 {
     protected static string $relationship = 'scaleMeasurement';
     protected static ?string $inverseRelationship = 'metricMeasurement';
-
     protected static ?string $recordTitleAttribute = 'name';
+
+    protected static ?string $title = "1.c. Scale of Measurement";
 
     public function getTableDescription(): string
     {
@@ -60,8 +61,6 @@ class ScaleMeasurementRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make()
-                    ->label('Create New Scale'),
                 Tables\Actions\AttachAction::make('Attach Existing')
                     ->preloadRecordSelect()
                     ->recordSelect(fn(Select $select) => $select->multiple())

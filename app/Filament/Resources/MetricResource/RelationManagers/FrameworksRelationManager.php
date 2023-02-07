@@ -14,8 +14,10 @@ use Filament\Tables;
 class FrameworksRelationManager extends RelationManager
 {
     protected static string $relationship = 'frameworks';
-
     protected static ?string $recordTitleAttribute = 'name';
+
+    protected static ?string $title = '0.h. Frameworks';
+
 
         public function getTableDescription(): string
     {
@@ -50,8 +52,6 @@ class FrameworksRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make()
-                    ->label('Create new Framework'),
                 Tables\Actions\AttachAction::make('Attach Existing')
                     ->preloadRecordSelect()
                     ->recordSelect(fn(Select $select) => $select->multiple())
