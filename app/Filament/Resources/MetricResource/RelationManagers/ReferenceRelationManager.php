@@ -5,7 +5,7 @@ namespace App\Filament\Resources\MetricResource\RelationManagers;
 use App\Filament\Form\Components\Textarea;
 use App\Models\Reference;
 use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Form;
@@ -16,8 +16,10 @@ use Filament\Tables;
 class ReferenceRelationManager extends RelationManager
 {
     protected static string $relationship = 'references';
-    protected static ?string $inverseRelationship = 'referencable';
+    protected static ?string $inverseRelationship = 'metrics';
     protected static ?string $recordTitleAttribute = 'name';
+
+    protected bool $allowsDuplicates = true;
 
     protected static ?string $title = "7. References";
 
@@ -35,13 +37,19 @@ class ReferenceRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                TextInput::make('name')
-                    ->required()
-                    ->maxLength(255),
-                Textarea::make('notes'),
-                Hidden::make('type')
-                    ->default('collector')
-
+                Section::make('Reference')
+                    ->schema([
+                        TextInput::make('name')
+                            ->inlineLabel()
+                            ->disabled(),
+                        TextInput::make('url')
+                            ->inlineLabel()
+                            ->disabled(),
+                    ]),
+                Textarea::make('notes')
+                    ->label('Add any extra information about how this reference relates to the metric'),
+                Hidden::make('reference_type')
+                    ->default('reference')
             ]);
     }
 
@@ -50,7 +58,7 @@ class ReferenceRelationManager extends RelationManager
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
-                    ->label('Category of user')
+                    ->label('Reference')
             ])
             ->filters([
                 //
@@ -63,25 +71,25 @@ class ReferenceRelationManager extends RelationManager
                         ->createOptionForm([
                             TextInput::make('name')
                                 ->required()
-                                ->label('Name of data source'),
+                                ->label('Name of reference'),
                             TextInput::make('url')
-                                ->label('Url of the source'),
+                                ->label('Url'),
                             Textarea::make('notes')
-                                ->label('Notes about this type of user')
-                                ->hint('Not specifically about why they are linked to this metric'),
+                                ->label('Notes about this reference')
+                                ->hint('Notes about the reference itself, not the link to the metric.'),
                         ])
                         ->createOptionUsing(fn($data): string => Reference::create($data)->id))
                     ->form(fn(Tables\Actions\AttachAction $action): array => [
                         $action->getRecordSelect(),
-                        Placeholder::make('Notes')
-                            ->content('Add any extra information about how/why this type of user is a "collector" of this metric.'),
-                        Textarea::make('notes'),
-                        Hidden::make('type')
-                            ->default('data source')
+                        Textarea::make('Notes')
+                            ->label('Add any extra information about how this reference relates to the metric'),
+                        Hidden::make('reference_type')
+                            ->default('reference')
                     ]),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->modalHeading('Edit link between metric and reference'),
                 Tables\Actions\DetachAction::make(),
             ])
             ->bulkActions([

@@ -5,7 +5,7 @@ namespace App\Filament\Resources\MetricResource\RelationManagers;
 use App\Filament\Form\Components\Textarea;
 use App\Models\MetricUser;
 use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Form;
@@ -34,16 +34,21 @@ class CollectorsRelationManager extends RelationManager
     public static function form(Form $form): Form
     {
         return $form
+            ->columns(1)
             ->schema([
-                TextInput::make('name')
-                    ->required()
-                    ->maxLength(255),
-                Placeholder::make('Notes')
-                    ->content('Add any extra information about how/why this type of user is a "collector" of this metric.'),
-                Textarea::make('notes'),
+                Section::make('User Type')
+                    ->schema([
+                        TextInput::make('name')
+                            ->inlineLabel()
+                            ->disabled(),
+                        Textarea::make('definition')
+                            ->inlineLabel()
+                            ->disabled()
+                    ]),
+                Textarea::make('notes')
+                    ->label('Add any extra information about how/why this type of user is a "collector" of this metric.'),
                 Hidden::make('type')
                     ->default('collector')
-
             ]);
     }
 
@@ -64,26 +69,31 @@ class CollectorsRelationManager extends RelationManager
                     ->recordSelect(fn(Select $select) => $select
                         ->createOptionForm([
                             TextInput::make('name')
+                                ->inlineLabel()
                                 ->required()
+                                ->maxLength(255)
                                 ->label('Type of user'),
                             Textarea::make('definition')
+                                ->inlineLabel()
                                 ->label('Definition of this user type'),
                             Textarea::make('notes')
+                                ->inlineLabel()
                                 ->label('Notes about this type of user')
                                 ->hint('Not specifically about why they are linked to this metric'),
                         ])
-                        ->createOptionUsing(fn($data): string => MetricUser::create($data)->id))
+                        ->createOptionUsing(fn($data): string => MetricUser::create($data)->id)
+                    )
                     ->form(fn(Tables\Actions\AttachAction $action): array => [
                         $action->getRecordSelect(),
-                        Placeholder::make('Notes')
-                            ->content('Add any extra information about how/why this type of user is a "collector" of this metric.'),
-                        Textarea::make('notes'),
+                        Textarea::make('notes')
+                            ->label('Add any extra information about how/why this type of user is a "collector" of this metric.'),
                         Hidden::make('type')
                             ->default('collector')
                     ]),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                ->modalHeading('Edit link between user type and metric'),
                 Tables\Actions\DetachAction::make(),
             ])
             ->bulkActions([

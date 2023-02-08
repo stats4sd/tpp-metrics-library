@@ -3,7 +3,8 @@
 namespace App\Filament\Resources\MetricResource\RelationManagers;
 
 use App\Filament\Form\Components\Textarea;
-use Filament\Forms\Components\Placeholder;
+use App\Models\Unit;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Form;
@@ -32,15 +33,20 @@ class UnitsRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                TextInput::make('name')
-                    ->required()
-                    ->maxLength(255),
-                TextInput::make('symbol')
-                    ->required()
-                    ->maxLength(255),
-                Placeholder::make('Notes')
-        ->content('Add any extra information about the relationship between this unit and the metric'),
-                Textarea::make('notes'),
+                Section::make('Unit')
+                    ->schema([
+                        TextInput::make('name')
+                            ->inlineLabel()
+                            ->disabled(),
+                        TextInput::make('symbol')
+                            ->inlineLabel()
+                            ->disabled(),
+                        Textarea::make('definition')
+                            ->inlineLabel()
+                            ->disabled()
+                    ]),
+                Textarea::make('Notes')
+                    ->label('Add any extra information about the relationship between this unit and the metric'),
             ]);
     }
 
@@ -56,20 +62,41 @@ class UnitsRelationManager extends RelationManager
             ->headerActions([
                 Tables\Actions\AttachAction::make('Attach Existing')
                     ->preloadRecordSelect()
-                    ->recordSelect(fn(Select $select) => $select->multiple())
+                    ->recordSelect(fn(Select $select) => $select
+                        ->createOptionForm([
+                            TextInput::make('name')
+                                ->inlineLabel()
+                                ->required()
+                                ->maxLength(255)
+                                ->label('Unit Name'),
+                            TextInput::make('symbol')
+                                ->inlineLabel()
+                                ->required()
+                                ->maxLength(255)
+                                ->label('Symbol'),
+                            Textarea::make('definition')
+                                ->inlineLabel()
+                                ->label('Definition of this unit'),
+                            Textarea::make('notes')
+                                ->inlineLabel()
+                                ->label('Notes about this unit')
+                                ->hint('Not specifically about why they are linked to this metric'),
+                        ])
+                        ->createOptionUsing(fn($data): string => Unit::create($data)->id)
+                    )
                     ->form(fn(Tables\Actions\AttachAction $action): array => [
-        $action->getRecordSelect(),
-        Placeholder::make('Notes')
-        ->content('Add any extra information about the relationship between this unit and the metric'),
-                Textarea::make('notes'),
+                        $action->getRecordSelect(),
+                        Textarea::make('Notes')
+                            ->label('Add any extra information about the relationship between this unit and the metric'),
                     ]),
             ])
             ->actions([
-        Tables\Actions\EditAction::make(),
-        Tables\Actions\DetachAction::make(),
-    ])
-        ->bulkActions([
-            Tables\Actions\DetachBulkAction::make(),
-        ]);
+                Tables\Actions\EditAction::make()
+                ->modalHeading('Edit link between this unit and the metric'),
+                Tables\Actions\DetachAction::make(),
+            ])
+            ->bulkActions([
+                Tables\Actions\DetachBulkAction::make(),
+            ]);
     }
 }

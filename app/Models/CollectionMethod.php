@@ -24,5 +24,6 @@ class CollectionMethod extends Model
             ->withPivot('notes');
     }
 
+    // TODO: include references
 
 }

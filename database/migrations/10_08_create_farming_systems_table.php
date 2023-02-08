@@ -16,6 +16,7 @@ return new class extends Migration
         Schema::create('farming_systems', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->text('definition')->nullable();
             $table->text('notes')->nullable();
             $table->timestamps();
         });

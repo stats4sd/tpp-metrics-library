@@ -172,24 +172,27 @@ class Metric extends Model
     }
 
     // 4.c Data sources
-    public function dataSources(): MorphMany
+    public function dataSources(): MorphToMany
     {
-        return $this->morphMany(Reference::class, 'referencable')
-            ->where('references.type', '=', 'data source');
+        return $this->morphToMany(Reference::class, 'referencable')
+            ->wherePivot('reference_type', '=', 'data source')
+        ->withPivot('reference_type', 'notes', 'id');
     }
 
     // 5.d. Computation guidance
-    public function computationGuidance(): MorphMany
+    public function computationGuidance(): MorphToMany
     {
-        return $this->morphMany(Reference::class, 'referencable')
-            ->where('references.type', '=', 'computation guidance');
+        return $this->morphToMany(Reference::class, 'referencable')
+            ->wherePivot('reference_type', '=', 'computation guidance')
+            ->withPivot('reference_type', 'notes', 'id');
     }
 
     // 7. References
-    public function references(): MorphMany
+    public function references(): MorphToMany
     {
-        return $this->morphMany(Reference::class, 'referencable')
-            ->where('references.type',  '=' , 'reference');
+        return $this->morphToMany(Reference::class, 'referencable')
+            ->wherePivot('reference_type',  '=' , 'reference')
+            ->withPivot('reference_type', 'notes', 'id');
 
     }
 

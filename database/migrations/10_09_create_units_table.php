@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('symbol');
             $table->string('name');
+            $table->text('definition');
             $table->string('label')->virtualAs('concat(name, \' ( \', symbol, \' )\')');
             $table->text('notes')->nullable();
             $table->timestamps();

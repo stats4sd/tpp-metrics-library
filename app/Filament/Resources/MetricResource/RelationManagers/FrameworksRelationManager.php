@@ -3,7 +3,8 @@
 namespace App\Filament\Resources\MetricResource\RelationManagers;
 
 use App\Filament\Form\Components\Textarea;
-use Filament\Forms\Components\Placeholder;
+use App\Models\Framework;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Form;
@@ -19,7 +20,7 @@ class FrameworksRelationManager extends RelationManager
     protected static ?string $title = '0.h. Frameworks';
 
 
-        public function getTableDescription(): string
+    public function getTableDescription(): string
     {
         return 'Frameworks that this metric relates to.';
     }
@@ -32,13 +33,19 @@ class FrameworksRelationManager extends RelationManager
     public static function form(Form $form): Form
     {
         return $form
+            ->columns(1)
             ->schema([
-                TextInput::make('name')
-                    ->required()
-                    ->maxLength(255),
-                                Placeholder::make('Notes')
-                    ->content('Add any extra information about the relationship between this framework and the metric'),
-                Textarea::make('notes'),
+                Section::make('Framework')
+                    ->schema([
+                        TextInput::make('name')
+                            ->inlineLabel()
+                            ->disabled(),
+                        Textarea::make('definition')
+                            ->inlineLabel()
+                            ->disabled()
+                    ]),
+                Textarea::make('notes')
+                    ->label('Add any extra information about the relationship between this framework and this metric.'),
             ]);
     }
 
@@ -52,18 +59,36 @@ class FrameworksRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                Tables\Actions\AttachAction::make('Attach Existing')
+                Tables\Actions\AttachAction::make('Attach')
                     ->preloadRecordSelect()
-                    ->recordSelect(fn(Select $select) => $select->multiple())
+                    ->recordSelect(fn(Select $select) => $select
+                        ->multiple()
+                        ->createOptionForm([
+                            TextInput::make('name')
+                                ->inlineLabel()
+                                ->required()
+                                ->maxLength(255)
+                                ->label('Framework Name'),
+                            Textarea::make('definition')
+                                ->inlineLabel()
+                                ->label('Definition or description of this framework.')
+                            ->hint('This could include a link to more information about the framework'),
+                            Textarea::make('notes')
+                                ->inlineLabel()
+                                ->label('Notes about this framework')
+                                ->hint('Not specifically about why they are linked to this metric'),
+                        ])
+                        ->createOptionUsing(fn($data): string => Framework::create($data)->id)
+                    )
                     ->form(fn(Tables\Actions\AttachAction $action): array => [
                         $action->getRecordSelect(),
-                        Placeholder::make('Notes')
-                    ->content('Add any extra information about the relationship between this framework and the metric'),
-                Textarea::make('notes'),
+                        Textarea::make('notes')
+                            ->label('Add any extra information about the relationship between this framework and the metric'),
                     ]),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                ->modalHeading('Edit link between framework and metric'),
                 Tables\Actions\DetachAction::make(),
             ])
             ->bulkActions([

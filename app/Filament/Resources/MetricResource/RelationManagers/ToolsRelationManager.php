@@ -3,7 +3,8 @@
 namespace App\Filament\Resources\MetricResource\RelationManagers;
 
 use App\Filament\Form\Components\Textarea;
-use Filament\Forms\Components\Placeholder;
+use App\Models\Tool;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Form;
@@ -31,14 +32,19 @@ class ToolsRelationManager extends RelationManager
     public static function form(Form $form): Form
     {
         return $form
+            ->columns(1)
             ->schema([
-                TextInput::make('name')
-                    ->required()
-                    ->maxLength(255),
-                Placeholder::make('Notes')
-                    ->content('Add any extra information about the relationship between this assessment tool and the metric'),
-                Textarea::make('notes'),
-
+                Section::make('Tool')
+                    ->schema([
+                        TextInput::make('name')
+                            ->inlineLabel()
+                            ->disabled(),
+                        Textarea::make('definition')
+                            ->inlineLabel()
+                            ->disabled()
+                    ]),
+                Textarea::make('notes')
+                ->label('Add any extra information about the link between this tool and this metric.'),
             ]);
     }
 
@@ -53,18 +59,36 @@ class ToolsRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                Tables\Actions\AttachAction::make('Attach Existing')
+                Tables\Actions\AttachAction::make('Attach')
                     ->preloadRecordSelect()
-                    ->recordSelect(fn(Select $select) => $select->multiple())
+                    ->recordSelect(fn(Select $select) => $select
+                        ->multiple()
+                        ->createOptionForm([
+                            TextInput::make('name')
+                            ->inlineLabel()
+                            ->required()
+                            ->maxLength(255)
+                            ->label('Name of the tool'),
+                            Textarea::make('definition')
+                            ->inlineLabel()
+                            ->label('Definition or description of the tool')
+                            ->hint('This could include a link to where you can find more information about the tool.'),
+                            Textarea::make('notes')
+                            ->inlineLabel()
+                            ->label('Notes about the tool')
+                            ->hint('These are notes about the tool itself, not about the relationship to the metric.')
+                        ])
+                        ->createOptionUsing(fn($data): string => Tool::create($data)->id)
+                    )
                     ->form(fn(Tables\Actions\AttachAction $action): array => [
                         $action->getRecordSelect(),
-                        Placeholder::make('Notes')
-                    ->content('Add any extra information about the relationship between this assessment tool and the metric.'),
-                Textarea::make('notes'),
+                        Textarea::make('notes')
+                            ->label('Add any extra information about the relationship between this assessment tool and the metric.'),
                     ]),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                ->modalHeading('Edit link between the tool and the metric'),
                 Tables\Actions\DetachAction::make(),
             ])
             ->bulkActions([
