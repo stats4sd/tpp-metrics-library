@@ -14,9 +14,11 @@
         "filament/filament": "^2.0",
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^7.0.1",
+        "jeffgreco13/filament-breezy": "v1.4.10.1",
         "laravel/framework": "^9.0",
         "laravel/telescope": "^4.4",
         "laravel/tinker": "^2.5",
+        "phpsa/filament-authentication": "^2.4",
         "pxlrbt/filament-environment-indicator": "^1.0"
     },
     "require-dev": {

@@ -114,4 +114,6 @@ return [
 
     'password_timeout' => 10800,
 
+    'allowed_users' => env('ALLOWED_USER_EMAILS', 'support@stats4sd.org'),
+
 ];

@@ -22,6 +22,9 @@ use Filament\Facades\Filament;
 use Filament\Navigation\NavigationBuilder;
 use Filament\Navigation\NavigationGroup;
 use Illuminate\Support\ServiceProvider;
+use Phpsa\FilamentAuthentication\Resources\PermissionResource;
+use Phpsa\FilamentAuthentication\Resources\RoleResource;
+use Phpsa\FilamentAuthentication\Resources\UserResource;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -84,6 +87,12 @@ class AppServiceProvider extends ServiceProvider
                         ->items([
                             ...ReferenceResource::getNavigationItems(),
                         ]),
+                    NavigationGroup::make('Users and Roles')
+                    ->items([
+                        ...UserResource::getNavigationItems(),
+                        ...RoleResource::getNavigationItems(),
+                        ...PermissionResource::getNavigationItems(),
+                    ]),
                 ]);
         });
     }
