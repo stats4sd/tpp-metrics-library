@@ -99,7 +99,7 @@ return [
     |--------------------------------------------------------------------------
     | Path to Profile page component.
     */
-    "profile_page_component_path" => \JeffGreco13\FilamentBreezy\Pages\MyProfile::class,
+//    "profile_page_component_path" => \JeffGreco13\FilamentBreezy\Pages\MyProfile::class,
     /*
     |--------------------------------------------------------------------------
     | Where to redirect the user after registration.
