@@ -22,7 +22,6 @@ use Filament\Facades\Filament;
 use Filament\Navigation\NavigationBuilder;
 use Filament\Navigation\NavigationGroup;
 use Illuminate\Support\ServiceProvider;
-use pxlrbt\FilamentEnvironmentIndicator\FilamentEnvironmentIndicator;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -47,9 +46,9 @@ class AppServiceProvider extends ServiceProvider
             Filament::registerViteTheme('resources/css/filament.css');
         });
 
-        FilamentEnvironmentIndicator::configureUsing(function (FilamentEnvironmentIndicator $indicator) {
-            $indicator->visible = fn() => auth()->user()?->hasRole('admin');
-        }, isImportant: true);
+//        FilamentEnvironmentIndicator::configureUsing(function (FilamentEnvironmentIndicator $indicator) {
+//            $indicator->visible = fn() => auth()->user()?->hasRole('admin');
+//        }, isImportant: true);
 
         Filament::navigation(function (NavigationBuilder $builder): NavigationBuilder {
             return $builder
