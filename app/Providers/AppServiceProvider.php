@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Filament\Resources\DimensionResource;
 use App\Filament\Resources\DiscussionPointResource;
 use App\Filament\Resources\FarmingSystemResource;
+use App\Filament\Resources\FeedbackResource;
 use App\Filament\Resources\FrameworkResource;
 use App\Filament\Resources\GeographyResource;
 use App\Filament\Resources\MethodResource;
@@ -61,6 +62,7 @@ class AppServiceProvider extends ServiceProvider
                     NavigationGroup::make('Review Tools')
                         ->items([
                             ...DiscussionPointResource::getNavigationItems(),
+                            ...FeedbackResource::getNavigationItems(),
                         ]),
                     NavigationGroup::make('Topics')
                         ->items([
