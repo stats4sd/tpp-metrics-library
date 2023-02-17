@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\MetricResource\RelationManagers;
 
 use App\Filament\Form\Components\Textarea;
+use App\Filament\Table\Actions\AddDiscussionPointAction;
 use App\Models\Scale;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Checkbox;
@@ -100,6 +101,7 @@ class ScaleReportingRelationManager extends RelationManager
                 Tables\Actions\EditAction::make()
                     ->modalHeading('Edit Link between scale and metric'),
                 Tables\Actions\DetachAction::make(),
+                AddDiscussionPointAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\DetachBulkAction::make(),

@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\MetricResource\RelationManagers;
 
 use App\Filament\Form\Components\Textarea;
+use App\Filament\Table\Actions\AddDiscussionPointAction;
 use App\Models\Unit;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
@@ -92,8 +93,9 @@ class UnitsRelationManager extends RelationManager
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
-                ->modalHeading('Edit link between this unit and the metric'),
+                    ->modalHeading('Edit link between this unit and the metric'),
                 Tables\Actions\DetachAction::make(),
+                AddDiscussionPointAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\DetachBulkAction::make(),

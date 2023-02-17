@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class Scale extends Model
 {
@@ -37,5 +38,10 @@ class Scale extends Model
         return $this->belongsToMany(Metric::class, 'metric_scale')
             ->withPivot('notes', 'commonly_used', 'type')
             ->wherePivot('type', '=', 'reporting');
+    }
+    
+    public function discussionPoints(): MorphMany
+    {
+        return $this->morphMany(DiscussionPoint::class, 'property_value');
     }
 }

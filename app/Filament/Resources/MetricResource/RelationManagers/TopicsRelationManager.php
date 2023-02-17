@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\MetricResource\RelationManagers;
 
+use App\Filament\Table\Actions\AddDiscussionPointAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Form;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -36,11 +37,12 @@ class TopicsRelationManager extends RelationManager
             ->headerActions([
                 Tables\Actions\AttachAction::make()
                     ->preloadRecordSelect()
-                ->label('Add Topic(s)'),
+                    ->label('Add Topic(s)'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DetachAction::make(),
+                AddDiscussionPointAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\DetachBulkAction::make(),

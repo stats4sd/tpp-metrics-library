@@ -32,6 +32,7 @@ class DiscussionPointResource extends Resource
                 TextColumn::make('subject_type_label'),
                 TextColumn::make('subject.title'),
                 TextColumn::make('property'),
+                TextColumn::make('property_value.name'),
                 TextColumn::make('user.name'),
                 TextColumn::make('notes'),
             ])

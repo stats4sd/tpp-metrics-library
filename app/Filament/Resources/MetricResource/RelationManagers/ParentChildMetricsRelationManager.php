@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\MetricResource\RelationManagers;
 
 use App\Filament\Form\Components\Textarea;
+use App\Filament\Table\Actions\AddDiscussionPointAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Form;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -54,6 +55,7 @@ class ParentChildMetricsRelationManager extends RelationManager
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DetachAction::make(),
+                AddDiscussionPointAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\DetachBulkAction::make(),

@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\MetricResource\RelationManagers;
 
 use App\Filament\Form\Components\Textarea;
+use App\Filament\Table\Actions\AddDiscussionPointAction;
 use App\Models\Tool;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
@@ -44,7 +45,7 @@ class ToolsRelationManager extends RelationManager
                             ->disabled()
                     ]),
                 Textarea::make('notes')
-                ->label('Add any extra information about the link between this tool and this metric.'),
+                    ->label('Add any extra information about the link between this tool and this metric.'),
             ]);
     }
 
@@ -65,18 +66,18 @@ class ToolsRelationManager extends RelationManager
                         ->multiple()
                         ->createOptionForm([
                             TextInput::make('name')
-                            ->inlineLabel()
-                            ->required()
-                            ->maxLength(255)
-                            ->label('Name of the tool'),
+                                ->inlineLabel()
+                                ->required()
+                                ->maxLength(255)
+                                ->label('Name of the tool'),
                             Textarea::make('definition')
-                            ->inlineLabel()
-                            ->label('Definition or description of the tool')
-                            ->hint('This could include a link to where you can find more information about the tool.'),
+                                ->inlineLabel()
+                                ->label('Definition or description of the tool')
+                                ->hint('This could include a link to where you can find more information about the tool.'),
                             Textarea::make('notes')
-                            ->inlineLabel()
-                            ->label('Notes about the tool')
-                            ->hint('These are notes about the tool itself, not about the relationship to the metric.')
+                                ->inlineLabel()
+                                ->label('Notes about the tool')
+                                ->hint('These are notes about the tool itself, not about the relationship to the metric.')
                         ])
                         ->createOptionUsing(fn($data): string => Tool::create($data)->id)
                     )
@@ -88,8 +89,9 @@ class ToolsRelationManager extends RelationManager
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
-                ->modalHeading('Edit link between the tool and the metric'),
+                    ->modalHeading('Edit link between the tool and the metric'),
                 Tables\Actions\DetachAction::make(),
+                AddDiscussionPointAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\DetachBulkAction::make(),

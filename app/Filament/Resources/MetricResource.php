@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Form\Components\CheckboxList;
 use App\Filament\Form\Components\Select;
+use App\Filament\Form\Components\TableRepeater;
 use App\Filament\Form\Components\Textarea;
 use App\Filament\Resources\MetricResource\Pages;
 use App\Filament\Resources\MetricResource\RelationManagers\CollectorsRelationManager;
@@ -31,7 +32,6 @@ use App\Models\SubDimension;
 use App\Models\Topic;
 use Awcodes\FilamentBadgeableColumn\Components\Badge;
 use Awcodes\FilamentBadgeableColumn\Components\BadgeableColumn;
-use Awcodes\FilamentTableRepeater\Components\TableRepeater;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Placeholder;
@@ -91,7 +91,8 @@ class MetricResource extends Resource
                                         'name' => '250px',
                                     ])
                                     ->createItemButtonLabel('Add new name')
-                                    ->itemLabel(fn(array $state): ?string => $state['name'] ?? '(new name)'),
+                                    ->itemLabel(fn(array $state): ?string => $state['name'] ?? '(new name)')
+                                    ->suffixAction(self::makeDiscussionPointAction()),
 
                                 Placeholder::make('-')
                                     ->content(new HtmlString('<hr/>')),
@@ -230,7 +231,7 @@ class MetricResource extends Resource
                                         $label = $property->code . ' - ' . $property->name;
                                         $hint = $property->definition;
                                         // change some field attributes if a select field also exists
-                                        if($property->select_options) {
+                                        if ($property->select_options) {
                                             $label = $label . ': Additional Notes';
                                             $hint = ''; // no need to repeat the hint
                                         }
@@ -240,7 +241,7 @@ class MetricResource extends Resource
                                             ->inlineLabel()
                                             ->hint($hint);
 
-                                        if(!$property->select_options) {
+                                        if (!$property->select_options) {
                                             $component = $component->suffixAction(self::makeDiscussionPointAction());
                                         }
 

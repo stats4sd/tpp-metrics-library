@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\MetricResource\RelationManagers;
 
 use App\Filament\Form\Components\Textarea;
+use App\Filament\Table\Actions\AddDiscussionPointAction;
 use App\Models\MetricUser;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Section;
@@ -92,6 +93,7 @@ class ImpactedByRelationManager extends RelationManager
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DetachAction::make(),
+                AddDiscussionPointAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\DetachBulkAction::make(),

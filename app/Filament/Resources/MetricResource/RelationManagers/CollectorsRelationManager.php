@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\MetricResource\RelationManagers;
 
 use App\Filament\Form\Components\Textarea;
+use App\Filament\Table\Actions\AddDiscussionPointAction;
 use App\Models\MetricUser;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Section;
@@ -95,6 +96,7 @@ class CollectorsRelationManager extends RelationManager
                 Tables\Actions\EditAction::make()
                 ->modalHeading('Edit link between user type and metric'),
                 Tables\Actions\DetachAction::make(),
+                AddDiscussionPointAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\DetachBulkAction::make(),

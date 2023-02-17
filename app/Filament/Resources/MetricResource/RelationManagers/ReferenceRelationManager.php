@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\MetricResource\RelationManagers;
 
 use App\Filament\Form\Components\Textarea;
+use App\Filament\Table\Actions\AddDiscussionPointAction;
 use App\Models\Reference;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Section;
@@ -91,6 +92,7 @@ class ReferenceRelationManager extends RelationManager
                 Tables\Actions\EditAction::make()
                     ->modalHeading('Edit link between metric and reference'),
                 Tables\Actions\DetachAction::make(),
+                AddDiscussionPointAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\DetachBulkAction::make(),

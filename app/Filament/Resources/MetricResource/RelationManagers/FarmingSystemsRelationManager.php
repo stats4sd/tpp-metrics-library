@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\MetricResource\RelationManagers;
 
 use App\Filament\Form\Components\Textarea;
+use App\Filament\Table\Actions\AddDiscussionPointAction;
 use App\Models\FarmingSystem;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Section;
@@ -83,6 +84,7 @@ class FarmingSystemsRelationManager extends RelationManager
                 Tables\Actions\EditAction::make()
                 ->modalHeading('Edit link between metric and farming system'),
                 Tables\Actions\DetachAction::make(),
+                AddDiscussionPointAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\DetachBulkAction::make(),

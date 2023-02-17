@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\MetricResource\RelationManagers;
 
 use App\Filament\Form\Components\Textarea;
+use App\Filament\Table\Actions\AddDiscussionPointAction;
 use App\Models\Framework;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
@@ -90,6 +91,7 @@ class FrameworksRelationManager extends RelationManager
                 Tables\Actions\EditAction::make()
                 ->modalHeading('Edit link between framework and metric'),
                 Tables\Actions\DetachAction::make(),
+                AddDiscussionPointAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\DetachBulkAction::make(),
