@@ -47,4 +47,14 @@ class User extends Authenticatable implements MustVerifyEmail, FilamentUser
         return $this->hasMany(DiscussionPoint::class);
     }
 
+    public function feedback(): HasMany
+    {
+        return $this->hasMany(Feedback::class);
+    }
+
+    public function feedbackResolved(): HasMany
+    {
+        return $this->hasMany(Feedback::class, 'resolver_id');
+    }
+
 }

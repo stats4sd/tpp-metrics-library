@@ -6,6 +6,8 @@ use App\Filament\Form\Components\Textarea;
 use App\Filament\Resources\FeedbackResource\Pages;
 use App\Filament\Resources\FeedbackResource\RelationManagers;
 use App\Models\Feedback;
+use Carbon\Carbon;
+use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
@@ -50,19 +52,78 @@ class FeedbackResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->columns([
-                Tables\Columns\TextColumn::make('type'),
-                Tables\Columns\TextColumn::make('url'),
-                Tables\Columns\Layout\Panel::make([
-                    Tables\Columns\TextColumn::make('comments'),
-                ])->collapsible(),
+            ->columns(
+//
+//                $followup = $feedback->feedbackFollowups()
+//                    ->map(function($followup) {
+//                        return Tables\Columns\Layout\Panel::make([
+//                            Tables\Columns\TextColumn::make('feedbackFollowup')
+//                            ->description(fn(FeedbackFollowup $followup): string => $followup->comments),
+//                        ]);
+//                    });
 
-            ])
-            ->filters([
-                //
-            ])
+                [
+                    Tables\Columns\Layout\Split::make([
+                        Tables\Columns\BadgeColumn::make('type')
+                            ->colors([
+                                'danger' => 'bug',
+                                'primary' => 'feature_request',
+                                'success' => 'comment',
+                            ]),
+                        Tables\Columns\TextColumn::make('user.name'),
+                        Tables\Columns\TextColumn::make('url'),
+                        Tables\Columns\IconColumn::make('resolved_at')
+                            ->options([
+                                'heroicon-o-check-circle' => fn($state): bool => (bool)$state,
+                            ])
+                            ->color('success'),
+
+                    ]),
+                    
+                    Tables\Columns\Layout\Panel::make([
+                        Tables\Columns\TextColumn::make('comments'),
+                        Tables\Columns\ViewColumn::make('followup')
+                            ->view('filament.tables.columns.feedback-followup')
+                    ])->collapsible()->collapsed(true),
+
+                ])
             ->actions([
+                Tables\Actions\Action::make('Resolve')
+                    ->label(fn(Feedback $record): string => $record->resolved_at ? 'Mark as unresolved' : 'Mark as resolved')
+                    ->action(function (Feedback $record) {
+
+                        if ($record->resolved_at) {
+                            $record->update([
+                                'resolved_at' => null,
+                            ]);
+                        } else {
+                            $record->update([
+                                'resolved_at' => Carbon::now(),
+                            ]);
+                        }
+                    }),
+                Tables\Actions\Action::make('Add Followup')
+                    ->action(function (Feedback $record, array $data) {
+                        $data['user_id'] = Auth::id();
+                        if ($data['resolved']) {
+                            $record->update([
+                                'resolver_id' => Auth::id(),
+                                'resolved_at' => Carbon::now(),
+                            ]);
+                        }
+
+                        unset($data['resolved']);
+
+                        $record->feedbackFollowups()
+                            ->create($data);
+
+                    })
+                    ->form([
+                        Textarea::make('comments')->required(),
+                        Checkbox::make('resolved')->label('Is this feedback now resolved?'),
+                    ]),
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
