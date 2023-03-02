@@ -8,3 +8,8 @@
 .filament-forms-field-wrapper-label {
     margin-bottom: 20px !important;
 }
+
+/*.filament-tables-filters-form {*/
+/*    @apply flex;*/
+/*    @remove space-y-6*/
+/*}*/

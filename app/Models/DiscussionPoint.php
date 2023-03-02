@@ -12,6 +12,11 @@ class DiscussionPoint extends Model
 
     protected $guarded = [];
 
+    protected $appends = [
+        'subject_type_label',
+        'property_type_label',
+    ];
+
     public function getSubjectTypeLabelAttribute()
     {
         return str_replace('App\\Models\\', '', $this->subject_type);
