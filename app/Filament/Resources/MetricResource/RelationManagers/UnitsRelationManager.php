@@ -72,7 +72,6 @@ class UnitsRelationManager extends RelationManager
                                 ->label('Unit Name'),
                             TextInput::make('symbol')
                                 ->inlineLabel()
-                                ->required()
                                 ->maxLength(255)
                                 ->label('Symbol'),
                             Textarea::make('definition')
