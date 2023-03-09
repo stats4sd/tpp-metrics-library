@@ -2,13 +2,17 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\TopicResource\Pages;
-use App\Filament\Resources\TopicResource\RelationManagers;
+use Filament\Tables;
 use App\Models\Topic;
 use Filament\Resources\Form;
-use Filament\Resources\Resource;
 use Filament\Resources\Table;
-use Filament\Tables;
+use Filament\Resources\Resource;
+use Filament\Forms\Components\Grid;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\TextInput;
+use App\Filament\Form\Components\Textarea;
+use App\Filament\Resources\TopicResource\Pages;
+use App\Filament\Resources\TopicResource\RelationManagers;
 
 class TopicResource extends Resource
 {
@@ -21,7 +25,12 @@ class TopicResource extends Resource
     {
         return $form
             ->schema([
-                //
+                Grid::make(1)
+                ->schema([
+                    TextInput::make('name')->required(),
+                    Textarea::make('definition'),
+                    Textarea::make('notes'),
+                ])
             ]);
     }
 
@@ -29,7 +38,10 @@ class TopicResource extends Resource
     {
         return $table
             ->columns([
-                //
+                TextColumn::make('name'),
+                TextColumn::make('definition'),
+                TextColumn::make('notes'),
+                TextColumn::make('metrics_count')->counts('metrics'),
             ])
             ->filters([
                 //

@@ -2,16 +2,20 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Forms;
+use Filament\Tables;
+use Filament\Resources\Form;
+use App\Models\FarmingSystem;
+use Filament\Resources\Table;
+use Filament\Resources\Resource;
+use Filament\Forms\Components\Grid;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\TextInput;
+use Illuminate\Database\Eloquent\Builder;
+use App\Filament\Form\Components\Textarea;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\FarmingSystemResource\Pages;
 use App\Filament\Resources\FarmingSystemResource\RelationManagers;
-use App\Models\FarmingSystem;
-use Filament\Forms;
-use Filament\Resources\Form;
-use Filament\Resources\Resource;
-use Filament\Resources\Table;
-use Filament\Tables;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class FarmingSystemResource extends Resource
 {
@@ -23,7 +27,12 @@ class FarmingSystemResource extends Resource
     {
         return $form
             ->schema([
-                //
+                Grid::make(1)
+                ->schema([
+                    TextInput::make('name')->required(),
+                    Textarea::make('definition'),
+                    Textarea::make('notes'),
+                ])
             ]);
     }
 
@@ -31,7 +40,10 @@ class FarmingSystemResource extends Resource
     {
         return $table
             ->columns([
-                //
+                TextColumn::make('name'),
+                TextColumn::make('definition'),
+                TextColumn::make('notes'),
+                TextColumn::make('metrics_count')->counts('metrics'),
             ])
             ->filters([
                 //

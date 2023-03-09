@@ -2,13 +2,18 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\DimensionResource\Pages;
-use App\Filament\Resources\DimensionResource\RelationManagers;
+use Filament\Tables;
 use App\Models\Dimension;
 use Filament\Resources\Form;
-use Filament\Resources\Resource;
 use Filament\Resources\Table;
-use Filament\Tables;
+use Filament\Resources\Resource;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Select;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\TextInput;
+use App\Filament\Form\Components\Textarea;
+use App\Filament\Resources\DimensionResource\Pages;
+use App\Filament\Resources\DimensionResource\RelationManagers;
 
 class DimensionResource extends Resource
 {
@@ -20,7 +25,13 @@ class DimensionResource extends Resource
     {
         return $form
             ->schema([
-                //
+                Grid::make(1)
+                ->schema([
+                    Select::make('topicId')->relationship('topic', 'name')->required(),
+                    TextInput::make('name')->required(),
+                    Textarea::make('definition'),
+                    Textarea::make('notes'),
+                ])
             ]);
     }
 
@@ -28,9 +39,9 @@ class DimensionResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name'),
-                Tables\Columns\TextColumn::make('metrics_count')
-                    ->counts('metrics'),
+                TextColumn::make('name'),
+                TextColumn::make('definition'),
+                TextColumn::make('metrics_count')->counts('metrics'),
 
             ])
             ->filters([
