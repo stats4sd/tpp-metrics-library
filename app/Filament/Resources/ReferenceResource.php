@@ -2,16 +2,20 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\ReferenceResource\Pages;
-use App\Filament\Resources\ReferenceResource\RelationManagers;
-use App\Models\Reference;
 use Filament\Forms;
-use Filament\Resources\Form;
-use Filament\Resources\Resource;
-use Filament\Resources\Table;
 use Filament\Tables;
+use App\Models\Reference;
+use Filament\Resources\Form;
+use Filament\Resources\Table;
+use Filament\Resources\Resource;
+use Filament\Forms\Components\Grid;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
+use App\Filament\Form\Components\Textarea;
+use App\Filament\Resources\ReferenceResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Resources\ReferenceResource\RelationManagers;
 
 class ReferenceResource extends Resource
 {
@@ -23,7 +27,12 @@ class ReferenceResource extends Resource
     {
         return $form
             ->schema([
-                //
+                Grid::make(1)
+                ->schema([
+                    TextInput::make('name')->required(),
+                    TextInput::make('url')->url(),
+                    Textarea::make('notes'),
+                ])
             ]);
     }
 
@@ -31,12 +40,15 @@ class ReferenceResource extends Resource
     {
         return $table
             ->columns([
-                //
+                TextColumn::make('name'),
+                TextColumn::make('url'),
+                TextColumn::make('notes'),
             ])
             ->filters([
                 //
             ])
             ->actions([
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
