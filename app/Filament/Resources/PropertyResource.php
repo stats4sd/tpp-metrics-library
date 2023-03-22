@@ -2,21 +2,21 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Form\Checkbox;
-use App\Filament\Form\Repeater;
-use App\Filament\Form\Section;
-use App\Filament\Form\Select;
-use App\Filament\Form\Textarea;
-use App\Filament\Form\TextInput;
-use App\Filament\Resources\PropertyResource\Pages;
-use App\Filament\Resources\PropertyResource\RelationManagers;
-use App\Models\CollectionMethod;
+use Filament\Tables;
 use App\Models\Metric;
 use App\Models\Property;
 use Filament\Resources\Form;
-use Filament\Resources\Resource;
 use Filament\Resources\Table;
-use Filament\Tables;
+use App\Models\CollectionMethod;
+use Filament\Resources\Resource;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\TextInput;
+use App\Filament\Form\Components\Textarea;
+use App\Filament\Resources\PropertyResource\Pages;
+use App\Filament\Resources\PropertyResource\RelationManagers;
 
 class PropertyResource extends Resource
 {
