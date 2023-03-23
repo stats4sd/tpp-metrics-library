@@ -2,13 +2,16 @@
 
 namespace App\Filament\Resources\MetricResource\RelationManagers;
 
-use App\Filament\Form\Components\Textarea;
-use App\Filament\Table\Actions\AddDiscussionPointAction;
-use Filament\Forms\Components\TextInput;
-use Filament\Resources\Form;
-use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Resources\Table;
 use Filament\Tables;
+use App\Models\Metric;
+use Filament\Resources\Form;
+use Filament\Resources\Table;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use App\Filament\Form\Components\Textarea;
+use Filament\Forms\Components\Actions\Action;
+use App\Filament\Table\Actions\AddDiscussionPointAction;
+use Filament\Resources\RelationManagers\RelationManager;
 
 class ParentChildMetricsRelationManager extends RelationManager
 {
@@ -38,7 +41,8 @@ class ParentChildMetricsRelationManager extends RelationManager
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('title'),
+                Tables\Columns\TextColumn::make('title')
+                    ->label('Metric'),
             ])
             ->filters([
                 //
@@ -47,9 +51,22 @@ class ParentChildMetricsRelationManager extends RelationManager
                 Tables\Actions\AssociateAction::make()
                     ->label('Attach Metric')
                     ->preloadRecordSelect()
+                    ->recordSelect(fn(Select $select) => $select
+                        ->createOptionForm([
+                            TextInput::make('title')
+                                ->inlineLabel()
+                                ->required()
+                                ->maxLength(255)
+                                ->label('Name of metric'),
+                            Textarea::make('definition')
+                                ->inlineLabel(),
+                        ])
+                        ->createOptionAction(fn(Action $action) => $action->modalHeading('Create Metric Entry'))
+                        ->createOptionUsing(fn($data): string => Metric::create($data)->id)
+                    )
                     ->form(fn(Tables\Actions\AssociateAction $action): array => [
                         $action->getRecordSelect(),
-                        Textarea::make('notes')->hint('Add any extra information about why this metric compliments the other'),
+                        Textarea::make('notes')->label('Add any extra information about why this metric is associated to the other'),
                     ])
             ])
             ->actions([
