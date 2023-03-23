@@ -61,6 +61,10 @@ class ComplimentaryMetricsRelationManager extends RelationManager
                                 ->label('Name of the metric'),
                             Textarea::make('definition')
                                 ->inlineLabel(),
+                            Textarea::make('notes')
+                                ->inlineLabel()
+                                ->label('Notes about this metric')
+                                ->hint('This is about the metric entry itself, not about the link to the current metric.'),
                         ])
                         ->createOptionAction(fn(Action $action) => $action->modalHeading('Create Metric Entry'))
                         ->createOptionUsing(fn($data): string => Metric::create($data)->id)
