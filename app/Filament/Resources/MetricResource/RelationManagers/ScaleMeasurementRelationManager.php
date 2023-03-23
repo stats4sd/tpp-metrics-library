@@ -74,7 +74,6 @@ class ScaleMeasurementRelationManager extends RelationManager
                 Tables\Actions\AttachAction::make('Attach')
                     ->preloadRecordSelect()
                     ->recordSelect(fn(Select $select) => $select
-                        ->multiple()
                         ->createOptionForm([
                             TextInput::make('name')
                                 ->required()

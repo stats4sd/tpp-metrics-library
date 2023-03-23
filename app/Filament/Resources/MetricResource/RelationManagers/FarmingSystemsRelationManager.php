@@ -47,7 +47,8 @@ class FarmingSystemsRelationManager extends RelationManager
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name'),
+                Tables\Columns\TextColumn::make('name')
+                    ->label('Farming System')
             ])
             ->filters([
                 //
@@ -56,7 +57,6 @@ class FarmingSystemsRelationManager extends RelationManager
                 Tables\Actions\AttachAction::make('Attach')
                     ->preloadRecordSelect()
                     ->recordSelect(fn(Select $select) => $select
-                        ->multiple()
                         ->createOptionForm([
                             TextInput::make('name')
                                 ->required()
@@ -69,7 +69,7 @@ class FarmingSystemsRelationManager extends RelationManager
                                 ->label('Notes about this farming system')
                                 ->hint('This is about the farming system itself, not about the link to the current metric.'),
                         ])
-                        ->createOptionAction(fn(Action $action) => $action->modalHeading('Create Scale Entry'))
+                        ->createOptionAction(fn(Action $action) => $action->modalHeading('Create Farming System Entry'))
                         ->createOptionUsing(fn(array $data) => FarmingSystem::create($data)->id)
                     )
                     ->form(fn(Tables\Actions\AttachAction $action): array => [

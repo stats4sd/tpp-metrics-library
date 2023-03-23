@@ -2,16 +2,17 @@
 
 namespace App\Filament\Resources\MetricResource\RelationManagers;
 
-use App\Filament\Form\Components\Textarea;
-use App\Filament\Table\Actions\AddDiscussionPointAction;
 use App\Models\Unit;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
-use Filament\Resources\Form;
-use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Resources\Table;
 use Filament\Tables;
+use Filament\Resources\Form;
+use Filament\Resources\Table;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\TextInput;
+use App\Filament\Form\Components\Textarea;
+use Filament\Forms\Components\Actions\Action;
+use App\Filament\Table\Actions\AddDiscussionPointAction;
+use Filament\Resources\RelationManagers\RelationManager;
 
 class UnitsRelationManager extends RelationManager
 {
@@ -55,7 +56,8 @@ class UnitsRelationManager extends RelationManager
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name'),
+                Tables\Columns\TextColumn::make('name')
+                    ->label('Unit')
             ])
             ->filters([
                 //
@@ -75,6 +77,7 @@ class UnitsRelationManager extends RelationManager
                                 ->maxLength(255)
                                 ->label('Symbol'),
                             Textarea::make('definition')
+                                ->required()
                                 ->inlineLabel()
                                 ->label('Definition of this unit'),
                             Textarea::make('notes')
@@ -82,6 +85,7 @@ class UnitsRelationManager extends RelationManager
                                 ->label('Notes about this unit')
                                 ->hint('Not specifically about why they are linked to this metric'),
                         ])
+                        ->createOptionAction(fn(Action $action) => $action->modalHeading('Create Unit Entry'))
                         ->createOptionUsing(fn($data): string => Unit::create($data)->id)
                     )
                     ->form(fn(Tables\Actions\AttachAction $action): array => [

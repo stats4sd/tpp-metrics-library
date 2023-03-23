@@ -2,17 +2,18 @@
 
 namespace App\Filament\Resources\MetricResource\RelationManagers;
 
-use App\Filament\Form\Components\Textarea;
-use App\Filament\Table\Actions\AddDiscussionPointAction;
-use App\Models\Reference;
-use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
-use Filament\Resources\Form;
-use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Resources\Table;
 use Filament\Tables;
+use App\Models\Reference;
+use Filament\Resources\Form;
+use Filament\Resources\Table;
+use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\TextInput;
+use App\Filament\Form\Components\Textarea;
+use Filament\Forms\Components\Actions\Action;
+use App\Filament\Table\Actions\AddDiscussionPointAction;
+use Filament\Resources\RelationManagers\RelationManager;
 
 class DataSourcesRelationManager extends RelationManager
 {
@@ -73,14 +74,18 @@ class DataSourcesRelationManager extends RelationManager
                     ->recordSelect(fn(Select $select) => $select
                         ->createOptionForm([
                             TextInput::make('name')
+                                ->inlineLabel()
                                 ->required()
                                 ->label('Name of reference'),
                             TextInput::make('url')
+                                ->inlineLabel()
                                 ->label('Url'),
                             Textarea::make('notes')
+                                ->inlineLabel()
                                 ->label('Notes about this reference')
                                 ->hint('Notes about the reference itself, not the link to the metric.'),
                         ])
+                        ->createOptionAction(fn(Action $action) => $action->modalHeading('Create Reference Entry'))
                         ->createOptionUsing(fn($data): string => Reference::create($data)->id))
                     ->form(fn(Tables\Actions\AttachAction $action): array => [
                         $action->getRecordSelect(),
