@@ -29,7 +29,7 @@ class Test extends Command
      */
     public function handle()
     {
-       Excel::import(new ScreeningImporter, '/Users/dave/Sites/metrics-poc/gpt_checked_output_27_mar_23.csv');
+       Excel::import(new ScreeningImporter, base_path('gpt_checked_output_27_mar_23.csv'));
 
         return Command::SUCCESS;
     }
