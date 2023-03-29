@@ -7,6 +7,7 @@ use App\Models\Metric;
 use Filament\Resources\Form;
 use Filament\Resources\Table;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use App\Filament\Form\Components\Textarea;
 use Filament\Forms\Components\Actions\Action;
@@ -30,10 +31,19 @@ class ParentMetricsRelationManager extends RelationManager
     public static function form(Form $form): Form
     {
         return $form
+            ->columns(1)
             ->schema([
-                TextInput::make('title')
-                    ->required()
-                    ->maxLength(255),
+                Section::make('Parent Metric')
+                    ->schema([
+                        TextInput::make('title')
+                            ->inlineLabel()
+                            ->disabled(),
+                        Textarea::make('definition')
+                            ->inlineLabel()
+                            ->disabled()
+                    ]),
+                Textarea::make('notes')
+                    ->label('Add any extra information about why this metric is a parent of the other'),
             ]);
     }
 
