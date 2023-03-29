@@ -18,26 +18,43 @@ class Metric extends Model
 
 
     // *************** 1.f DERIVED / RELATED METRICS ***************
-    public function parent(): BelongsTo
+    public function childMetrics(): BelongsToMany
     {
-        return $this->belongsTo(__CLASS__, 'parent_id');
+        return $this->belongsToMany(__CLASS__, 'metric_parent_child', 'parent_id', 'child_id')
+            ->withPivot('notes');
     }
 
-    public function relatedMetrics(): HasMany
+    public function inverseChildMetrics(): BelongsToMany
     {
-        return $this->hasMany(__CLASS__, 'parent_id');
+        return $this->belongsToMany(__CLASS__, 'metric_parent_child', 'child_id', 'parent_id')
+            ->withPivot('notes');
     }
 
     // ******************* 1.g COMPLIMENTARY METRICS ******************
 
     public function complimentaryMetrics(): BelongsToMany
     {
-        return $this->belongsToMany(__CLASS__, 'metric_metric', 'metric_id', 'related_id');
+        return $this->belongsToMany(__CLASS__, 'metric_metric', 'metric_id', 'related_id')
+            ->withPivot('notes');
     }
 
     public function inverseComplimentaryMetrics(): BelongsToMany
     {
-        return $this->belongsToMany(__CLASS__, 'metric_metric', 'related_id', 'metric_id');
+        return $this->belongsToMany(__CLASS__, 'metric_metric', 'related_id', 'metric_id')
+            ->withPivot('notes');
+    }
+
+    // *************** 1.h PARENT METRICS ***************
+    public function parentMetrics(): BelongsToMany
+    {
+        return $this->belongsToMany(__CLASS__, 'metric_parent_child', 'child_id', 'parent_id')
+            ->withPivot('notes');
+    }
+
+    public function inverseParentMetrics(): BelongsToMany
+    {
+        return $this->belongsToMany(__CLASS__, 'metric_parent_child', 'parent_id', 'child_id')
+            ->withPivot('notes');
     }
 
     // 0.c Topics

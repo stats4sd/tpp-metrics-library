@@ -13,18 +13,18 @@ use Filament\Forms\Components\Actions\Action;
 use App\Filament\Table\Actions\AddDiscussionPointAction;
 use Filament\Resources\RelationManagers\RelationManager;
 
-class ParentChildMetricsRelationManager extends RelationManager
+class ParentMetricsRelationManager extends RelationManager
 {
-    protected static string $relationship = 'relatedMetrics';
-    protected static ?string $inverseRelationship = 'parent';
+    protected static string $relationship = 'parentMetrics';
+    protected static ?string $inverseRelationship = 'inverseParentMetrics';
 
     protected static ?string $recordTitleAttribute = 'title';
 
-    protected static ?string $title = "1.f. Derived / Related Metrics";
+    protected static ?string $title = "1.h. Parent Metrics";
 
     public function getTableDescription(): string
     {
-        return "Other metrics that are derived from or closely related to this metric. For example, they could be metrics that measure a subset of what this metric is measuring, or a more context-specific version of this metric.";
+        return "Other metrics that this metric is derived from.";
     }
 
     public static function form(Form $form): Form
@@ -48,7 +48,7 @@ class ParentChildMetricsRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                Tables\Actions\AssociateAction::make()
+                Tables\Actions\AttachAction::make()
                     ->label('Attach Metric')
                     ->preloadRecordSelect()
                     ->recordSelect(fn(Select $select) => $select
@@ -68,9 +68,9 @@ class ParentChildMetricsRelationManager extends RelationManager
                         ->createOptionAction(fn(Action $action) => $action->modalHeading('Create Metric Entry'))
                         ->createOptionUsing(fn($data): string => Metric::create($data)->id)
                     )
-                    ->form(fn(Tables\Actions\AssociateAction $action): array => [
+                    ->form(fn(Tables\Actions\AttachAction $action): array => [
                         $action->getRecordSelect(),
-                        Textarea::make('notes')->label('Add any extra information about why this metric is associated to the other'),
+                        Textarea::make('notes')->label('Add any extra information about why this metric is a parent of the other'),
                     ])
             ])
             ->actions([
