@@ -19,6 +19,7 @@
         "laravel/framework": "^9.0",
         "laravel/telescope": "^4.4",
         "laravel/tinker": "^2.5",
+        "maatwebsite/excel": "^3.1",
         "phpsa/filament-authentication": "^2.4",
         "pxlrbt/filament-environment-indicator": "^1.0",
         "symfony/http-client": "^6.2",
