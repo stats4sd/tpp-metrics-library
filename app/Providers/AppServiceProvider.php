@@ -2,30 +2,31 @@
 
 namespace App\Providers;
 
-use App\Filament\Resources\DimensionResource;
-use App\Filament\Resources\DiscussionPointResource;
-use App\Filament\Resources\FarmingSystemResource;
+use Filament\Facades\Filament;
+use Illuminate\Support\ServiceProvider;
+use App\Filament\Resources\FlagResource;
+use App\Filament\Resources\ToolResource;
+use Filament\Navigation\NavigationGroup;
+use App\Filament\Resources\ScaleResource;
+use App\Filament\Resources\TopicResource;
+use App\Filament\Resources\MethodResource;
+use App\Filament\Resources\MetricResource;
+use Filament\Navigation\NavigationBuilder;
 use App\Filament\Resources\FeedbackResource;
+use App\Filament\Resources\PropertyResource;
+use App\Filament\Resources\DimensionResource;
 use App\Filament\Resources\FrameworkResource;
 use App\Filament\Resources\GeographyResource;
-use App\Filament\Resources\MethodResource;
-use App\Filament\Resources\MetricPropertyResource;
-use App\Filament\Resources\MetricResource;
-use App\Filament\Resources\MetricUserResource;
-use App\Filament\Resources\PropertyResource;
-use App\Filament\Resources\PropertyTypeResource;
 use App\Filament\Resources\ReferenceResource;
-use App\Filament\Resources\ScaleResource;
+use App\Filament\Resources\MetricUserResource;
+use App\Filament\Resources\PropertyTypeResource;
 use App\Filament\Resources\SubDimensionResource;
-use App\Filament\Resources\ToolResource;
-use App\Filament\Resources\TopicResource;
-use Filament\Facades\Filament;
-use Filament\Navigation\NavigationBuilder;
-use Filament\Navigation\NavigationGroup;
-use Illuminate\Support\ServiceProvider;
-use Phpsa\FilamentAuthentication\Resources\PermissionResource;
+use App\Filament\Resources\FarmingSystemResource;
+use App\Filament\Resources\MetricPropertyResource;
+use App\Filament\Resources\DiscussionPointResource;
 use Phpsa\FilamentAuthentication\Resources\RoleResource;
 use Phpsa\FilamentAuthentication\Resources\UserResource;
+use Phpsa\FilamentAuthentication\Resources\PermissionResource;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -62,6 +63,7 @@ class AppServiceProvider extends ServiceProvider
                     NavigationGroup::make('Review Tools')
                         ->items([
                             ...DiscussionPointResource::getNavigationItems(),
+                            ...FlagResource::getNavigationItems(),
                             ...FeedbackResource::getNavigationItems(),
                         ]),
                     NavigationGroup::make('Topics')
