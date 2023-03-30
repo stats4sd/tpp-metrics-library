@@ -17,7 +17,7 @@ use Filament\Tables;
 class ParentMetricsRelationManager extends RelationManager
 {
     protected static string $relationship = 'parentMetrics';
-    protected static ?string $inverseRelationship = 'inverseParentMetrics';
+    protected static ?string $inverseRelationship = 'childMetrics';
 
     protected static ?string $recordTitleAttribute = 'title';
 

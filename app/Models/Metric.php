@@ -24,12 +24,6 @@ class Metric extends Model
             ->withPivot('relation_notes');
     }
 
-    public function inverseChildMetrics(): BelongsToMany
-    {
-        return $this->belongsToMany(__CLASS__, 'metric_parent_child', 'child_id', 'parent_id')
-            ->withPivot('relation_notes');
-    }
-
     // ******************* 1.g COMPLIMENTARY METRICS ******************
 
     public function complimentaryMetrics(): BelongsToMany
@@ -51,11 +45,6 @@ class Metric extends Model
             ->withPivot('relation_notes');
     }
 
-    public function inverseParentMetrics(): BelongsToMany
-    {
-        return $this->belongsToMany(__CLASS__, 'metric_parent_child', 'parent_id', 'child_id')
-            ->withPivot('relation_notes');
-    }
 
     // 0.c Topics
     public function topics(): BelongsToMany
