@@ -2,17 +2,17 @@
 
 namespace App\Filament\Resources\MetricResource\RelationManagers;
 
-use Filament\Tables;
-use App\Models\Framework;
-use Filament\Resources\Form;
-use Filament\Resources\Table;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\TextInput;
 use App\Filament\Form\Components\Textarea;
-use Filament\Forms\Components\Actions\Action;
 use App\Filament\Table\Actions\AddDiscussionPointAction;
+use App\Models\Framework;
+use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Resources\Form;
 use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Resources\Table;
+use Filament\Tables;
 
 class FrameworksRelationManager extends RelationManager
 {
@@ -46,7 +46,7 @@ class FrameworksRelationManager extends RelationManager
                             ->inlineLabel()
                             ->disabled()
                     ]),
-                Textarea::make('notes')
+                Textarea::make('relation_notes')
                     ->label('Add any extra information about the relationship between this framework and this metric.'),
             ]);
     }
@@ -85,7 +85,7 @@ class FrameworksRelationManager extends RelationManager
                     )
                     ->form(fn(Tables\Actions\AttachAction $action): array => [
                         $action->getRecordSelect(),
-                        Textarea::make('notes')
+                        Textarea::make('relation_notes')
                             ->label('Add any extra information about the relationship between this framework and the metric'),
                     ]),
             ])

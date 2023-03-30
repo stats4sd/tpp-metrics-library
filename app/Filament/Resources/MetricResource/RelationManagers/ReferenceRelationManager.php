@@ -48,7 +48,7 @@ class ReferenceRelationManager extends RelationManager
                             ->inlineLabel()
                             ->disabled(),
                     ]),
-                Textarea::make('notes')
+                Textarea::make('relation_notes')
                     ->label('Add any extra information about how this reference relates to the metric'),
                 Hidden::make('reference_type')
                     ->default('reference')
@@ -87,7 +87,7 @@ class ReferenceRelationManager extends RelationManager
                         ->createOptionUsing(fn($data): string => Reference::create($data)->id))
                     ->form(fn(Tables\Actions\AttachAction $action): array => [
                         $action->getRecordSelect(),
-                        Textarea::make('Notes')
+                        Textarea::make('relation_notes')
                             ->label('Add any extra information about how this reference relates to the metric'),
                         Hidden::make('reference_type')
                             ->default('reference')

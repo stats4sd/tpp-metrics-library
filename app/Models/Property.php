@@ -17,7 +17,7 @@ class Property extends Model
     {
         return $this->morphedByMany(Metric::class, 'linked', 'property_links')
             ->using(PropertyLink::class)
-            ->withPivot('notes');
+            ->withPivot('relation_notes');
     }
 
     public function propertyLinks(): HasMany
@@ -28,7 +28,7 @@ class Property extends Model
     public function collectionMethods(): MorphToMany
     {
         return $this->morphedByMany(CollectionMethod::class, 'property_link')
-            ->withPivot('notes');
+            ->withPivot('relation_notes');
     }
 
     public function propertyOptions(): HasMany

@@ -49,7 +49,7 @@ class ScaleMeasurementRelationManager extends RelationManager
                             ->inlineLabel()
                             ->disabled(),
                     ]),
-                Textarea::make('notes')
+                Textarea::make('relation_notes')
                     ->label('Add any extra information about how/why this metric can be used at this scale to make decisions'),
                 Checkbox::make('commonly_used')
                     ->label('Is the metric commonly used at this scale?'),
@@ -92,7 +92,7 @@ class ScaleMeasurementRelationManager extends RelationManager
                     ->form(fn(Tables\Actions\AttachAction $action): array => [
                         $action->getRecordSelect()
                             ->autofocus(false),
-                        Textarea::make('notes')
+                        Textarea::make('relation_notes')
                             ->label('Add any extra information about how/why this metric can be used at this scale to make decisions'),
                         Checkbox::make('commonly_used')
                             ->label('Is the metric commonly used at this scale?'),

@@ -36,7 +36,7 @@ class FarmingSystemsRelationManager extends RelationManager
                             ->inlineLabel()
                             ->disabled(),
                     ]),
-                Textarea::make('notes')
+                Textarea::make('relation_notes')
                     ->inlineLabel()
                     ->label('Add any extra information about how/why this metric is linked to this farming system.')
                     ->hint('i.e. Is the metric particularly well-suited to this type of system? Or ill-suited? Is the metric often used when studying this type of system?'),
@@ -75,7 +75,7 @@ class FarmingSystemsRelationManager extends RelationManager
                     ->form(fn(Tables\Actions\AttachAction $action): array => [
                         $action->getRecordSelect()
                             ->autofocus(false),
-                        Textarea::make('notes')
+                        Textarea::make('relation_notes')
                             ->label('Add any extra information about how/why this metric is linked to this farming system.')
                             ->hint('i.e. Is the metric particularly well-suited to this type of system? Or ill-suited? Is the metric often used when studying this type of system?'),
                     ]),

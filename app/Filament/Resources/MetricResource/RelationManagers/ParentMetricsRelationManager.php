@@ -2,17 +2,17 @@
 
 namespace App\Filament\Resources\MetricResource\RelationManagers;
 
-use Filament\Tables;
-use App\Models\Metric;
-use Filament\Resources\Form;
-use Filament\Resources\Table;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\TextInput;
 use App\Filament\Form\Components\Textarea;
-use Filament\Forms\Components\Actions\Action;
 use App\Filament\Table\Actions\AddDiscussionPointAction;
+use App\Models\Metric;
+use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Resources\Form;
 use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Resources\Table;
+use Filament\Tables;
 
 class ParentMetricsRelationManager extends RelationManager
 {
@@ -42,7 +42,7 @@ class ParentMetricsRelationManager extends RelationManager
                             ->inlineLabel()
                             ->disabled()
                     ]),
-                Textarea::make('notes')
+                Textarea::make('relation_notes')
                     ->label('Add any extra information about why this metric is a parent of the other'),
             ]);
     }
@@ -80,7 +80,7 @@ class ParentMetricsRelationManager extends RelationManager
                     )
                     ->form(fn(Tables\Actions\AttachAction $action): array => [
                         $action->getRecordSelect(),
-                        Textarea::make('notes')->label('Add any extra information about why this metric is a parent of the other'),
+                        Textarea::make('relation_notes')->label('Add any extra information about why this metric is a parent of the other'),
                     ])
             ])
             ->actions([

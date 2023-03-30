@@ -15,28 +15,28 @@ class MetricUser extends Model
     public function metrics(): BelongsToMany
     {
         return $this->belongsToMany(Metric::class, 'metric_metric_user')
-            ->withPivot('notes', 'type', 'id');
+            ->withPivot('relation_notes', 'type', 'id');
     }
 
     public function metricDecisionMakers(): BelongsToMany
     {
         return $this->belongsToMany(Metric::class,
             'metric_metric_user')
-            ->withPivot('notes', 'type', 'id')
+            ->withPivot('relation_notes', 'type', 'id')
             ->wherePivot('type', '=', 'decision maker');
     }
 
     public function metricCollectors(): BelongsToMany
     {
         return $this->belongsToMany(Metric::class, 'metric_metric_user')
-            ->withPivot('notes', 'type', 'id')
+            ->withPivot('relation_notes', 'type', 'id')
             ->wherePivot('type', '=', 'collector');
     }
 
     public function metricImpactedBy(): BelongsToMany
     {
         return $this->belongsToMany(Metric::class, 'metric_metric_user')
-            ->withPivot('notes', 'type', 'id')
+            ->withPivot('relation_notes', 'type', 'id')
             ->wherePivot('type', '=', 'impacted by');
     }
 

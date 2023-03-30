@@ -2,18 +2,18 @@
 
 namespace App\Filament\Resources\MetricResource\RelationManagers;
 
-use Filament\Tables;
-use App\Models\MetricUser;
-use Filament\Resources\Form;
-use Filament\Resources\Table;
-use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\TextInput;
 use App\Filament\Form\Components\Textarea;
-use Filament\Forms\Components\Actions\Action;
 use App\Filament\Table\Actions\AddDiscussionPointAction;
+use App\Models\MetricUser;
+use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Resources\Form;
 use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Resources\Table;
+use Filament\Tables;
 
 class ImpactedByRelationManager extends RelationManager
 {
@@ -47,7 +47,7 @@ class ImpactedByRelationManager extends RelationManager
                             ->inlineLabel()
                             ->disabled()
                     ]),
-                Textarea::make('notes')
+                Textarea::make('relation_notes')
                     ->label('Add any extra information about how/why this type of user is a "collector" of this metric.'),
                 Hidden::make('type')
                     ->default('impacted by'),
@@ -87,7 +87,7 @@ class ImpactedByRelationManager extends RelationManager
                         ->createOptionUsing(fn($data): string => MetricUser::create($data)->id))
                     ->form(fn(Tables\Actions\AttachAction $action): array => [
                         $action->getRecordSelect(),
-                        Textarea::make('notes')
+                        Textarea::make('relation_notes')
                             ->label('Add any extra information about how/why this type of user is "impacted" by this metric.'),
                         Hidden::make('type')
                             ->default('impacted by'),

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\MetricResource\RelationManagers;
 
+use Filament\Forms\Components\Section;
 use Filament\Tables;
 use App\Models\Metric;
 use Filament\Resources\Form;
@@ -32,9 +33,17 @@ class ComplimentaryMetricsRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                TextInput::make('title')
-                    ->required()
-                    ->maxLength(255),
+                Section::make('Complimentary Metric')
+                    ->schema([
+                        TextInput::make('title')
+                            ->inlineLabel()
+                            ->disabled(),
+                        Textarea::make('definition')
+                            ->inlineLabel()
+                            ->disabled()
+                    ]),
+                Textarea::make('relation_notes')
+                    ->label('Add any extra information about why this metric is associated to the other'),
             ]);
     }
 
@@ -71,7 +80,7 @@ class ComplimentaryMetricsRelationManager extends RelationManager
                     )
                     ->form(fn(Tables\Actions\AttachAction $action): array => [
                         $action->getRecordSelect(),
-                        Textarea::make('notes')
+                        Textarea::make('relation_notes')
                             ->label('Add any extra information about why this metric compliments the other'),
                     ])
             ])

@@ -2,18 +2,18 @@
 
 namespace App\Filament\Resources\MetricResource\RelationManagers;
 
-use Filament\Tables;
-use App\Models\Reference;
-use Filament\Resources\Form;
-use Filament\Resources\Table;
-use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\TextInput;
 use App\Filament\Form\Components\Textarea;
-use Filament\Forms\Components\Actions\Action;
 use App\Filament\Table\Actions\AddDiscussionPointAction;
+use App\Models\Reference;
+use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Resources\Form;
 use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Resources\Table;
+use Filament\Tables;
 
 class DataSourcesRelationManager extends RelationManager
 {
@@ -50,7 +50,7 @@ class DataSourcesRelationManager extends RelationManager
                             ->disabled(),
                     ]),
 
-                Textarea::make('notes')
+                Textarea::make('relation_notes')
                     ->label('Add any extra information about how this reference is a data source for the metric.'),
                 Hidden::make('reference_type')
                     ->default('data source')
@@ -89,7 +89,7 @@ class DataSourcesRelationManager extends RelationManager
                         ->createOptionUsing(fn($data): string => Reference::create($data)->id))
                     ->form(fn(Tables\Actions\AttachAction $action): array => [
                         $action->getRecordSelect(),
-                        Textarea::make('Notes')
+                        Textarea::make('relation_notes')
                             ->label('Add any extra information about how this reference relates to the metric'),
                         Hidden::make('reference_type')
                             ->default('data source')

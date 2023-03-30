@@ -21,13 +21,13 @@ class Metric extends Model
     public function childMetrics(): BelongsToMany
     {
         return $this->belongsToMany(__CLASS__, 'metric_parent_child', 'parent_id', 'child_id')
-            ->withPivot('notes');
+            ->withPivot('relation_notes');
     }
 
     public function inverseChildMetrics(): BelongsToMany
     {
         return $this->belongsToMany(__CLASS__, 'metric_parent_child', 'child_id', 'parent_id')
-            ->withPivot('notes');
+            ->withPivot('relation_notes');
     }
 
     // ******************* 1.g COMPLIMENTARY METRICS ******************
@@ -35,47 +35,47 @@ class Metric extends Model
     public function complimentaryMetrics(): BelongsToMany
     {
         return $this->belongsToMany(__CLASS__, 'metric_metric', 'metric_id', 'related_id')
-            ->withPivot('notes');
+            ->withPivot('relation_notes');
     }
 
     public function inverseComplimentaryMetrics(): BelongsToMany
     {
         return $this->belongsToMany(__CLASS__, 'metric_metric', 'related_id', 'metric_id')
-            ->withPivot('notes');
+            ->withPivot('relation_notes');
     }
 
     // *************** 1.h PARENT METRICS ***************
     public function parentMetrics(): BelongsToMany
     {
         return $this->belongsToMany(__CLASS__, 'metric_parent_child', 'child_id', 'parent_id')
-            ->withPivot('notes');
+            ->withPivot('relation_notes');
     }
 
     public function inverseParentMetrics(): BelongsToMany
     {
         return $this->belongsToMany(__CLASS__, 'metric_parent_child', 'parent_id', 'child_id')
-            ->withPivot('notes');
+            ->withPivot('relation_notes');
     }
 
     // 0.c Topics
     public function topics(): BelongsToMany
     {
         return $this->belongsToMany(Topic::class, 'metric_topic')
-            ->withPivot('notes');
+            ->withPivot('relation_notes');
     }
 
     // 0.d Dimensions
     public function dimensions(): BelongsToMany
     {
         return $this->belongsToMany(Dimension::class, 'metric_dimension')
-            ->withPivot('notes');
+            ->withPivot('relation_notes');
     }
 
     // 0.e Sub-dimensions
     public function subDimensions(): BelongsToMany
     {
         return $this->belongsToMany(SubDimension::class, 'metric_sub_dimension')
-            ->withPivot('notes');
+            ->withPivot('relation_notes');
     }
 
     // 0.f Scales (decisions)
@@ -83,7 +83,7 @@ class Metric extends Model
     {
         return $this->belongsToMany(Scale::class, 'metric_scale')
             ->wherePivot('type', '=', 'decision making')
-            ->withPivot('notes', 'commonly_used', 'type');
+            ->withPivot('relation_notes', 'commonly_used', 'type');
     }
 
     // 1.c Scale - measurement
@@ -91,7 +91,7 @@ class Metric extends Model
     {
         return $this->belongsToMany(Scale::class, 'metric_scale')
             ->wherePivot('type', '=', 'measurement')
-            ->withPivot('notes', 'commonly_used', 'type');
+            ->withPivot('relation_notes', 'commonly_used', 'type');
 
     }
 
@@ -100,35 +100,35 @@ class Metric extends Model
     {
         return $this->belongsToMany(Scale::class, 'metric_scale')
             ->wherePivot('type', '=', 'reporting')
-            ->withPivot('notes', 'type', 'commonly_used');
+            ->withPivot('relation_notes', 'type', 'commonly_used');
     }
 
     // 0.g Tools
     public function tools(): BelongsToMany
     {
         return $this->belongsToMany(Tool::class, 'metric_tool')
-            ->withPivot('notes');
+            ->withPivot('relation_notes');
     }
 
     // 0.h Frameworks
     public function frameworks(): BelongsToMany
     {
         return $this->belongsToMany(Framework::class, 'metric_framework')
-            ->withPivot('notes');
+            ->withPivot('relation_notes');
     }
 
     // 1.d Units of measure
     public function units(): BelongsToMany
     {
         return $this->belongsToMany(Unit::class, 'metric_unit')
-            ->withPivot('notes');
+            ->withPivot('relation_notes');
     }
 
     // 3. - Metric  Properties
     public function properties(): MorphToMany
     {
         return $this->morphToMany(Property::class, 'linked', 'property_links')
-            ->withPivot('notes');
+            ->withPivot('relation_notes');
     }
 
     // 4.a Collection methods
@@ -143,21 +143,21 @@ class Metric extends Model
     {
         return $this->belongsToMany(MetricUser::class)
             ->wherePivot('type', '=', 'collector')
-            ->withPivot('notes', 'type', 'id');
+            ->withPivot('relation_notes', 'type', 'id');
     }
 
     public function decisionMakers(): BelongsToMany
     {
         return $this->belongsToMany(MetricUser::class)
             ->wherePivot('type', '=', 'decision maker')
-            ->withPivot('notes', 'type', 'id');
+            ->withPivot('relation_notes', 'type', 'id');
     }
 
     public function impactedBy(): BelongsToMany
     {
         return $this->belongsToMany(MetricUser::class)
             ->wherePivot('type', '=', 'impacted by')
-            ->withPivot('notes', 'type', 'id');
+            ->withPivot('relation_notes', 'type', 'id');
     }
 
     // ************************************** //
@@ -178,14 +178,14 @@ class Metric extends Model
     public function farmingSystems(): BelongsToMany
     {
         return $this->belongsToMany(FarmingSystem::class, 'metric_farming_system')
-            ->withPivot('notes');
+            ->withPivot('relation_notes');
     }
 
     // 6.c Geographies
     public function geographies(): BelongsToMany
     {
         return $this->belongsToMany(Geography::class, 'metric_geography')
-            ->withPivot('notes');
+            ->withPivot('relation_notes');
     }
 
     // 4.c Data sources
@@ -193,7 +193,7 @@ class Metric extends Model
     {
         return $this->morphToMany(Reference::class, 'referencable')
             ->wherePivot('reference_type', '=', 'data source')
-        ->withPivot('reference_type', 'notes', 'id');
+        ->withPivot('reference_type', 'relation_notes', 'id');
     }
 
     // 5.d. Computation guidance
@@ -201,7 +201,7 @@ class Metric extends Model
     {
         return $this->morphToMany(Reference::class, 'referencable')
             ->wherePivot('reference_type', '=', 'computation guidance')
-            ->withPivot('reference_type', 'notes', 'id');
+            ->withPivot('reference_type', 'relation_notes', 'id');
     }
 
     // 7. References
@@ -209,7 +209,7 @@ class Metric extends Model
     {
         return $this->morphToMany(Reference::class, 'referencable')
             ->wherePivot('reference_type',  '=' , 'reference')
-            ->withPivot('reference_type', 'notes', 'id');
+            ->withPivot('reference_type', 'relation_notes', 'id');
 
     }
 
