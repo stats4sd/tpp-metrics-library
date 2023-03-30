@@ -5,6 +5,7 @@ namespace App\Filament\Resources\MetricResource\RelationManagers;
 use App\Filament\Form\Components\Textarea;
 use App\Filament\Table\Actions\AddDiscussionPointAction;
 use App\Models\MetricUser;
+use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
@@ -46,7 +47,7 @@ class ImpactedByRelationManager extends RelationManager
                             ->inlineLabel()
                             ->disabled()
                     ]),
-                Textarea::make('notes')
+                Textarea::make('relation_notes')
                     ->label('Add any extra information about how/why this type of user is a "collector" of this metric.'),
                 Hidden::make('type')
                     ->default('impacted by'),
@@ -57,7 +58,8 @@ class ImpactedByRelationManager extends RelationManager
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name'),
+                Tables\Columns\TextColumn::make('name')
+                    ->label('Category of user'),
             ])
             ->filters([
                 //
@@ -81,11 +83,12 @@ class ImpactedByRelationManager extends RelationManager
                                 ->label('Notes about this type of user')
                                 ->hint('Not specifically about why they are linked to this metric'),
                         ])
+                        ->createOptionAction(fn(Action $action) => $action->modalHeading('Create User Entry'))
                         ->createOptionUsing(fn($data): string => MetricUser::create($data)->id))
                     ->form(fn(Tables\Actions\AttachAction $action): array => [
                         $action->getRecordSelect(),
-                        Textarea::make('notes')
-                            ->label('Add any extra information about how/why this type of user is a "collector" of this metric.'),
+                        Textarea::make('relation_notes')
+                            ->label('Add any extra information about how/why this type of user is "impacted" by this metric.'),
                         Hidden::make('type')
                             ->default('impacted by'),
                     ])

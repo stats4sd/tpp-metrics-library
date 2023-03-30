@@ -23,6 +23,6 @@ class Unit extends Model
     public function metrics(): BelongsToMany
     {
         return $this->belongsToMany(Metric::class, 'metric_unit')
-            ->withPivot('notes');
+            ->withPivot('relation_notes');
     }
 }

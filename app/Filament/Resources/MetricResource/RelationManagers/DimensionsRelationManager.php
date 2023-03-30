@@ -4,6 +4,7 @@ namespace App\Filament\Resources\MetricResource\RelationManagers;
 
 use App\Filament\Form\Components\Textarea;
 use App\Filament\Table\Actions\AddDiscussionPointAction;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Form;
@@ -11,6 +12,9 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Table;
 use Filament\Tables;
 
+// ***********************
+// NOTE - CURRENTLY UNUSED
+// ***********************
 class DimensionsRelationManager extends RelationManager
 {
     protected static string $relationship = 'dimensions';
@@ -36,9 +40,17 @@ class DimensionsRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                TextInput::make('name')
-                    ->required()
-                    ->maxLength(255),
+                Section::make('Dimension')
+                    ->schema([
+                        TextInput::make('name')
+                            ->inlineLabel()
+                            ->disabled(),
+                        Textarea::make('definition')
+                            ->inlineLabel()
+                            ->disabled()
+                    ]),
+                Textarea::make('relation_notes')
+                    ->label('Add any extra information about why this metric is associated to the other'),
             ]);
     }
 
@@ -67,7 +79,7 @@ class DimensionsRelationManager extends RelationManager
                     )
                     ->form(fn(Tables\Actions\AttachAction $action): array => [
                         $action->getRecordSelect(),
-                        Textarea::make('notes')
+                        Textarea::make('relation_notes')
                             ->hint('Add any extra information about how/why this metric is linked to this dimension.'),
                     ]),
             ])

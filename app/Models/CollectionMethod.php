@@ -21,7 +21,7 @@ class CollectionMethod extends Model
     public function properties(): MorphToMany
     {
         return $this->morphToMany(Property::class, 'property_link')
-            ->withPivot('notes');
+            ->withPivot('relation_notes');
     }
 
     // TODO: include references

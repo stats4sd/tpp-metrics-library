@@ -4,9 +4,8 @@ namespace App\Filament\Resources\MetricResource\RelationManagers;
 
 use App\Filament\Form\Components\Textarea;
 use App\Filament\Table\Actions\AddDiscussionPointAction;
-use App\Models\MetricUser;
+use App\Models\Metric;
 use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -15,22 +14,18 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Table;
 use Filament\Tables;
 
-class CollectorsRelationManager extends RelationManager
+class ChildMetricsRelationManager extends RelationManager
 {
-    protected static string $relationship = 'collectors';
-    protected static ?string $inverseRelationship = 'metricCollectors';
-    protected static ?string $recordTitleAttribute = 'name';
+    protected static string $relationship = 'childMetrics';
+    protected static ?string $inverseRelationship = 'parentMetrics';
 
-    protected static ?string $title = "6.a.a. Collectors";
+    protected static ?string $recordTitleAttribute = 'title';
+
+    protected static ?string $title = "1.f. Derived / Related Metrics";
 
     public function getTableDescription(): string
     {
-        return 'What sort of users would be involved in collecting the data to calculate this metric?';
-    }
-
-    public function isTablePaginationEnabled(): bool
-    {
-        return false;
+        return "Other metrics that are derived from or closely related to this metric. For example, they could be metrics that measure a subset of what this metric is measuring, or a more context-specific version of this metric.";
     }
 
     public static function form(Form $form): Form
@@ -38,9 +33,9 @@ class CollectorsRelationManager extends RelationManager
         return $form
             ->columns(1)
             ->schema([
-                Section::make('User Type')
+                Section::make('Derived / Related Metric')
                     ->schema([
-                        TextInput::make('name')
+                        TextInput::make('title')
                             ->inlineLabel()
                             ->disabled(),
                         Textarea::make('definition')
@@ -48,9 +43,7 @@ class CollectorsRelationManager extends RelationManager
                             ->disabled()
                     ]),
                 Textarea::make('relation_notes')
-                    ->label('Add any extra information about how/why this type of user is a "collector" of this metric.'),
-                Hidden::make('type')
-                    ->default('collector')
+                    ->label('Add any extra information about why this metric is associated to the other'),
             ]);
     }
 
@@ -58,45 +51,40 @@ class CollectorsRelationManager extends RelationManager
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')
-                    ->label('Category of user')
+                Tables\Columns\TextColumn::make('title')
+                    ->label('Metric'),
             ])
             ->filters([
                 //
             ])
             ->headerActions([
                 Tables\Actions\AttachAction::make()
-                    ->label('Attach')
+                    ->label('Attach Metric')
                     ->preloadRecordSelect()
                     ->recordSelect(fn(Select $select) => $select
                         ->createOptionForm([
-                            TextInput::make('name')
+                            TextInput::make('title')
                                 ->inlineLabel()
                                 ->required()
                                 ->maxLength(255)
-                                ->label('Type of user'),
+                                ->label('Name of metric'),
                             Textarea::make('definition')
-                                ->inlineLabel()
-                                ->label('Definition of this user type'),
+                                ->inlineLabel(),
                             Textarea::make('notes')
                                 ->inlineLabel()
-                                ->label('Notes about this type of user')
-                                ->hint('Not specifically about why they are linked to this metric'),
+                                ->label('Notes about this metric')
+                                ->hint('This is about the metric entry itself, not about the link to the current metric.'),
                         ])
-                        ->createOptionAction(fn(Action $action) => $action->modalHeading('Create User Entry'))
-                        ->createOptionUsing(fn($data): string => MetricUser::create($data)->id)
+                        ->createOptionAction(fn(Action $action) => $action->modalHeading('Create Metric Entry'))
+                        ->createOptionUsing(fn($data): string => Metric::create($data)->id)
                     )
                     ->form(fn(Tables\Actions\AttachAction $action): array => [
                         $action->getRecordSelect(),
-                        Textarea::make('relation_notes')
-                            ->label('Add any extra information about how/why this type of user is a "collector" of this metric.'),
-                        Hidden::make('type')
-                            ->default('collector')
-                    ]),
+                        Textarea::make('relation_notes')->label('Add any extra information about why this metric is associated to the other'),
+                    ])
             ])
             ->actions([
-                Tables\Actions\EditAction::make()
-                ->modalHeading('Edit link between user type and metric'),
+                Tables\Actions\EditAction::make(),
                 Tables\Actions\DetachAction::make(),
                 AddDiscussionPointAction::make(),
             ])

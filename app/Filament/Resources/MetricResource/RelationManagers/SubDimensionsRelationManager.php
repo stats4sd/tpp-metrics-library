@@ -9,6 +9,9 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Table;
 use Filament\Tables;
 
+// ***********************
+// NOTE - CURRENTLY UNUSED
+// ***********************
 class SubDimensionsRelationManager extends RelationManager
 {
     protected static string $relationship = 'subDimensions';

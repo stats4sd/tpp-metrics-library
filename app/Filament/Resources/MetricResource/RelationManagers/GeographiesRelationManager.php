@@ -36,7 +36,7 @@ class GeographiesRelationManager extends RelationManager
                             ->inlineLabel()
                             ->disabled(),
                     ]),
-                Textarea::make('notes')
+                Textarea::make('relation_notes')
                     ->inlineLabel()
                     ->label('Add any extra information about how/why this metric is linked to this farming system.')
                     ->hint('i.e. Is the metric particularly well-suited to this type of system? Or ill-suited? Is the metric often used when studying this type of system?'),
@@ -47,7 +47,8 @@ class GeographiesRelationManager extends RelationManager
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name'),
+                Tables\Columns\TextColumn::make('name')
+                    ->label('Geography')
             ])
             ->filters([
                 //
@@ -56,7 +57,6 @@ class GeographiesRelationManager extends RelationManager
                 Tables\Actions\AttachAction::make('Attach')
                     ->preloadRecordSelect()
                     ->recordSelect(fn(Select $select) => $select
-                        ->multiple()
                         ->createOptionForm([
                             TextInput::make('name')
                                 ->required()
@@ -69,13 +69,13 @@ class GeographiesRelationManager extends RelationManager
                                 ->label('Notes about this geography')
                                 ->hint('This is about the geographical entry itself, not about the link to the current metric.'),
                         ])
-                        ->createOptionAction(fn(Action $action) => $action->modalHeading('Create Scale Entry'))
+                        ->createOptionAction(fn(Action $action) => $action->modalHeading('Create Geography Entry'))
                         ->createOptionUsing(fn(array $data) => Geography::create($data)->id)
                     )
                     ->form(fn(Tables\Actions\AttachAction $action): array => [
                         $action->getRecordSelect()
                             ->autofocus(false),
-                        Textarea::make('notes')
+                        Textarea::make('relation_notes')
                             ->label('Add any extra information about how/why this metric is linked to this geography')
                             ->hint('i.e. Is the metric especially well suited for use in this geography? (Or ill-suited?) How widely used in this geography is the metric?'),
                     ]),
