@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('references', function (Blueprint $table) {
-            $table->integer('doi')->nullable()->after('url');
+            $table->string('doi')->nullable()->after('url');
         });
     }
 
