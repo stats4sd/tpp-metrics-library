@@ -27,6 +27,24 @@ class Reference extends Model
         'referencable');
     }
 
+    public function dimensions(): MorphToMany
+    {
+        return $this->morphedByMany(Dimension::class, 'referencable');
+    }
 
+    public function methods(): MorphToMany
+    {
+        return $this->morphedByMany(Method::class, 'referencable');
+    }
+
+    public function geographies(): MorphToMany
+    {
+        return $this->morphedByMany(Geography::class, 'referencable');
+    }
+
+    public function scales(): MorphToMany
+    {
+        return $this->morphedByMany(Scale::class, 'referencable');
+    }
 
 }
