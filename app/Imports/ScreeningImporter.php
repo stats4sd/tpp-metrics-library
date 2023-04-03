@@ -2,8 +2,14 @@
 
 namespace App\Imports;
 
-use Illuminate\Support\Collection;
+use App\Models\Scale;
+use App\Models\Method;
+use App\Models\Metric;
+use App\Models\Dimension;
+use App\Models\Geography;
+use App\Models\Reference;
 use Illuminate\Support\Str;
+use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 
@@ -14,50 +20,82 @@ class ScreeningImporter implements ToCollection, WithHeadingRow
     */
     public function collection(Collection $collection)
     {
-        dump('hi from importer');
-
-        $metrics = collect([]);
 
         foreach($collection as $row) {
 
+            $reference = Reference::firstWhere('rayyan_key', $row['key']);
 
-            if($row['decision'] !== 'include') {
-                continue;
+            if($row['decision'] === 'exclude') {
+
+                $reference->delete();
+
             }
 
-            $str = Str::of($row['corrected'])
-                ->split('/[\n\r]/');
+            elseif($row['decision'] === 'include') {
 
-            foreach($str as $line) {
-                $line = Str::of($line)
-                    ->trim();
+                $str = Str::of($row['corrected'])
+                    ->split('/[\n\r]/');
 
-                $type = $line->before(":");
-                $items = $line->after(':');
+                foreach($str as $line) {
 
-                dump('type: ' . $type);
-               // dump('items: ' . $items);
+                    $line = Str::of($line)
+                        ->trim();
 
-                if($type->toString() === "Metrics") {
+                    $type = $line->before(":");
+                    $items = $line->after(':');
+
                     $items = collect(str_getcsv($items));
-                    dump($items);
 
                     $items = $items->map(fn($item) => Str::of($item)
                         ->trim()
-                        //->lower()  (3961 when all lowercase; 4188 when not; 
                         ->toString())
                         ->filter(fn($item) => $item !== '');
 
-                    dump($items);
-                    $metrics = $metrics->merge($items);
+                    foreach ($items as $item) {
+
+                        if($type->toString() === "Metrics") {
+
+                            $metric = Metric::updateOrCreate(['title' => $item]);
+                            $reference->metrics()->syncWithoutDetaching($metric->id, ['reference_type' => 'reference']);
+
+                        }
+
+                        elseif($type->toString()=== "Dimensions") {
+
+                            $dimension = Dimension::updateOrCreate(['name' => $item]);
+                            $reference->dimensions()->syncWithoutDetaching($dimension->id, ['reference_type' => 'reference']);
+
+                        }
+    
+                        elseif($type->toString()=== "Methods") {
+    
+                            $method = Method::updateOrCreate(['name' => $item]);
+                            $reference->methods()->syncWithoutDetaching($method->id, ['reference_type' => 'reference']);
+
+                        }
+    
+                        elseif($type->toString()=== "Country/region") {
+    
+                            $geography = Geography::updateOrCreate(['name' => $item]);
+                            $reference->geographies()->syncWithoutDetaching($geography->id, ['reference_type' => 'reference']);
+
+                        }
+    
+                        elseif($type->toString()=== "Scale" || $type->toString()===  "Level") {
+    
+                            $scale = Scale::updateOrCreate(['name' => $item]);
+                            $reference->scales()->syncWithoutDetaching($scale->id, ['reference_type' => 'reference']);
+
+                        }
+
+                    }   
+
                 }
+
             }
+
         }
 
-        dump($metrics->unique());
-        dump('########################');
-        dump('Mertic Count: ' . $metrics->unique()->count());
-        dump('########################');
-
     }
+
 }
