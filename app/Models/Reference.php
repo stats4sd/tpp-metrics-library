@@ -2,9 +2,12 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Referencable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Reference extends Model
 {
@@ -45,6 +48,11 @@ class Reference extends Model
     public function scales(): MorphToMany
     {
         return $this->morphedByMany(Scale::class, 'referencable');
+    }
+
+    public function referencables(): HasMany
+    {
+        return $this->hasMany(Referencable::class);
     }
 
 }

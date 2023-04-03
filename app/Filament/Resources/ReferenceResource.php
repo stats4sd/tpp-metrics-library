@@ -9,6 +9,7 @@ use Filament\Resources\Form;
 use Filament\Resources\Table;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Grid;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
@@ -45,7 +46,9 @@ class ReferenceResource extends Resource
                 TextColumn::make('notes'),
             ])
             ->filters([
-                //
+                Filter::make('is_referenced')
+                    ->query(fn(Builder $query): Builder => $query->has('referencables'))
+                    ->default('is_referenced')
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
