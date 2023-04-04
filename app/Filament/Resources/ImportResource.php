@@ -32,7 +32,7 @@ class ImportResource extends Resource
             ->schema([
                 Grid::make(1)
                 ->schema([
-                    FileUpload::make('file')->required()->disabled('edit'),
+                    FileUpload::make('file')->required()->disabledOn('edit'),
                     Textarea::make('description'),
                     Hidden::make('user_id')
                     ->default(Auth::id())
