@@ -32,7 +32,7 @@ class ImportResource extends Resource
             ->schema([
                 Grid::make(1)
                 ->schema([
-                    FileUpload::make('file')->required()->disabledOn('edit'),
+                    FileUpload::make('file')->required()->disabledOn('edit')->disk('screening-imports')->preserveFilenames(),
                     Textarea::make('description'),
                     Hidden::make('user_id')
                     ->default(Auth::id())
@@ -47,7 +47,7 @@ class ImportResource extends Resource
                 TextColumn::make('file'),
                 TextColumn::make('description'),
                 TextColumn::make('user.name')->label('Imported by'),
-                TextColumn::make('created_at')->label('Imported at'),
+                TextColumn::make('created_at')->label('Imported at')->sortable(),
             ])
             ->filters([
                 //
