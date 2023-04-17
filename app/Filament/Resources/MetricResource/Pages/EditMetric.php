@@ -56,7 +56,7 @@ class EditMetric extends EditRecord
 
             // handle free text notes fields
             if ($property->free_text) {
-                $data['property_notes_' . $property->id] = $property->pivot->notes ?? null;
+                $data['property_notes_' . $property->id] = $property->pivot->relation_notes ?? null;
 
             }
 
@@ -149,7 +149,7 @@ class EditMetric extends EditRecord
 
             // handle free-text by putting the free-text into the 'notes' of the property_link table
             $record->properties()->updateExistingPivot($propertyId, [
-                'notes' => $value
+                'relation_notes' => $value
             ]);
         }
 
