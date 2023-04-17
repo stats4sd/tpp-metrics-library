@@ -20,7 +20,7 @@ class CollectionMethod extends Model
 
     public function properties(): MorphToMany
     {
-        return $this->morphToMany(Property::class, 'property_link')
+        return $this->morphToMany(Property::class, 'linked', 'property_links')
             ->withPivot('relation_notes');
     }
 

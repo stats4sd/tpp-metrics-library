@@ -27,7 +27,8 @@ class Property extends Model
 
     public function collectionMethods(): MorphToMany
     {
-        return $this->morphedByMany(CollectionMethod::class, 'property_link')
+        return $this->morphedByMany(CollectionMethod::class, 'linked', 'property_links')
+            ->using(PropertyLink::class)
             ->withPivot('relation_notes');
     }
 
