@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Filament\Facades\Filament;
 use Illuminate\Support\ServiceProvider;
+use App\Filament\Resources\FlagResource;
 use App\Filament\Resources\ToolResource;
 use Filament\Navigation\NavigationGroup;
 use App\Filament\Resources\ScaleResource;
@@ -63,6 +64,7 @@ class AppServiceProvider extends ServiceProvider
                     NavigationGroup::make('Review Tools')
                         ->items([
                             ...DiscussionPointResource::getNavigationItems(),
+                            ...FlagResource::getNavigationItems(),
                             ...FeedbackResource::getNavigationItems(),
                         ]),
                     NavigationGroup::make('Topics')
