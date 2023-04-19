@@ -43,6 +43,7 @@ use App\Filament\Resources\MetricResource\RelationManagers\ScaleDecisionRelation
 use App\Filament\Resources\MetricResource\RelationManagers\FarmingSystemsRelationManager;
 use App\Filament\Resources\MetricResource\RelationManagers\ScaleReportingRelationManager;
 use App\Filament\Resources\MetricResource\RelationManagers\ScaleMeasurementRelationManager;
+use App\Filament\Resources\MetricResource\RelationManagers\CollectionMethodsRelationManager;
 use App\Filament\Resources\MetricResource\RelationManagers\ComputationGuidanceRelationManager;
 use App\Filament\Resources\MetricResource\RelationManagers\ComplimentaryMetricsRelationManager;
 
@@ -309,9 +310,10 @@ class MetricResource extends Resource
             ]),
 
 
-            RelationGroup::make('Tools and Frameworks', [
+            RelationGroup::make('Tools, Methods, Frameworks', [
                 ToolsRelationManager::class,
                 FrameworksRelationManager::class,
+                CollectionMethodsRelationManager::class,
                 UnitsRelationManager::class,
             ]),
 

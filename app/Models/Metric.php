@@ -121,9 +121,10 @@ class Metric extends Model
     }
 
     // 4.a Collection methods
-    public function collectionMethods(): HasMany
+    public function collectionMethods(): BelongsToMany
     {
-        return $this->hasMany(CollectionMethod::class);
+        return $this->belongsToMany(CollectionMethod::class, 'metric_collection_method')
+            ->withPivot('relation_notes');
 
     }
 

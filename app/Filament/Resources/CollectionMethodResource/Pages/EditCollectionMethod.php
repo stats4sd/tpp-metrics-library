@@ -1,37 +1,18 @@
 <?php
 
-namespace App\Filament\Resources\MetricResource\Pages;
+namespace App\Filament\Resources\CollectionMethodResource\Pages;
 
-use App\Filament\Resources\MetricResource;
-use App\Models\Metric;
 use App\Models\Property;
-use App\Models\PropertyLink;
 use Filament\Pages\Actions;
+use App\Models\PropertyLink;
+use App\Models\CollectionMethod;
 use Filament\Resources\Pages\EditRecord;
+use App\Filament\Resources\CollectionMethodResource;
 use Illuminate\Database\Eloquent\Model;
 
-class EditMetric extends EditRecord
+class EditCollectionMethod extends EditRecord
 {
-    protected static string $resource = MetricResource::class;
-
-    public function getTitle(): string
-    {
-        return "Reviewing {$this->getRecord()?->title}";
-    }
-
-    public function getSubheading(): string
-    {
-        if ($metric = $this->getRecord()) {
-            return "Last Updated on {$metric->updated_at}";
-        }
-
-        return '';
-    }
-
-    public function getFormTabLabel(): string
-    {
-        return 'Metric';
-    }
+    protected static string $resource = CollectionMethodResource::class;
 
     protected function getActions(): array
     {
@@ -40,17 +21,12 @@ class EditMetric extends EditRecord
         ];
     }
 
-    public function hasCombinedRelationManagerTabsWithForm(): bool
-    {
-        return true;
-    }
-
     protected function mutateFormDataBeforeFill(array $data): array
     {
         // get property information
 
-        $metric = $this->getRecord();
-        $properties = $metric->properties;
+        $collectionMethod = $this->getRecord();
+        $properties = $collectionMethod->properties;
 
         foreach ($properties as $property) {
 
@@ -66,8 +42,8 @@ class EditMetric extends EditRecord
                 if ($property->select_multiple) {
                     $data['property_' . $property->id] = $property
                         ->propertyLinks
-                        ->where('linked_id', $metric->id)
-                        ->where('linked_type', Metric::class)
+                        ->where('linked_id', $collectionMethod->id)
+                        ->where('linked_type', CollectionMethod::class)
                         ->first()
                         ?->propertyOptions
                         ->pluck('id')
@@ -80,8 +56,8 @@ class EditMetric extends EditRecord
 
                 $data['property_' . $property->id] = $property
                         ->propertyLinks
-                        ->where('linked_id', $metric->id)
-                        ->where('linked_type', Metric::class)
+                        ->where('linked_id', $collectionMethod->id)
+                        ->where('linked_type', CollectionMethod::class)
                         ->first()
                         ?->propertyOptions
                         // there should be only one (or none)
@@ -95,28 +71,28 @@ class EditMetric extends EditRecord
 
     }
 
-    public function handleRecordUpdate(Metric|Model $record, array $data): Model
+    public function handleRecordUpdate(CollectionMethod|Model $record, array $data): Model
     {
-        $propertiesOfMetrics = Property::where('default_type', Metric::class)->get();
+        $propertiesOfCollectionMethods = Property::where('default_type', CollectionMethod::class)->get();
 
-        $propertyKeys = $propertiesOfMetrics->map(fn($prop) => 'property_' . $prop->id)->toArray();
-        $propertyNotesKeys = $propertiesOfMetrics->map(fn($prop) => 'property_notes_' . $prop->id)->toArray();
+        $propertyKeys = $propertiesOfCollectionMethods->map(fn($prop) => 'property_' . $prop->id)->toArray();
+        $propertyNotesKeys = $propertiesOfCollectionMethods->map(fn($prop) => 'property_notes_' . $prop->id)->toArray();
 
-        $metricData = collect($data)->except(array_merge($propertyKeys, $propertyNotesKeys))->toArray();
+        $collectionMethodData = collect($data)->except(array_merge($propertyKeys, $propertyNotesKeys))->toArray();
 
         $propertyData = collect($data)->only($propertyKeys);
         $propertyNotesData = collect($data)->only($propertyNotesKeys);
 
 
-        // update metric with metric-level data
-        $record->update($metricData);
+        // update collection method with collection method-level data
+        $record->update($collectionMethodData);
 
         // handle propertydata
         $propertyData = collect($data)->only($propertyKeys);
 
-        // For the next thing to work, we need to confirm that all the metric properties are indeed linked to the metric;
+        // For the next thing to work, we need to confirm that all the collection method properties are indeed linked to the collection method;
 
-        $record->properties()->syncWithoutDetaching($propertiesOfMetrics->pluck('id')->toArray());
+        $record->properties()->syncWithoutDetaching($propertiesOfCollectionMethods->pluck('id')->toArray());
 
         // go through and add any prop values from the creation form (if they exist)
         foreach ($propertyData as $key => $value) {
@@ -125,7 +101,7 @@ class EditMetric extends EditRecord
 
             $link = PropertyLink::where('property_id', $propertyId)
                 ->where('linked_id', $record->id)
-                ->where('linked_type', Metric::class)
+                ->where('linked_type', CollectionMethod::class)
                 ->first();
 
             // handle select multiples and select_ones by ensuring Value is an array
@@ -144,7 +120,7 @@ class EditMetric extends EditRecord
 
             $link = PropertyLink::where('property_id', $propertyId)
                 ->where('linked_id', $record->id)
-                ->where('linked_type', Metric::class)
+                ->where('linked_type', CollectionMethod::class)
                 ->first();
 
             // handle free-text by putting the free-text into the 'notes' of the property_link table
@@ -155,4 +131,5 @@ class EditMetric extends EditRecord
 
         return $record;
     }
+
 }

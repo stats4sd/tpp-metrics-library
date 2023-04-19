@@ -24,6 +24,7 @@ use App\Filament\Resources\SubDimensionResource;
 use App\Filament\Resources\FarmingSystemResource;
 use App\Filament\Resources\MetricPropertyResource;
 use App\Filament\Resources\DiscussionPointResource;
+use App\Filament\Resources\CollectionMethodResource;
 use Phpsa\FilamentAuthentication\Resources\RoleResource;
 use Phpsa\FilamentAuthentication\Resources\UserResource;
 use Phpsa\FilamentAuthentication\Resources\PermissionResource;
@@ -79,8 +80,9 @@ class AppServiceProvider extends ServiceProvider
                         ]),
                     NavigationGroup::make('Tools, Methods + Frameworks')
                         ->items([
-                            ...FrameworkResource::getNavigationItems(),
                             ...ToolResource::getNavigationItems(),
+                            ...CollectionMethodResource::getNavigationItems(),
+                            ...FrameworkResource::getNavigationItems(),
                         ]),
                     NavigationGroup::make('Systems and Geographies')
                         ->items([
