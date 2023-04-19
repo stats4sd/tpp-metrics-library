@@ -3,9 +3,10 @@
 namespace App\Models;
 
 use Carbon\Carbon;
+use App\Models\Flag;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class DiscussionPoint extends Model
 {
@@ -58,5 +59,9 @@ class DiscussionPoint extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function flag(): BelongsTo
+    {
+        return $this->belongsTo(Flag::class);
+    }
 
 }
