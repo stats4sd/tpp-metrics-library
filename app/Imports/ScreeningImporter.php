@@ -2,14 +2,13 @@
 
 namespace App\Imports;
 
-use App\Models\Scale;
-use App\Models\Method;
-use App\Models\Metric;
 use App\Models\Dimension;
 use App\Models\Geography;
+use App\Models\Metric;
 use App\Models\Reference;
-use Illuminate\Support\Str;
+use App\Models\Scale;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 
@@ -56,39 +55,40 @@ class ScreeningImporter implements ToCollection, WithHeadingRow
                         if($type->toString() === "Metrics") {
 
                             $metric = Metric::updateOrCreate(['title' => $item]);
-                            $reference->metrics()->syncWithoutDetaching($metric->id, ['reference_type' => 'reference']);
+                            $reference->metrics()->syncWithoutDetaching([$metric->id => ['reference_type' => 'reference']]);
 
                         }
 
                         elseif($type->toString()=== "Dimensions") {
 
                             $dimension = Dimension::updateOrCreate(['name' => $item]);
-                            $reference->dimensions()->syncWithoutDetaching($dimension->id, ['reference_type' => 'reference']);
+                            $reference->dimensions()->syncWithoutDetaching([$dimension->id => ['reference_type' => 'reference']]);
 
                         }
-    
-                        elseif($type->toString()=== "Methods") {
-    
-                            $method = Method::updateOrCreate(['name' => $item]);
-                            $reference->methods()->syncWithoutDetaching($method->id, ['reference_type' => 'reference']);
 
-                        }
-    
+//                        elseif($type->toString()=== "Methods") {
+//
+//
+////                            $method = Method::updateOrCreate(['name' => $item]);
+////                            $reference->methods()->syncWithoutDetaching([$method->id => ['reference_type' => 'reference']]);
+//
+//                        }
+
                         elseif($type->toString()=== "Country/region") {
-    
+
                             $geography = Geography::updateOrCreate(['name' => $item]);
-                            $reference->geographies()->syncWithoutDetaching($geography->id, ['reference_type' => 'reference']);
+                            $reference->geographies()->syncWithoutDetaching([$geography->id => ['reference_type' => 'reference']]);
 
                         }
-    
+
                         elseif($type->toString()=== "Scale" || $type->toString()===  "Level") {
-    
+
                             $scale = Scale::updateOrCreate(['name' => $item]);
-                            $reference->scales()->syncWithoutDetaching($scale->id, ['reference_type' => 'reference']);
+                            $reference->scales()->syncWithoutDetaching([$scale->id => ['reference_type' => 'reference']]);
 
                         }
 
-                    }   
+                    }
 
                 }
 
