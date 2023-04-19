@@ -8,10 +8,8 @@ use App\Models\Property;
 use Filament\Resources\Form;
 use Filament\Resources\Table;
 use App\Models\PropertyOption;
-use Pages\ViewCollectionMethod;
 use App\Models\CollectionMethod;
 use Filament\Resources\Resource;
-use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
@@ -128,7 +126,6 @@ class CollectionMethodResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
@@ -149,7 +146,6 @@ class CollectionMethodResource extends Resource
             'index' => Pages\ListCollectionMethods::route('/'),
             'create' => Pages\CreateCollectionMethod::route('/create'),
             'edit' => Pages\EditCollectionMethod::route('/{record}/edit'),
-            'view' => Pages\ViewCollectionMethod::route('/{record}'),
         ];
     }    
 }
