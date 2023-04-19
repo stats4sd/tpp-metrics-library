@@ -2,25 +2,22 @@
 
 namespace App\Filament\Resources;
 
-use Filament\Forms;
-use Filament\Tables;
-use App\Models\Property;
-use Filament\Resources\Form;
-use Filament\Resources\Table;
-use App\Models\PropertyOption;
-use App\Models\CollectionMethod;
-use Filament\Resources\Resource;
-use Filament\Forms\Components\Tabs;
-use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Tabs\Tab;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Forms\Components\TextInput;
-use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Form\Components\Textarea;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\CollectionMethodResource\Pages;
 use App\Filament\Resources\CollectionMethodResource\RelationManagers;
+use App\Models\CollectionMethod;
+use App\Models\Property;
+use App\Models\PropertyOption;
+use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\Tabs\Tab;
+use Filament\Forms\Components\TextInput;
+use Filament\Resources\Form;
+use Filament\Resources\Resource;
+use Filament\Resources\Table;
+use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
 
 class CollectionMethodResource extends Resource
 {
@@ -35,12 +32,13 @@ class CollectionMethodResource extends Resource
                 Tabs::make('methods-tabs')
                     ->columnSpanFull()
                     ->schema([
-                        
+
                         Tab::make('Core Info')
                         ->schema([
                             TextInput::make('title')->required(),
                             Textarea::make('description'),
                             Textarea::make('pros_cons')->label('Pros/Cons'),
+                            Textarea::make('notes')->label('Pros/Cons'),
                         ]),
 
                         Tab::make('Properties')
@@ -132,14 +130,14 @@ class CollectionMethodResource extends Resource
                 Tables\Actions\DeleteBulkAction::make(),
             ]);
     }
-    
+
     public static function getRelations(): array
     {
         return [
             //
         ];
     }
-    
+
     public static function getPages(): array
     {
         return [
@@ -147,5 +145,5 @@ class CollectionMethodResource extends Resource
             'create' => Pages\CreateCollectionMethod::route('/create'),
             'edit' => Pages\EditCollectionMethod::route('/{record}/edit'),
         ];
-    }    
+    }
 }
