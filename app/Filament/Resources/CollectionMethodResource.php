@@ -38,7 +38,7 @@ class CollectionMethodResource extends Resource
                             TextInput::make('title')->required(),
                             Textarea::make('description'),
                             Textarea::make('pros_cons')->label('Pros/Cons'),
-                            Textarea::make('notes')->label('Pros/Cons'),
+                            Textarea::make('notes'),
                         ]),
 
                         Tab::make('Properties')
