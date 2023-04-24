@@ -200,12 +200,18 @@ return [
 
     'broadcasting' => [
 
-        // 'echo' => [
-        //     'broadcaster' => 'pusher',
-        //     'key' => env('VITE_PUSHER_APP_KEY'),
-        //     'cluster' => env('VITE_PUSHER_APP_CLUSTER'),
-        //     'forceTLS' => true,
-        // ],
+        'echo' => [
+            'broadcaster' => 'pusher',
+            'key' => env('VITE_PUSHER_APP_KEY'),
+            'wsHost' => env('VITE_PUSHER_HOST'),
+            'wsPort' => env('VITE_PUSHER_PROXY_PORT'),
+            'wssPort' => env('VITE_PUSHER_PROXY_PORT'),
+            'disableStats' => true,
+            'encrypted' => true,
+            'cluster' => env('VITE_PUSHER_APP_CLUSTER'),
+            'forceTLS' => (env('VITE_PUSHER_SCHEME') === 'https'),
+            'enabledTransports' => ['ws', 'wss'],
+        ],
 
     ],
 

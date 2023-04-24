@@ -3,12 +3,12 @@
 namespace App\Jobs;
 
 use App\Models\User;
-use Illuminate\Bus\Queueable;
-use Illuminate\Queue\SerializesModels;
 use Filament\Notifications\Notification;
-use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 
 class ProcessImportNotifcation implements ShouldQueue
 {
@@ -31,9 +31,12 @@ class ProcessImportNotifcation implements ShouldQueue
      */
     public function handle()
     {
+
+        sleep(5);
+
         Notification::make()
             ->title('Imported file processing is now complete')
             ->broadcast($this->recipient);
-        
+
     }
 }
