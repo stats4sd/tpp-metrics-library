@@ -35,6 +35,12 @@ return [
             'root' => storage_path('app'),
         ],
 
+        'screening-imports' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public/screening-imports'),
+            'url' => env('APP_URL').'/storage/screening-imports',
+        ],
+
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),

@@ -2,10 +2,11 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Scale extends Model
 {
@@ -43,5 +44,11 @@ class Scale extends Model
     public function discussionPoints(): MorphMany
     {
         return $this->morphMany(DiscussionPoint::class, 'property_value');
+    }
+
+    public function references(): MorphToMany
+    {
+        return $this->morphToMany(Reference::class, 'referencable')
+            ->withPivot('reference_type', 'notes', 'id');
     }
 }

@@ -9,6 +9,7 @@ use App\Filament\Resources\ToolResource;
 use Filament\Navigation\NavigationGroup;
 use App\Filament\Resources\ScaleResource;
 use App\Filament\Resources\TopicResource;
+use App\Filament\Resources\ImportResource;
 use App\Filament\Resources\MethodResource;
 use App\Filament\Resources\MetricResource;
 use Filament\Navigation\NavigationBuilder;
@@ -92,6 +93,10 @@ class AppServiceProvider extends ServiceProvider
                     NavigationGroup::make('References')
                         ->items([
                             ...ReferenceResource::getNavigationItems(),
+                        ]),
+                    NavigationGroup::make('Imports')
+                        ->items([
+                            ...ImportResource::getNavigationItems(),
                         ]),
                     NavigationGroup::make('Users and Roles')
                     ->items([
