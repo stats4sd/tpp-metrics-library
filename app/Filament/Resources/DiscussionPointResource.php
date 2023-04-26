@@ -52,7 +52,9 @@ class DiscussionPointResource extends Resource
                 TextColumn::make('subject_type_label')
                     ->description(fn($record): string => $record->subject->title),
                 TextColumn::make('property')
-                    ->description(fn($record): string => $record->property_value?->name ?? ''),
+                    ->description(fn($record): string => $record->property_value?->name ?? '')
+                    ->sortable(),
+                TextColumn::make('flag.name')->sortable(),
                 TextColumn::make('user.name'),
                 Tables\Columns\IconColumn::make('resolved_at')
                     ->options([
@@ -63,6 +65,7 @@ class DiscussionPointResource extends Resource
             ->filters([
                 Tables\Filters\Filter::make('is_unresolved')
                     ->query(fn(Builder $query): Builder => $query->whereNull('resolved_at')),
+                Tables\Filters\SelectFilter::make('flag')->multiple()->relationship('flag', 'name')
             ])
             ->actions([
                 Tables\Actions\Action::make('Resolve')

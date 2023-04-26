@@ -5,6 +5,7 @@ namespace App\Filament\Resources\MetricResource\RelationManagers;
 use App\Filament\Form\Components\Textarea;
 use App\Filament\Table\Actions\AddDiscussionPointAction;
 use App\Models\Unit;
+use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -46,7 +47,7 @@ class UnitsRelationManager extends RelationManager
                             ->inlineLabel()
                             ->disabled()
                     ]),
-                Textarea::make('Notes')
+                Textarea::make('relation_notes')
                     ->label('Add any extra information about the relationship between this unit and the metric'),
             ]);
     }
@@ -55,7 +56,8 @@ class UnitsRelationManager extends RelationManager
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name'),
+                Tables\Columns\TextColumn::make('name')
+                    ->label('Unit')
             ])
             ->filters([
                 //
@@ -75,6 +77,7 @@ class UnitsRelationManager extends RelationManager
                                 ->maxLength(255)
                                 ->label('Symbol'),
                             Textarea::make('definition')
+                                ->required()
                                 ->inlineLabel()
                                 ->label('Definition of this unit'),
                             Textarea::make('notes')
@@ -82,11 +85,12 @@ class UnitsRelationManager extends RelationManager
                                 ->label('Notes about this unit')
                                 ->hint('Not specifically about why they are linked to this metric'),
                         ])
+                        ->createOptionAction(fn(Action $action) => $action->modalHeading('Create Unit Entry'))
                         ->createOptionUsing(fn($data): string => Unit::create($data)->id)
                     )
                     ->form(fn(Tables\Actions\AttachAction $action): array => [
                         $action->getRecordSelect(),
-                        Textarea::make('Notes')
+                        Textarea::make('relation_notes')
                             ->label('Add any extra information about the relationship between this unit and the metric'),
                     ]),
             ])

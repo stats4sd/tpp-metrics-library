@@ -21,7 +21,8 @@ class PropertyOption extends Model
 
     public function propertyLinks(): BelongsToMany
     {
-        return $this->belongsToMany(PropertyLink::class, 'property_option_property_link', 'linked_id', 'property_option_id');
+        return $this->belongsToMany(PropertyLink::class, 'property_option_property_link', 'linked_id', 'property_option_id')
+            ->withPivot('relation_notes');
     }
 
 }

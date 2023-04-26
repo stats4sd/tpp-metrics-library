@@ -15,6 +15,6 @@ class FarmingSystem extends Model
     public function metrics(): BelongsToMany
     {
         return $this->belongsToMany(Metric::class, 'metric_farming_system')
-            ->withPivot('notes');
+            ->withPivot('relation_notes');
     }
 }

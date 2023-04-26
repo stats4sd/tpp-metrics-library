@@ -5,6 +5,7 @@ namespace App\Filament\Resources\MetricResource\RelationManagers;
 use App\Filament\Form\Components\Textarea;
 use App\Filament\Table\Actions\AddDiscussionPointAction;
 use App\Models\Tool;
+use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -44,7 +45,7 @@ class ToolsRelationManager extends RelationManager
                             ->inlineLabel()
                             ->disabled()
                     ]),
-                Textarea::make('notes')
+                Textarea::make('relation_notes')
                     ->label('Add any extra information about the link between this tool and this metric.'),
             ]);
     }
@@ -63,7 +64,6 @@ class ToolsRelationManager extends RelationManager
                 Tables\Actions\AttachAction::make('Attach')
                     ->preloadRecordSelect()
                     ->recordSelect(fn(Select $select) => $select
-                        ->multiple()
                         ->createOptionForm([
                             TextInput::make('name')
                                 ->inlineLabel()
@@ -79,11 +79,12 @@ class ToolsRelationManager extends RelationManager
                                 ->label('Notes about the tool')
                                 ->hint('These are notes about the tool itself, not about the relationship to the metric.')
                         ])
+                        ->createOptionAction(fn(Action $action) => $action->modalHeading('Create Tool Entry'))
                         ->createOptionUsing(fn($data): string => Tool::create($data)->id)
                     )
                     ->form(fn(Tables\Actions\AttachAction $action): array => [
                         $action->getRecordSelect(),
-                        Textarea::make('notes')
+                        Textarea::make('relation_notes')
                             ->label('Add any extra information about the relationship between this assessment tool and the metric.'),
                     ]),
             ])

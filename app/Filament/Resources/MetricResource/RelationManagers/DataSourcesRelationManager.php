@@ -5,6 +5,7 @@ namespace App\Filament\Resources\MetricResource\RelationManagers;
 use App\Filament\Form\Components\Textarea;
 use App\Filament\Table\Actions\AddDiscussionPointAction;
 use App\Models\Reference;
+use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
@@ -49,7 +50,7 @@ class DataSourcesRelationManager extends RelationManager
                             ->disabled(),
                     ]),
 
-                Textarea::make('notes')
+                Textarea::make('relation_notes')
                     ->label('Add any extra information about how this reference is a data source for the metric.'),
                 Hidden::make('reference_type')
                     ->default('data source')
@@ -73,18 +74,22 @@ class DataSourcesRelationManager extends RelationManager
                     ->recordSelect(fn(Select $select) => $select
                         ->createOptionForm([
                             TextInput::make('name')
+                                ->inlineLabel()
                                 ->required()
                                 ->label('Name of reference'),
                             TextInput::make('url')
+                                ->inlineLabel()
                                 ->label('Url'),
                             Textarea::make('notes')
+                                ->inlineLabel()
                                 ->label('Notes about this reference')
                                 ->hint('Notes about the reference itself, not the link to the metric.'),
                         ])
+                        ->createOptionAction(fn(Action $action) => $action->modalHeading('Create Reference Entry'))
                         ->createOptionUsing(fn($data): string => Reference::create($data)->id))
                     ->form(fn(Tables\Actions\AttachAction $action): array => [
                         $action->getRecordSelect(),
-                        Textarea::make('Notes')
+                        Textarea::make('relation_notes')
                             ->label('Add any extra information about how this reference relates to the metric'),
                         Hidden::make('reference_type')
                             ->default('data source')

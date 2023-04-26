@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Filament\Facades\Filament;
 use Illuminate\Support\ServiceProvider;
+use App\Filament\Resources\FlagResource;
 use App\Filament\Resources\ToolResource;
 use Filament\Navigation\NavigationGroup;
 use App\Filament\Resources\ScaleResource;
@@ -24,6 +25,7 @@ use App\Filament\Resources\SubDimensionResource;
 use App\Filament\Resources\FarmingSystemResource;
 use App\Filament\Resources\MetricPropertyResource;
 use App\Filament\Resources\DiscussionPointResource;
+use App\Filament\Resources\CollectionMethodResource;
 use Phpsa\FilamentAuthentication\Resources\RoleResource;
 use Phpsa\FilamentAuthentication\Resources\UserResource;
 use Phpsa\FilamentAuthentication\Resources\PermissionResource;
@@ -63,6 +65,7 @@ class AppServiceProvider extends ServiceProvider
                     NavigationGroup::make('Review Tools')
                         ->items([
                             ...DiscussionPointResource::getNavigationItems(),
+                            ...FlagResource::getNavigationItems(),
                             ...FeedbackResource::getNavigationItems(),
                         ]),
                     NavigationGroup::make('Topics')
@@ -78,8 +81,9 @@ class AppServiceProvider extends ServiceProvider
                         ]),
                     NavigationGroup::make('Tools, Methods + Frameworks')
                         ->items([
-                            ...FrameworkResource::getNavigationItems(),
                             ...ToolResource::getNavigationItems(),
+                            ...CollectionMethodResource::getNavigationItems(),
+                            ...FrameworkResource::getNavigationItems(),
                         ]),
                     NavigationGroup::make('Systems and Geographies')
                         ->items([

@@ -17,13 +17,13 @@ class Scale extends Model
     public function metrics(): BelongsToMany
     {
         return $this->belongsToMany(Metric::class, 'metric_scale')
-            ->withPivot('notes', 'commonly_used', 'type');
+            ->withPivot('relation_notes', 'commonly_used', 'type');
     }
 
     public function metricDecision(): BelongsToMany
     {
         return $this->belongsToMany(Metric::class, 'metric_scale')
-            ->withPivot('notes', 'commonly_used', 'type')
+            ->withPivot('relation_notes', 'commonly_used', 'type')
             ->wherePivot('type', '=', 'decision making');
     }
 
@@ -37,10 +37,10 @@ class Scale extends Model
     public function metricReporting(): BelongsToMany
     {
         return $this->belongsToMany(Metric::class, 'metric_scale')
-            ->withPivot('notes', 'commonly_used', 'type')
+            ->withPivot('relation_notes', 'commonly_used', 'type')
             ->wherePivot('type', '=', 'reporting');
     }
-    
+
     public function discussionPoints(): MorphMany
     {
         return $this->morphMany(DiscussionPoint::class, 'property_value');

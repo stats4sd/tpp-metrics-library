@@ -18,7 +18,7 @@ class Topic extends Model
     public function metrics(): BelongsToMany
     {
         return $this->belongsToMany(Metric::class, 'metric_topic')
-            ->withPivot('notes');
+            ->withPivot('relation_notes');
     }
 
 

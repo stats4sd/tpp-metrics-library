@@ -15,12 +15,12 @@ class Tool extends Model
     public function metrics(): BelongsToMany
     {
         return $this->belongsToMany(Metric::class, 'metric_tool')
-            ->withPivot('notes');
+            ->withPivot('relation_notes');
     }
 
     public function frameworks(): BelongsToMany
     {
         return $this->belongsToMany(Framework::class, 'framework_tool')
-            ->withPivot('notes');
+            ->withPivot('relation_notes');
     }
 }

@@ -5,6 +5,7 @@ namespace App\Filament\Resources\MetricResource\RelationManagers;
 use App\Filament\Form\Components\Textarea;
 use App\Filament\Table\Actions\AddDiscussionPointAction;
 use App\Models\Framework;
+use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -45,7 +46,7 @@ class FrameworksRelationManager extends RelationManager
                             ->inlineLabel()
                             ->disabled()
                     ]),
-                Textarea::make('notes')
+                Textarea::make('relation_notes')
                     ->label('Add any extra information about the relationship between this framework and this metric.'),
             ]);
     }
@@ -54,7 +55,8 @@ class FrameworksRelationManager extends RelationManager
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name'),
+                Tables\Columns\TextColumn::make('name')
+                    ->label('Framework')
             ])
             ->filters([
                 //
@@ -63,7 +65,6 @@ class FrameworksRelationManager extends RelationManager
                 Tables\Actions\AttachAction::make('Attach')
                     ->preloadRecordSelect()
                     ->recordSelect(fn(Select $select) => $select
-                        ->multiple()
                         ->createOptionForm([
                             TextInput::make('name')
                                 ->inlineLabel()
@@ -79,11 +80,12 @@ class FrameworksRelationManager extends RelationManager
                                 ->label('Notes about this framework')
                                 ->hint('Not specifically about why they are linked to this metric'),
                         ])
+                        ->createOptionAction(fn(Action $action) => $action->modalHeading('Create Framework Entry'))
                         ->createOptionUsing(fn($data): string => Framework::create($data)->id)
                     )
                     ->form(fn(Tables\Actions\AttachAction $action): array => [
                         $action->getRecordSelect(),
-                        Textarea::make('notes')
+                        Textarea::make('relation_notes')
                             ->label('Add any extra information about the relationship between this framework and the metric'),
                     ]),
             ])

@@ -17,7 +17,7 @@ class SubDimension extends Model
     public function metrics(): BelongsToMany
     {
         return $this->belongsToMany(Metric::class, 'metric_sub_dimension')
-            ->withPivot('notes');
+            ->withPivot('relation_notes');
     }
 
     public function dimension(): BelongsTo

@@ -15,7 +15,7 @@ class PropertyLink extends Pivot
     public function propertyOptions(): BelongsToMany
     {
         return $this->belongsToMany(PropertyOption::class, 'property_option_property_link', 'property_option_id', 'linked_id')
-            ->withPivot('notes');
+            ->withPivot('relation_notes');
     }
 
     public function property(): BelongsTo
