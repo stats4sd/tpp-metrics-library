@@ -35,12 +35,6 @@ class Reference extends Model
             ->withPivot('reference_type', 'notes', 'id');
     }
 
-    public function methods(): MorphToMany
-    {
-        return $this->morphedByMany(Method::class, 'referencable')
-            ->withPivot('reference_type', 'notes', 'id');
-    }
-
     public function geographies(): MorphToMany
     {
         return $this->morphedByMany(Geography::class, 'referencable')

@@ -25,6 +25,10 @@ class CollectionMethod extends Model
             ->withPivot('relation_notes');
     }
 
-    // TODO: include references
+    public function references(): MorphToMany
+    {
+        return $this->morphToMany(Reference::class, 'referencable')
+            ->withPivot('reference_type', 'notes', 'id');
+    }
 
 }
