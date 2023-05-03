@@ -41,7 +41,7 @@ class TopicResource extends Resource
                 TextColumn::make('name'),
                 TextColumn::make('definition'),
                 TextColumn::make('notes'),
-                TextColumn::make('metrics_count')->counts('metrics'),
+                TextColumn::make('metrics_count')->counts('metrics')->sortable(),
             ])
             ->filters([
                 //
