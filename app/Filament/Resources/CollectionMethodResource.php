@@ -2,22 +2,24 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Form\Components\Textarea;
-use App\Filament\Resources\CollectionMethodResource\Pages;
-use App\Filament\Resources\CollectionMethodResource\RelationManagers;
-use App\Models\CollectionMethod;
+use Filament\Tables;
 use App\Models\Property;
+use Filament\Resources\Form;
+use Filament\Resources\Table;
 use App\Models\PropertyOption;
+use App\Models\CollectionMethod;
+use Filament\Resources\Resource;
+use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
-use Filament\Forms\Components\TextInput;
-use Filament\Resources\Form;
-use Filament\Resources\Resource;
-use Filament\Resources\Table;
-use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\TextInput;
+use Illuminate\Database\Eloquent\Builder;
+use App\Filament\Form\Components\Textarea;
+use Filament\Tables\Filters\TrashedFilter;
+use App\Filament\Resources\CollectionMethodResource\Pages;
+use App\Filament\Resources\CollectionMethodResource\RelationManagers;
 
 class CollectionMethodResource extends Resource
 {
@@ -116,12 +118,13 @@ class CollectionMethodResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('title'),
+                TextColumn::make('title')->searchable()->sortable(),
                 TextColumn::make('description'),
                 TextColumn::make('pros_cons')->label('Pros/Cons'),
+                TextColumn::make('metrics_count')->counts('metrics')->sortable(),
             ])
             ->filters([
-                //
+                TrashedFilter::make(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -146,4 +149,13 @@ class CollectionMethodResource extends Resource
             'edit' => Pages\EditCollectionMethod::route('/{record}/edit'),
         ];
     }
+
+    public static function getEloquentQuery(): Builder
+    {
+    return parent::getEloquentQuery()
+        ->withoutGlobalScopes([
+            SoftDeletingScope::class,
+        ]);
+    }
+    
 }
