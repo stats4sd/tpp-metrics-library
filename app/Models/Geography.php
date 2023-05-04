@@ -23,6 +23,6 @@ class Geography extends Model
     public function references(): MorphToMany
     {
         return $this->morphToMany(Reference::class, 'referencable')
-            ->withPivot('reference_type', 'notes', 'id');
+            ->withPivot('reference_type', 'relation_notes', 'id');
     }
 }
