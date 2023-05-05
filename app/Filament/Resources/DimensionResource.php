@@ -77,27 +77,62 @@ class DimensionResource extends Resource
                                             ];
                                         }
                                     )
-                                    
-                                    ->action(function (Collection $records, array $data) {
+                                    ->action(
+                                        function (Collection $records, array $data) {
                                         
-                                        $record_remain = $data['remaining_record'];
-                                        
-                                        $records_remove = [];
-                                        foreach ($records as $record) {
-                                            if (strval($record->id) !== $record_remain) {
-                                                $records_remove[] = $record->id;
+                                            $record_remain = $data['remaining_record'];
+                                            $records_remove = [];
+                                            foreach ($records as $record) {
+                                                if (strval($record->id) !== $record_remain) {
+                                                    $records_remove[] = $record->id;
+                                                };
+                                            }
+
+                                            $metrics_array=[];
+                                            $references_array=[];
+
+                                            foreach($records as $record) {
+
+                                                $metrics = $record->metrics()->get();
+                                                foreach($metrics as $metric) {
+                                                    if(isset($metrics_array[$metric->pivot->metric_id])) {
+                                                        if ($metrics_array[$metric->pivot->metric_id]['relation_notes']=='') {
+                                                            $metrics_array[$metric->pivot->metric_id]['relation_notes'] = $metric->pivot->relation_notes;
+                                                        }
+                                                        else {
+                                                            $metrics_array[$metric->pivot->metric_id]['relation_notes'] = $metrics_array[$metric->pivot->metric_id]['relation_notes'] . '. ' . $metric->pivot->relation_notes;
+                                                        }
+                                                    }
+                                                    else {
+                                                        $metrics_array[$metric->pivot->metric_id]['relation_notes'] = $metric->pivot->relation_notes;
+                                                    }
+                                                }
+
+                                                $references = $record->references()->get();
+                                                foreach($references as $reference) {
+                                                    if(isset($references_array[$reference->pivot->reference_id])) {
+                                                        if ($references_array[$reference->pivot->reference_id]['relation_notes']=='') {
+                                                            $references_array[$reference->pivot->reference_id]['relation_notes'] = $reference->pivot->relation_notes;
+                                                        }
+                                                        else {
+                                                            $references_array[$reference->pivot->reference_id]['relation_notes'] = $references_array[$reference->pivot->reference_id]['relation_notes'] . '. ' . $reference->pivot->relation_notes;
+                                                        }
+                                                    }
+                                                    else {
+                                                        $references_array[$reference->pivot->reference_id]['relation_notes'] = $reference->pivot->relation_notes;
+                                                    }
+                                                }
                                             };
-                                        }
  
-                                        dump($record_remain, $records_remove);
-
-
-                                        //
-
-
-                                    })
-                        ]);
-                                        
+                                            // TODO: fix sync
+                                            // Dimension::where('id', $record_remain)->sync($metrics_array);
+                                            // Dimension::where('id', $record_remain)->sync($references_array);
+                                            
+                                            Dimension::whereIn('id', $records_remove)->delete();
+                                            
+                                        }
+                                    )
+            ]);                       
     }
 
     public static function getRelations(): array
@@ -124,8 +159,4 @@ class DimensionResource extends Resource
         ]);
     }
 
-    // public function deduplicate()
-    // {
-
-    // }
 }
