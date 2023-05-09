@@ -20,31 +20,31 @@ class Reference extends Model
     public function metrics(): MorphToMany
     {
         return $this->morphedByMany(Metric::class, 'referencable')
-            ->withPivot('reference_type', 'notes', 'id');
+            ->withPivot('reference_type', 'relation_notes', 'id');
     }
 
     public function collectionMethods(): MorphToMany
     {
         return $this->morphedByMany(CollectionMethod::class, 'referencable')
-            ->withPivot('reference_type', 'notes', 'id');
+            ->withPivot('reference_type', 'relation_notes', 'id');
     }
 
     public function dimensions(): MorphToMany
     {
         return $this->morphedByMany(Dimension::class, 'referencable')
-            ->withPivot('reference_type', 'notes', 'id');
+            ->withPivot('reference_type', 'relation_notes', 'id');
     }
 
     public function geographies(): MorphToMany
     {
         return $this->morphedByMany(Geography::class, 'referencable')
-            ->withPivot('reference_type', 'notes', 'id');
+            ->withPivot('reference_type', 'relation_notes', 'id');
     }
 
     public function scales(): MorphToMany
     {
         return $this->morphedByMany(Scale::class, 'referencable')
-            ->withPivot('reference_type', 'notes', 'id');
+            ->withPivot('reference_type', 'relation_notes', 'id');
     }
 
     public function referencables(): HasMany
