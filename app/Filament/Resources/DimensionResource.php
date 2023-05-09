@@ -63,6 +63,7 @@ class DimensionResource extends Resource
                 Tables\Actions\BulkAction::make('de-duplicate')
                                     ->icon('heroicon-s-document-duplicate')
                                     ->label('De-duplicate selected')
+                                    ->deselectRecordsAfterCompletion()
                                     ->form(
                                         function (Collection $records) {
                                             $tableName = $records->first()->getTable();
@@ -120,14 +121,13 @@ class DimensionResource extends Resource
                                                     }
                                                     else {
                                                         $references_array[$reference->pivot->reference_id]['relation_notes'] = $reference->pivot->relation_notes;
+                                                        $references_array[$reference->pivot->reference_id]['reference_type'] = $reference->pivot->reference_type;
                                                     }
                                                 }
                                             };
- 
-                                            // TODO: fix sync
-                                            // Dimension::where('id', $record_remain)->sync($metrics_array);
-                                            // Dimension::where('id', $record_remain)->sync($references_array);
-                                            
+
+                                            Dimension::where('id', $record_remain)->first()->metrics()->sync($metrics_array);
+                                            Dimension::where('id', $record_remain)->first()->references()->sync($references_array);
                                             Dimension::whereIn('id', $records_remove)->delete();
                                             
                                         }
