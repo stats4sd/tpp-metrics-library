@@ -3,13 +3,13 @@
 namespace App\Jobs;
 
 use App\Models\Scale;
-use App\Models\Method;
 use App\Models\Metric;
 use App\Models\Dimension;
 use App\Models\Geography;
 use App\Models\Reference;
 use Illuminate\Support\Str;
 use Illuminate\Bus\Queueable;
+use App\Models\CollectionMethod;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -75,8 +75,8 @@ class ProcessImporter implements ShouldQueue
                 elseif($type->toString()=== "Methods") {
 
 
-                    $method = Method::updateOrCreate(['name' => $item]);
-                    $this->reference->methods()->syncWithoutDetaching([$method->id => ['reference_type' => 'reference']]);
+                    $collection_method = CollectionMethod::updateOrCreate(['name' => $item]);
+                    $this->reference->collectionMethods()->syncWithoutDetaching([$collection_method->id => ['reference_type' => 'reference']]);
 
                 }
 
