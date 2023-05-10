@@ -14,6 +14,7 @@ use App\Filament\Form\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Form\Components\Textarea;
+use Filament\Tables\Filters\TrashedFilter;
 use App\Filament\Resources\ScaleResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\ScaleResource\RelationManagers;
@@ -41,13 +42,13 @@ class ScaleResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('name'),
+                TextColumn::make('name')->searchable()->sortable(),
                 TextColumn::make('definition'),
                 TextColumn::make('notes'),
-                TextColumn::make('metrics_count')->counts('metrics'),
+                TextColumn::make('metrics_count')->counts('metrics')->sortable(),
             ])
             ->filters([
-                //
+                TrashedFilter::make(),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
@@ -73,4 +74,13 @@ class ScaleResource extends Resource
             'edit' => Pages\EditScale::route('/{record}/edit'),
         ];
     }    
+
+    public static function getEloquentQuery(): Builder
+    {
+    return parent::getEloquentQuery()
+        ->withoutGlobalScopes([
+            SoftDeletingScope::class,
+        ]);
+    }
+    
 }

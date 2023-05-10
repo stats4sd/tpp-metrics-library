@@ -14,6 +14,7 @@ use App\Filament\Form\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Form\Components\Textarea;
+use Filament\Tables\Filters\TrashedFilter;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\SubDimensionResource\Pages;
 use App\Filament\Resources\SubDimensionResource\RelationManagers;
@@ -42,12 +43,12 @@ class SubDimensionResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('name'),
+                TextColumn::make('name')->searchable()->sortable(),
                 TextColumn::make('definition'),
-                TextColumn::make('metrics_count')->counts('metrics'),
+                TextColumn::make('metrics_count')->counts('metrics')->sortable(),
             ])
             ->filters([
-                //
+                TrashedFilter::make(),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
@@ -72,5 +73,14 @@ class SubDimensionResource extends Resource
             'create' => Pages\CreateSubDimension::route('/create'),
             'edit' => Pages\EditSubDimension::route('/{record}/edit'),
         ];
-    }    
+    }  
+    
+    public static function getEloquentQuery(): Builder
+    {
+    return parent::getEloquentQuery()
+        ->withoutGlobalScopes([
+            SoftDeletingScope::class,
+        ]);
+    }
+    
 }

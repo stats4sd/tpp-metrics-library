@@ -13,6 +13,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Form\Components\Textarea;
+use Filament\Tables\Filters\TrashedFilter;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\FarmingSystemResource\Pages;
 use App\Filament\Resources\FarmingSystemResource\RelationManagers;
@@ -40,13 +41,13 @@ class FarmingSystemResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('name'),
+                TextColumn::make('name')->searchable()->sortable(),
                 TextColumn::make('definition'),
                 TextColumn::make('notes'),
-                TextColumn::make('metrics_count')->counts('metrics'),
+                TextColumn::make('metrics_count')->counts('metrics')->sortable(),
             ])
             ->filters([
-                //
+                TrashedFilter::make(),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
@@ -71,5 +72,14 @@ class FarmingSystemResource extends Resource
             'create' => Pages\CreateFarmingSystem::route('/create'),
             'edit' => Pages\EditFarmingSystem::route('/{record}/edit'),
         ];
-    }    
+    }
+    
+    public static function getEloquentQuery(): Builder
+    {
+    return parent::getEloquentQuery()
+        ->withoutGlobalScopes([
+            SoftDeletingScope::class,
+        ]);
+    }
+    
 }
