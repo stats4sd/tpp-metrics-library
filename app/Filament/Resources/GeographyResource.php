@@ -47,6 +47,9 @@ class GeographyResource extends Resource
                 TextColumn::make('metrics_count')->counts('metrics')->sortable(),
             ])
             ->filters([
+                Tables\Filters\Filter::make('unreviewed_import')
+                                        ->query(fn(Builder $query): Builder => $query->where('unreviewed_import', true))
+                                        ->label('Unreviewed imported records'),
                 TrashedFilter::make(),
             ])
             ->actions([

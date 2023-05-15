@@ -18,6 +18,7 @@ use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Tabs\Tab;
 use App\Filament\Form\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Form\Components\Textarea;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Actions\Action;
@@ -277,7 +278,11 @@ class MetricResource extends Resource
                 Tables\Columns\TextColumn::make('updated_at')
                     ->label('Last Updated')
             ])
-            ->filters([])
+            ->filters([
+                Tables\Filters\Filter::make('unreviewed_import')
+                                        ->query(fn(Builder $query): Builder => $query->where('unreviewed_import', true))
+                                        ->label('Unreviewed imported records'),
+            ])
             ->actions([
                 Tables\Actions\EditAction::make(),
             ])
