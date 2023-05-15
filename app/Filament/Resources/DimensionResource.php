@@ -2,25 +2,22 @@
 
 namespace App\Filament\Resources;
 
-use Filament\Tables;
+use App\Filament\Form\Components\Textarea;
+use App\Filament\Resources\DimensionResource\Pages;
+use App\Filament\Resources\DimensionResource\RelationManagers;
+use App\Filament\Table\Actions\DeduplicateRecordsAction;
 use App\Models\Dimension;
-use Illuminate\Support\Str;
-use Filament\Resources\Form;
-use Filament\Resources\Table;
-use Filament\Resources\Resource;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Select;
-use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
-use Illuminate\Database\Eloquent\Builder;
-use App\Filament\Form\Components\Textarea;
-use Filament\Forms\Components\Placeholder;
+use Filament\Resources\Form;
+use Filament\Resources\Resource;
+use Filament\Resources\Table;
+use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\TrashedFilter;
-use Illuminate\Database\Eloquent\Collection;
-use Filament\Forms\Components\Actions\Action;
-use App\Filament\Resources\DimensionResource\Pages;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\Resources\DimensionResource\RelationManagers;
 
 class DimensionResource extends Resource
 {
@@ -60,79 +57,9 @@ class DimensionResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
-                Tables\Actions\BulkAction::make('de-duplicate')
-                                    ->icon('heroicon-s-document-duplicate')
-                                    ->label('De-duplicate selected')
-                                    ->deselectRecordsAfterCompletion()
-                                    ->form(
-                                        function (Collection $records) {
-                                            $tableName = $records->first()->getTable();
-                                            $modelName = Str::lower(ltrim(get_class($records->first()), 'App\Models'));
-                                            return [
-                                                Select::make('remaining_record')
-                                                ->inlineLabel()
-                                                ->label('The following ' . $tableName . ' have been selected for de-duplication')
-                                                ->hint('Select one ' . $modelName . ' to remain. All other ' . $tableName . ' will be deleted and their links to other entities will be merged with the remaining ' . $modelName)
-                                                ->placeholder('Select a ' . $modelName)
-                                                ->options($records->pluck('name', 'id'))
-                                            ];
-                                        }
-                                    )
-                                    ->action(
-                                        function (Collection $records, array $data) {
-                                        
-                                            $record_remain = $data['remaining_record'];
-                                            $records_remove = [];
-                                            foreach ($records as $record) {
-                                                if (strval($record->id) !== $record_remain) {
-                                                    $records_remove[] = $record->id;
-                                                };
-                                            }
+                DeduplicateRecordsAction::make(),
+            ]);
 
-                                            $metrics_array=[];
-                                            $references_array=[];
-
-                                            foreach($records as $record) {
-
-                                                $metrics = $record->metrics()->get();
-                                                foreach($metrics as $metric) {
-                                                    if(isset($metrics_array[$metric->pivot->metric_id])) {
-                                                        if ($metrics_array[$metric->pivot->metric_id]['relation_notes']=='') {
-                                                            $metrics_array[$metric->pivot->metric_id]['relation_notes'] = $metric->pivot->relation_notes;
-                                                        }
-                                                        else {
-                                                            $metrics_array[$metric->pivot->metric_id]['relation_notes'] = $metrics_array[$metric->pivot->metric_id]['relation_notes'] . '. ' . $metric->pivot->relation_notes;
-                                                        }
-                                                    }
-                                                    else {
-                                                        $metrics_array[$metric->pivot->metric_id]['relation_notes'] = $metric->pivot->relation_notes;
-                                                    }
-                                                }
-
-                                                $references = $record->references()->get();
-                                                foreach($references as $reference) {
-                                                    if(isset($references_array[$reference->pivot->reference_id])) {
-                                                        if ($references_array[$reference->pivot->reference_id]['relation_notes']=='') {
-                                                            $references_array[$reference->pivot->reference_id]['relation_notes'] = $reference->pivot->relation_notes;
-                                                        }
-                                                        else {
-                                                            $references_array[$reference->pivot->reference_id]['relation_notes'] = $references_array[$reference->pivot->reference_id]['relation_notes'] . '. ' . $reference->pivot->relation_notes;
-                                                        }
-                                                    }
-                                                    else {
-                                                        $references_array[$reference->pivot->reference_id]['relation_notes'] = $reference->pivot->relation_notes;
-                                                        $references_array[$reference->pivot->reference_id]['reference_type'] = $reference->pivot->reference_type;
-                                                    }
-                                                }
-                                            };
-
-                                            Dimension::where('id', $record_remain)->first()->metrics()->sync($metrics_array);
-                                            Dimension::where('id', $record_remain)->first()->references()->sync($references_array);
-                                            Dimension::whereIn('id', $records_remove)->delete();
-                                            
-                                        }
-                                    )
-            ]);                       
     }
 
     public static function getRelations(): array
