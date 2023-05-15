@@ -16,6 +16,7 @@ use Illuminate\Support\HtmlString;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Tabs\Tab;
+use Filament\Tables\Columns\IconColumn;
 use App\Filament\Form\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
@@ -276,7 +277,11 @@ class MetricResource extends Resource
                     }),
                 Tables\Columns\TextColumn::make('developer.name'),
                 Tables\Columns\TextColumn::make('updated_at')
-                    ->label('Last Updated')
+                    ->label('Last Updated'),
+                IconColumn::make('unreviewed_import')
+                    ->options(['heroicon-o-exclamation-circle' => fn($state): bool => (bool)$state])
+                    ->color('danger')
+                    ->sortable(),
             ])
             ->filters([
                 Tables\Filters\Filter::make('unreviewed_import')

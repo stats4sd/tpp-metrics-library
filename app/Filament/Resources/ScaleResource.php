@@ -9,6 +9,7 @@ use Filament\Resources\Form;
 use Filament\Resources\Table;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Grid;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use App\Filament\Form\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -46,6 +47,10 @@ class ScaleResource extends Resource
                 TextColumn::make('definition'),
                 TextColumn::make('notes'),
                 TextColumn::make('metrics_count')->counts('metrics')->sortable(),
+                IconColumn::make('unreviewed_import')
+                            ->options(['heroicon-o-exclamation-circle' => fn($state): bool => (bool)$state])
+                            ->color('danger')
+                            ->sortable(),
             ])
             ->filters([
                 Tables\Filters\Filter::make('unreviewed_import')

@@ -10,6 +10,7 @@ use Filament\Resources\Table;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Select;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
@@ -49,7 +50,10 @@ class DimensionResource extends Resource
                 TextColumn::make('name')->searchable()->sortable(),
                 TextColumn::make('definition'),
                 TextColumn::make('metrics_count')->counts('metrics')->sortable(),
-
+                IconColumn::make('unreviewed_import')
+                            ->options(['heroicon-o-exclamation-circle' => fn($state): bool => (bool)$state])
+                            ->color('danger')
+                            ->sortable(),
             ])
             ->filters([
                 Tables\Filters\Filter::make('unreviewed_import')
