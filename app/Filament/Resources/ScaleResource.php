@@ -9,9 +9,10 @@ use Filament\Resources\Form;
 use Filament\Resources\Table;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Toggle;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
-use App\Filament\Form\Components\Select;
+use Illuminate\Database\Eloquent\Model;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Form\Components\Textarea;
@@ -35,6 +36,16 @@ class ScaleResource extends Resource
                     TextInput::make('name')->required(),
                     Textarea::make('definition'),
                     Textarea::make('notes'),
+                    Toggle::make('unreviewed_import')
+                            ->label('Mark this imported record as reviewed')
+                            ->visible(function (Model $record): bool {
+                                $visible = $record->unreviewed_import==1;
+                                return $visible;
+                            })
+                            ->offColor('success')
+                            ->onColor('danger')
+                            ->offIcon('heroicon-s-check')
+                            ->onIcon('heroicon-s-exclamation-circle')
                 ])
             ]);
     }

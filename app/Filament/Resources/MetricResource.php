@@ -15,8 +15,10 @@ use Filament\Resources\Resource;
 use Illuminate\Support\HtmlString;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Tables\Columns\IconColumn;
+use Illuminate\Database\Eloquent\Model;
 use App\Filament\Form\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
@@ -125,6 +127,20 @@ class MetricResource extends Resource
                                     ->hint('A description of the metric\'s relevance to assessing ag/food system performance')
                                     ->suffixAction(self::makeDiscussionPointAction()),
 
+                                Placeholder::make('-')
+                                    ->content(new HtmlString('<hr/>')),
+
+                                Toggle::make('unreviewed_import')
+                                    ->label('Mark this imported record as reviewed')
+                                    ->visible(function (Model $record): bool {
+                                        $visible = $record->unreviewed_import==1;
+                                        return $visible;
+                                    })
+                                    ->offColor('success')
+                                    ->onColor('danger')
+                                    ->offIcon('heroicon-s-check')
+                                    ->onIcon('heroicon-s-exclamation-circle')      
+                                    
                             ]),
 
                         Tab::make('Topics and Dimensions')
