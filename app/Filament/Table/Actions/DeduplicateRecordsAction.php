@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Collection;
 class DeduplicateRecordsAction extends BulkAction
 {
 
+
     public static function getDefaultName(): ?string
     {
         return 'de-duplicate';
@@ -28,13 +29,16 @@ class DeduplicateRecordsAction extends BulkAction
                 $tableName = $records->first()->getTable();
                 $modelName = $this->getModelLabel();
 
+                // This assumes that the 1st entry in the list table is the identifiable "title" / "name" of the record.
+                $titleAttribute = array_keys($this->getTable()->getColumns())[0];
+                
                 return [
                     Select::make('remaining_record')
                         ->inlineLabel()
                         ->label('The following ' . $tableName . ' have been selected for de-duplication')
                         ->hint('Select one ' . $modelName . ' to remain. All other ' . $tableName . ' will be deleted and their links to other entities will be merged with the remaining ' . $modelName)
                         ->placeholder('Select a ' . $modelName)
-                        ->options($records->pluck('name', 'id'))
+                        ->options($records->pluck($titleAttribute, 'id'))
                 ];
             }
         );
