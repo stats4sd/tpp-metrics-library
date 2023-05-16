@@ -51,27 +51,11 @@ class DeduplicateRecordsAction extends BulkAction
                 // pre-load relations to avoid too many db calls
                 $records->load($relations);
 
-//                $all_related_entries = $records->mapWithKeys(function (Model $record) use ($relations) {
-//
-//                    $item = collect($relations)->mapWithKeys(function(string $relation) use ($record) {
-//                        $related_entities = $record->$relation;
-//
-//                        // return [$relation => [
-//                        //      [ 1 => ['relation_notes' => 'some notes']],
-//                        //      [ 2 => ['relation_notes' => 'some more notes]],
-//                        //   ]];
-//
-//                        $values = $related_entities->mapWithKeys(function($related_entity) {
-//                           return [ $related_entity->id => ['relation_notes' => $related_entity->pivot->relation_notes]];
-//                        });
-//
-//                    });
-//
-//                });
-
                 $related_array = [];
 
-                foreach($relations as $relation) {
+
+                // pre-fill related_array with keys;
+                foreach ($relations as $relation) {
                     $related_array[$relation] = [];
                 }
 
@@ -79,16 +63,11 @@ class DeduplicateRecordsAction extends BulkAction
 
                     foreach ($relations as $relation) {
 
-
                         $related_items = $record->$relation;
 
                         foreach ($related_items as $related_item) {
-                            if (isset($related_array[$relation][$related_item->id])) {
-                                if ($related_array[$relation][$related_item->id]['relation_notes'] === '') {
-                                    $related_array[$relation][$related_item->id]['relation_notes'] = $related_item->pivot->relation_notes;
-                                } else {
-                                    $related_array[$relation][$related_item->id]['relation_notes'] .= '. ' . $related_item->pivot->relation_notes;
-                                }
+                            if (isset($related_array[$relation][$related_item->id]) && $related_array[$relation][$related_item->id]['relation_notes'] !== '') {
+                                $related_array[$relation][$related_item->id]['relation_notes'] .= '. ' . $related_item->pivot->relation_notes;
                             } else {
                                 $related_array[$relation][$related_item->id]['relation_notes'] = $related_item->pivot->relation_notes;
                             }
@@ -99,8 +78,8 @@ class DeduplicateRecordsAction extends BulkAction
 
                 $class = get_class($records->first());
                 $remaining_record = $class::findOrFail($record_remain_id);
-                
-                foreach($relations as $relation) {
+
+                foreach ($relations as $relation) {
                     $remaining_record->$relation()->sync($related_array[$relation]);
                 }
 
