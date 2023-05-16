@@ -5,7 +5,6 @@ namespace App\Filament\Table\Actions;
 use Filament\Forms\Components\Select;
 use Filament\Tables\Actions\BulkAction;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Str;
 
 class DeduplicateRecordsAction extends BulkAction
 {
@@ -27,7 +26,8 @@ class DeduplicateRecordsAction extends BulkAction
         $this->form(
             function (Collection $records) {
                 $tableName = $records->first()->getTable();
-                $modelName = Str::lower(ltrim(get_class($records->first()), 'App\Models'));
+                $modelName = $this->getModelLabel();
+
                 return [
                     Select::make('remaining_record')
                         ->inlineLabel()
@@ -54,7 +54,7 @@ class DeduplicateRecordsAction extends BulkAction
                 $related_array = [];
 
 
-                // pre-fill related_array with keys;
+                // pre-fill related_array with keys, so we don't need to check if $related_array[$relation] exists or not;
                 foreach ($relations as $relation) {
                     $related_array[$relation] = [];
                 }
