@@ -84,11 +84,7 @@ class DeduplicateRecordsAction extends BulkAction
                         return [(string)$record->id => $values];
 
                     })->reduce(function ($carry, $item) use ($relation) {
-
-                        if ($relation === 'scaleDecision') {
-
-                        }
-
+                        
                         return $item->mapWithKeys(function (\Illuminate\Support\Collection $pivot_values, int $model_id) use ($carry) {
 
                             // if model is already linked via relationship
@@ -124,15 +120,20 @@ class DeduplicateRecordsAction extends BulkAction
                             }
 
                             return [$model_id => $pivot_values];
-                        })->union($carry);
+                        })
+                            ->union($carry)
+
+                            // reduce to array for final sync()
+                            ->toArray();
 
                     }, collect([]));
 
 
-                    $remaining_record->$relation()->sync($all_related_records);
+                $remaining_record->$relation()->sync($all_related_records);
 
 
                 }
+
 
                 $class::whereIn('id', $records_remove)->delete();
 
