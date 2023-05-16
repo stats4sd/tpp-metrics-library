@@ -2,7 +2,6 @@
 
 namespace App\Filament\Table\Actions;
 
-use App\Models\Dimension;
 use Filament\Forms\Components\Select;
 use Filament\Tables\Actions\BulkAction;
 use Illuminate\Database\Eloquent\Collection;
@@ -43,54 +42,73 @@ class DeduplicateRecordsAction extends BulkAction
         $this->action(
             function (Collection $records, array $data) {
 
-                $record_remain = $data['remaining_record'];
-                $records_remove = [];
-                foreach ($records as $record) {
-                    if (strval($record->id) !== $record_remain) {
-                        $records_remove[] = $record->id;
-                    };
+                $record_remain_id = $data['remaining_record'];
+                $records_remove = $records->filter(fn($record) => $record->id != $record_remain_id)->pluck('id');
+
+                $relations = array_keys($records[0]->getAvailableManyToManyRelations());
+
+
+                // pre-load relations to avoid too many db calls
+                $records->load($relations);
+
+//                $all_related_entries = $records->mapWithKeys(function (Model $record) use ($relations) {
+//
+//                    $item = collect($relations)->mapWithKeys(function(string $relation) use ($record) {
+//                        $related_entities = $record->$relation;
+//
+//                        // return [$relation => [
+//                        //      [ 1 => ['relation_notes' => 'some notes']],
+//                        //      [ 2 => ['relation_notes' => 'some more notes]],
+//                        //   ]];
+//
+//                        $values = $related_entities->mapWithKeys(function($related_entity) {
+//                           return [ $related_entity->id => ['relation_notes' => $related_entity->pivot->relation_notes]];
+//                        });
+//
+//                    });
+//
+//                });
+
+                $related_array = [];
+
+                foreach($relations as $relation) {
+                    $related_array[$relation] = [];
                 }
 
-                $metrics_array = [];
-                $references_array = [];
-
                 foreach ($records as $record) {
 
-                    $metrics = $record->metrics()->get();
-                    foreach ($metrics as $metric) {
-                        if (isset($metrics_array[$metric->pivot->metric_id])) {
-                            if ($metrics_array[$metric->pivot->metric_id]['relation_notes'] == '') {
-                                $metrics_array[$metric->pivot->metric_id]['relation_notes'] = $metric->pivot->relation_notes;
+                    foreach ($relations as $relation) {
+
+
+                        $related_items = $record->$relation;
+
+                        foreach ($related_items as $related_item) {
+                            if (isset($related_array[$relation][$related_item->id])) {
+                                if ($related_array[$relation][$related_item->id]['relation_notes'] === '') {
+                                    $related_array[$relation][$related_item->id]['relation_notes'] = $related_item->pivot->relation_notes;
+                                } else {
+                                    $related_array[$relation][$related_item->id]['relation_notes'] .= '. ' . $related_item->pivot->relation_notes;
+                                }
                             } else {
-                                $metrics_array[$metric->pivot->metric_id]['relation_notes'] = $metrics_array[$metric->pivot->metric_id]['relation_notes'] . '. ' . $metric->pivot->relation_notes;
+                                $related_array[$relation][$related_item->id]['relation_notes'] = $related_item->pivot->relation_notes;
                             }
-                        } else {
-                            $metrics_array[$metric->pivot->metric_id]['relation_notes'] = $metric->pivot->relation_notes;
                         }
                     }
 
-                    $references = $record->references()->get();
-                    foreach ($references as $reference) {
-                        if (isset($references_array[$reference->pivot->reference_id])) {
-                            if ($references_array[$reference->pivot->reference_id]['relation_notes'] == '') {
-                                $references_array[$reference->pivot->reference_id]['relation_notes'] = $reference->pivot->relation_notes;
-                            } else {
-                                $references_array[$reference->pivot->reference_id]['relation_notes'] = $references_array[$reference->pivot->reference_id]['relation_notes'] . '. ' . $reference->pivot->relation_notes;
-                            }
-                        } else {
-                            $references_array[$reference->pivot->reference_id]['relation_notes'] = $reference->pivot->relation_notes;
-                            $references_array[$reference->pivot->reference_id]['reference_type'] = $reference->pivot->reference_type;
-                        }
-                    }
-                };
+                }
 
-                Dimension::where('id', $record_remain)->first()->metrics()->sync($metrics_array);
-                Dimension::where('id', $record_remain)->first()->references()->sync($references_array);
-                Dimension::whereIn('id', $records_remove)->delete();
+                $class = get_class($records->first());
+                $remaining_record = $class::findOrFail($record_remain_id);
+                
+                foreach($relations as $relation) {
+                    $remaining_record->$relation()->sync($related_array[$relation]);
+                }
+
+                $class::whereIn('id', $records_remove)->delete();
 
             }
         );
-        
+
 
     }
 
