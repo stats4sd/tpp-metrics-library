@@ -60,33 +60,33 @@ class ProcessImporter implements ShouldQueue
 
                 if($type->toString() === "Metrics") {
 
-                    $metric = Metric::updateOrCreate(['title' => $item]);
-                    $this->reference->metrics()->syncWithoutDetaching([$metric->id => ['reference_type' => 'reference', 'unreviewed_import' => 1]]);
+                    $metric = Metric::updateOrCreate(['title' => $item], ['unreviewed_import' => 1]);
+                    $this->reference->metrics()->syncWithoutDetaching([$metric->id => ['reference_type' => 'reference']]);
 
                 }
 
                 elseif($type->toString()=== "Dimensions") {
 
-                    $dimension = Dimension::updateOrCreate(['name' => $item]);
-                    $this->reference->dimensions()->syncWithoutDetaching([$dimension->id => ['reference_type' => 'reference', 'unreviewed_import' => 1]]);
+                    $dimension = Dimension::updateOrCreate(['name' => $item], ['unreviewed_import' => 1]);
+                    $this->reference->dimensions()->syncWithoutDetaching([$dimension->id => ['reference_type' => 'reference']]);
 
                 }
 
                 elseif($type->toString()=== "Methods") {
-                    $collection_method = CollectionMethod::updateOrCreate(['title' => $item]);
-                    $this->reference->collectionMethods()->syncWithoutDetaching([$collection_method->id => ['reference_type' => 'reference', 'unreviewed_import' => 1]]);
+                    $collection_method = CollectionMethod::updateOrCreate(['title' => $item], ['unreviewed_import' => 1]);
+                    $this->reference->collectionMethods()->syncWithoutDetaching([$collection_method->id => ['reference_type' => 'reference']]);
 
                 }
 
                 elseif($type->toString()=== "Country/region") {
-                    $geography = Geography::updateOrCreate(['name' => $item]);
-                    $this->reference->geographies()->syncWithoutDetaching([$geography->id => ['reference_type' => 'reference', 'unreviewed_import' => 1]]);
+                    $geography = Geography::updateOrCreate(['name' => $item], ['unreviewed_import' => 1]);
+                    $this->reference->geographies()->syncWithoutDetaching([$geography->id => ['reference_type' => 'reference']]);
 
                 }
 
                 elseif($type->toString()=== "Scale" || $type->toString()===  "Level") {
-                    $scale = Scale::updateOrCreate(['name' => $item]);
-                    $this->reference->scales()->syncWithoutDetaching([$scale->id => ['reference_type' => 'reference', 'unreviewed_import' => 1]]);
+                    $scale = Scale::updateOrCreate(['name' => $item], ['unreviewed_import' => 1]);
+                    $this->reference->scales()->syncWithoutDetaching([$scale->id => ['reference_type' => 'reference']]);
 
                 }
 
