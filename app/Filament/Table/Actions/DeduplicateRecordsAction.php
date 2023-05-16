@@ -5,6 +5,7 @@ namespace App\Filament\Table\Actions;
 use Filament\Forms\Components\Select;
 use Filament\Tables\Actions\BulkAction;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 
 class DeduplicateRecordsAction extends BulkAction
 {
@@ -31,7 +32,7 @@ class DeduplicateRecordsAction extends BulkAction
 
                 // This assumes that the 1st entry in the list table is the identifiable "title" / "name" of the record.
                 $titleAttribute = array_keys($this->getTable()->getColumns())[0];
-                
+
                 return [
                     Select::make('remaining_record')
                         ->inlineLabel()
@@ -55,6 +56,37 @@ class DeduplicateRecordsAction extends BulkAction
                 // pre-load relations to avoid too many db calls
                 $records->load($relations);
 
+                // records level
+                $all_related_entries = $records->mapWithKeys(function (Model $record) use ($relations) {
+
+                    // relations level
+                    $item = collect($relations)->mapWithKeys(function (string $relation) use ($record) {
+                        $related_entities = $record->$relation;
+
+                        $pivot_vars = $record->$relation()->getPivotColumns();
+
+                        $values = $related_entities->mapWithKeys(function (Model $related_entity) use ($pivot_vars) {
+                            $pivot_values = collect($pivot_vars)->mapWithKeys(function($pivot_var) use ($related_entity) {
+                               return [$pivot_var => $related_entity->pivot->$pivot_var];
+                            });
+
+                            return [ $related_entity->id => $pivot_values ];
+                        });
+
+                        return [$relation => $values];
+
+                    });
+
+                    return [ $record->id => $item ];
+                });
+
+                dump($all_related_entries);
+
+
+                $
+
+
+                dd('hi');
                 $related_array = [];
 
 
@@ -63,17 +95,31 @@ class DeduplicateRecordsAction extends BulkAction
                     $related_array[$relation] = [];
                 }
 
+
                 foreach ($records as $record) {
 
                     foreach ($relations as $relation) {
 
                         $related_items = $record->$relation;
 
+                        $pivot_vars = $record->$relation()->getPivotColumns();
+
                         foreach ($related_items as $related_item) {
-                            if (isset($related_array[$relation][$related_item->id]) && $related_array[$relation][$related_item->id]['relation_notes'] !== '') {
-                                $related_array[$relation][$related_item->id]['relation_notes'] .= '. ' . $related_item->pivot->relation_notes;
-                            } else {
-                                $related_array[$relation][$related_item->id]['relation_notes'] = $related_item->pivot->relation_notes;
+
+                            // if no entries for this $related_item->id are included yet, initialise.
+                            if (!isset($related_array[$relation][$related_item->id])) {
+                                $related_array[$relation][$related_item->id] = [];
+                            }
+
+                            foreach ($pivot_vars as $pivot_var) {
+
+                                // if no entries for this pivot_var and thie $related_item->id are included yet, initialise
+                                if (!isset($related_array[$relation][$related_item->id][$pivot_var])) {
+                                    $related_array[$relation][$related_item->id][$pivot_var] = '';
+                                }
+
+                                $related_array[$relation][$related_item->id][$pivot_var] .= '. ' . $related_item->pivot->$pivot_var;
+
                             }
                         }
                     }
