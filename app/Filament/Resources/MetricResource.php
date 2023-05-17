@@ -2,51 +2,54 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Form\Components\CheckboxList;
-use App\Filament\Form\Components\Select;
-use App\Filament\Form\Components\TableRepeater;
-use App\Filament\Form\Components\Textarea;
-use App\Filament\Resources\MetricResource\Pages;
-use App\Filament\Resources\MetricResource\RelationManagers\ChildMetricsRelationManager;
-use App\Filament\Resources\MetricResource\RelationManagers\CollectionMethodsRelationManager;
-use App\Filament\Resources\MetricResource\RelationManagers\CollectorsRelationManager;
-use App\Filament\Resources\MetricResource\RelationManagers\ComplimentaryMetricsRelationManager;
-use App\Filament\Resources\MetricResource\RelationManagers\ComputationGuidanceRelationManager;
-use App\Filament\Resources\MetricResource\RelationManagers\DataSourcesRelationManager;
-use App\Filament\Resources\MetricResource\RelationManagers\DecisionMakerRelationManager;
-use App\Filament\Resources\MetricResource\RelationManagers\FarmingSystemsRelationManager;
-use App\Filament\Resources\MetricResource\RelationManagers\FrameworksRelationManager;
-use App\Filament\Resources\MetricResource\RelationManagers\GeographiesRelationManager;
-use App\Filament\Resources\MetricResource\RelationManagers\ImpactedByRelationManager;
-use App\Filament\Resources\MetricResource\RelationManagers\ParentMetricsRelationManager;
-use App\Filament\Resources\MetricResource\RelationManagers\ReferenceRelationManager;
-use App\Filament\Resources\MetricResource\RelationManagers\ScaleDecisionRelationManager;
-use App\Filament\Resources\MetricResource\RelationManagers\ScaleMeasurementRelationManager;
-use App\Filament\Resources\MetricResource\RelationManagers\ScaleReportingRelationManager;
-use App\Filament\Resources\MetricResource\RelationManagers\ToolsRelationManager;
-use App\Filament\Resources\MetricResource\RelationManagers\UnitsRelationManager;
-use App\Filament\Resources\Traits\HasDiscussionPoints;
-use App\Filament\Table\Actions\DeduplicateRecordsAction;
-use App\Models\Dimension;
+use Filament\Tables;
+use App\Models\Topic;
 use App\Models\Metric;
 use App\Models\Property;
-use App\Models\PropertyOption;
+use App\Models\Dimension;
 use App\Models\SubDimension;
-use App\Models\Topic;
-use Awcodes\FilamentBadgeableColumn\Components\Badge;
-use Awcodes\FilamentBadgeableColumn\Components\BadgeableColumn;
-use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Components\Tabs;
-use Filament\Forms\Components\Tabs\Tab;
-use Filament\Forms\Components\TextInput;
 use Filament\Resources\Form;
-use Filament\Resources\RelationManagers\RelationGroup;
-use Filament\Resources\Resource;
 use Filament\Resources\Table;
-use Filament\Tables;
+use App\Models\PropertyOption;
+use Filament\Resources\Resource;
 use Illuminate\Support\HtmlString;
+use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Tabs\Tab;
+use App\Filament\Form\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Illuminate\Database\Eloquent\Builder;
+use App\Filament\Form\Components\Textarea;
+use Filament\Forms\Components\Placeholder;
+use Filament\Tables\Filters\TrashedFilter;
+use Filament\Forms\Components\Actions\Action;
+use App\Filament\Form\Components\CheckboxList;
+use App\Filament\Form\Components\TableRepeater;
+use App\Filament\Resources\MetricResource\Pages;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Awcodes\FilamentBadgeableColumn\Components\Badge;
+use App\Filament\Resources\Traits\HasDiscussionPoints;
+use Filament\Resources\RelationManagers\RelationGroup;
+use App\Filament\Table\Actions\DeduplicateRecordsAction;
+use Awcodes\FilamentBadgeableColumn\Components\BadgeableColumn;
+use App\Filament\Resources\MetricResource\RelationManagers\ToolsRelationManager;
+use App\Filament\Resources\MetricResource\RelationManagers\UnitsRelationManager;
+use App\Filament\Resources\MetricResource\RelationManagers\ReferenceRelationManager;
+use App\Filament\Resources\MetricResource\RelationManagers\CollectorsRelationManager;
+use App\Filament\Resources\MetricResource\RelationManagers\FrameworksRelationManager;
+use App\Filament\Resources\MetricResource\RelationManagers\ImpactedByRelationManager;
+use App\Filament\Resources\MetricResource\RelationManagers\DataSourcesRelationManager;
+use App\Filament\Resources\MetricResource\RelationManagers\GeographiesRelationManager;
+use App\Filament\Resources\MetricResource\RelationManagers\ChildMetricsRelationManager;
+use App\Filament\Resources\MetricResource\RelationManagers\DecisionMakerRelationManager;
+use App\Filament\Resources\MetricResource\RelationManagers\ParentMetricsRelationManager;
+use App\Filament\Resources\MetricResource\RelationManagers\ScaleDecisionRelationManager;
+use App\Filament\Resources\MetricResource\RelationManagers\FarmingSystemsRelationManager;
+use App\Filament\Resources\MetricResource\RelationManagers\ScaleReportingRelationManager;
+use App\Filament\Resources\MetricResource\RelationManagers\ScaleMeasurementRelationManager;
+use App\Filament\Resources\MetricResource\RelationManagers\CollectionMethodsRelationManager;
+use App\Filament\Resources\MetricResource\RelationManagers\ComputationGuidanceRelationManager;
+use App\Filament\Resources\MetricResource\RelationManagers\ComplimentaryMetricsRelationManager;
 
 class MetricResource extends Resource
 {
@@ -266,6 +269,8 @@ class MetricResource extends Resource
         return $table
             ->columns([
                 BadgeableColumn::make('title')
+                    ->sortable()
+                    ->searchable()
                     ->badges(function ($record): array {
                         return $record->topics->map(function ($topic) {
                             return Badge::make($topic->id)
@@ -278,7 +283,9 @@ class MetricResource extends Resource
                 Tables\Columns\TextColumn::make('updated_at')
                     ->label('Last Updated')
             ])
-            ->filters([])
+            ->filters([
+                TrashedFilter::make(),
+            ])
             ->actions([
                 Tables\Actions\EditAction::make(),
             ])
@@ -339,13 +346,20 @@ class MetricResource extends Resource
         ];
     }
 
-    public
-    static function getPages(): array
+    public static function getPages(): array
     {
         return [
             'index' => Pages\ListMetrics::route('/'),
             'create' => Pages\CreateMetric::route('/create'),
             'edit' => Pages\EditMetric::route('/{record}/edit'),
         ];
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+    return parent::getEloquentQuery()
+        ->withoutGlobalScopes([
+            SoftDeletingScope::class,
+        ]);
     }
 }
