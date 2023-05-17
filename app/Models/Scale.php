@@ -32,7 +32,7 @@ class Scale extends Model
     public function metricMeasurement(): BelongsToMany
     {
         return $this->belongsToMany(Metric::class, 'metric_scale')
-            ->withPivot('notes', 'commonly_used', 'type')
+            ->withPivot('relation_notes', 'commonly_used', 'type')
             ->wherePivot('type', '=', 'measurement');
     }
 
