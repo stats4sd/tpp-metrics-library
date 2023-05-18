@@ -12,6 +12,7 @@ use Filament\Forms\Components\Grid;
 use Illuminate\Support\Facades\Auth;
 use Filament\Forms\Components\Hidden;
 use Filament\Tables\Columns\TextColumn;
+use Illuminate\Support\Facades\Storage;
 use App\Filament\Form\Components\Select;
 use Filament\Forms\Components\FileUpload;
 use Illuminate\Database\Eloquent\Builder;
@@ -32,10 +33,9 @@ class ImportResource extends Resource
             ->schema([
                 Grid::make(1)
                 ->schema([
-                    FileUpload::make('file')->required()->disabledOn('edit')->disk('screening-imports')->preserveFilenames(),
+                    FileUpload::make('file')->required()->disabledOn('edit')->disk('screening-imports')->preserveFilenames()->enableDownload(),
                     Textarea::make('description'),
-                    Hidden::make('user_id')
-                    ->default(Auth::id())
+                    Hidden::make('user_id')->default(Auth::id())
                 ])
             ]);
     }
@@ -44,7 +44,7 @@ class ImportResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('file'),
+                TextColumn::make('file')->url(fn(Import $record): string => env('APP_URL').'storage/screening-imports/'.$record->file),
                 TextColumn::make('description'),
                 TextColumn::make('user.name')->label('Imported by'),
                 TextColumn::make('created_at')->label('Imported at')->sortable(),
