@@ -38,7 +38,7 @@ class TopicResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('name'),
+                TextColumn::make('name')->sortable()->searchable(),
                 TextColumn::make('definition'),
                 TextColumn::make('notes'),
                 TextColumn::make('metrics_count')->counts('metrics')->sortable(),
