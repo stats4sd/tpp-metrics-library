@@ -6,6 +6,7 @@ use Filament\Facades\Filament;
 use Illuminate\Support\ServiceProvider;
 use App\Filament\Resources\FlagResource;
 use App\Filament\Resources\ToolResource;
+use App\Filament\Resources\UserResource;
 use Filament\Navigation\NavigationGroup;
 use App\Filament\Resources\ScaleResource;
 use App\Filament\Resources\TopicResource;
@@ -27,7 +28,6 @@ use App\Filament\Resources\MetricPropertyResource;
 use App\Filament\Resources\DiscussionPointResource;
 use App\Filament\Resources\CollectionMethodResource;
 use Phpsa\FilamentAuthentication\Resources\RoleResource;
-use Phpsa\FilamentAuthentication\Resources\UserResource;
 use Phpsa\FilamentAuthentication\Resources\PermissionResource;
 
 class AppServiceProvider extends ServiceProvider
