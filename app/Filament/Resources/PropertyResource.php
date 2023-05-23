@@ -68,7 +68,7 @@ class PropertyResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('code'),
-                Tables\Columns\TextColumn::make('name'),
+                Tables\Columns\TextColumn::make('name')->sortable()->searchable(),
                 Tables\Columns\IconColumn::make('select_multiple')->boolean(),
                 Tables\Columns\IconColumn::make('free_text')->boolean(),
             ])
