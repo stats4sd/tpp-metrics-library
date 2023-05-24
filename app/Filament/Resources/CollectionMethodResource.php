@@ -12,8 +12,11 @@ use Filament\Resources\Resource;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Tabs\Tab;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
+use Illuminate\Database\Eloquent\Model;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Form\Components\Textarea;
@@ -41,6 +44,16 @@ class CollectionMethodResource extends Resource
                             Textarea::make('description'),
                             Textarea::make('pros_cons')->label('Pros/Cons'),
                             Textarea::make('notes'),
+                            Toggle::make('unreviewed_import')
+                                    ->label('Mark this imported record as reviewed')
+                                    ->visible(function (Model $record): bool {
+                                        $visible = $record->unreviewed_import==1;
+                                        return $visible;
+                                    })
+                                    ->offColor('success')
+                                    ->onColor('danger')
+                                    ->offIcon('heroicon-s-check')
+                                    ->onIcon('heroicon-s-exclamation-circle')
                         ]),
 
                         Tab::make('Properties')
@@ -122,8 +135,15 @@ class CollectionMethodResource extends Resource
                 TextColumn::make('description'),
                 TextColumn::make('pros_cons')->label('Pros/Cons'),
                 TextColumn::make('metrics_count')->counts('metrics')->sortable(),
+                IconColumn::make('unreviewed_import')
+                            ->options(['heroicon-o-exclamation-circle' => fn($state): bool => (bool)$state])
+                            ->color('danger')
+                            ->sortable(),
             ])
             ->filters([
+                Tables\Filters\Filter::make('unreviewed_import')
+                                        ->query(fn(Builder $query): Builder => $query->where('unreviewed_import', true))
+                                        ->label('Unreviewed imported records'),
                 TrashedFilter::make(),
             ])
             ->actions([
