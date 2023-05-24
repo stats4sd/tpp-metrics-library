@@ -19,6 +19,7 @@ use App\Filament\Form\Components\Textarea;
 use Filament\Tables\Filters\TrashedFilter;
 use App\Filament\Resources\GeographyResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Table\Actions\DeduplicateRecordsAction;
 use App\Filament\Resources\GeographyResource\RelationManagers;
 
 class GeographyResource extends Resource
@@ -75,6 +76,7 @@ class GeographyResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
+                DeduplicateRecordsAction::make(),
             ]);
     }
     

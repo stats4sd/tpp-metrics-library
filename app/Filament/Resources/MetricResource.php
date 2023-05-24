@@ -24,13 +24,16 @@ use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Form\Components\Textarea;
 use Filament\Forms\Components\Placeholder;
+use Filament\Tables\Filters\TrashedFilter;
 use Filament\Forms\Components\Actions\Action;
 use App\Filament\Form\Components\CheckboxList;
 use App\Filament\Form\Components\TableRepeater;
 use App\Filament\Resources\MetricResource\Pages;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Awcodes\FilamentBadgeableColumn\Components\Badge;
 use App\Filament\Resources\Traits\HasDiscussionPoints;
 use Filament\Resources\RelationManagers\RelationGroup;
+use App\Filament\Table\Actions\DeduplicateRecordsAction;
 use Awcodes\FilamentBadgeableColumn\Components\BadgeableColumn;
 use App\Filament\Resources\MetricResource\RelationManagers\ToolsRelationManager;
 use App\Filament\Resources\MetricResource\RelationManagers\UnitsRelationManager;
@@ -283,6 +286,8 @@ class MetricResource extends Resource
         return $table
             ->columns([
                 BadgeableColumn::make('title')
+                    ->sortable()
+                    ->searchable()
                     ->badges(function ($record): array {
                         return $record->topics->map(function ($topic) {
                             return Badge::make($topic->id)
@@ -303,12 +308,14 @@ class MetricResource extends Resource
                 Tables\Filters\Filter::make('unreviewed_import')
                                         ->query(fn(Builder $query): Builder => $query->where('unreviewed_import', true))
                                         ->label('Unreviewed imported records'),
+                TrashedFilter::make(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
+                DeduplicateRecordsAction::make(),
             ]);
     }
 
@@ -363,13 +370,20 @@ class MetricResource extends Resource
         ];
     }
 
-    public
-    static function getPages(): array
+    public static function getPages(): array
     {
         return [
             'index' => Pages\ListMetrics::route('/'),
             'create' => Pages\CreateMetric::route('/create'),
             'edit' => Pages\EditMetric::route('/{record}/edit'),
         ];
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+    return parent::getEloquentQuery()
+        ->withoutGlobalScopes([
+            SoftDeletingScope::class,
+        ]);
     }
 }

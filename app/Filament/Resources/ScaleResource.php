@@ -19,6 +19,7 @@ use App\Filament\Form\Components\Textarea;
 use Filament\Tables\Filters\TrashedFilter;
 use App\Filament\Resources\ScaleResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Table\Actions\DeduplicateRecordsAction;
 use App\Filament\Resources\ScaleResource\RelationManagers;
 
 class ScaleResource extends Resource
@@ -75,6 +76,7 @@ class ScaleResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
+                DeduplicateRecordsAction::make(),
             ]);
     }
     

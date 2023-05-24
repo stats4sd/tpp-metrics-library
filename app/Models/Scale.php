@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Traits\GetRelationships;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
@@ -11,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Scale extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, GetRelationships;
 
     protected $guarded = [];
 
@@ -31,7 +32,7 @@ class Scale extends Model
     public function metricMeasurement(): BelongsToMany
     {
         return $this->belongsToMany(Metric::class, 'metric_scale')
-            ->withPivot('notes', 'commonly_used', 'type')
+            ->withPivot('relation_notes', 'commonly_used', 'type')
             ->wherePivot('type', '=', 'measurement');
     }
 

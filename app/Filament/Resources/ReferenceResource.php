@@ -41,9 +41,10 @@ class ReferenceResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('name'),
+                TextColumn::make('name')->searchable()->sortable(),
                 TextColumn::make('url'),
                 TextColumn::make('notes'),
+                TextColumn::make('metrics_count')->counts('metrics')->sortable(),
             ])
             ->filters([
                 Filter::make('is_referenced')

@@ -21,6 +21,7 @@ use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Form\Components\Textarea;
 use Filament\Tables\Filters\TrashedFilter;
+use App\Filament\Table\Actions\DeduplicateRecordsAction;
 use App\Filament\Resources\CollectionMethodResource\Pages;
 use App\Filament\Resources\CollectionMethodResource\RelationManagers;
 
@@ -151,6 +152,7 @@ class CollectionMethodResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
+                DeduplicateRecordsAction::make(),
             ]);
     }
 
