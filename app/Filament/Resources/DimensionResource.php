@@ -9,19 +9,17 @@ use App\Filament\Table\Actions\DeduplicateRecordsAction;
 use App\Models\Dimension;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\Checkbox;
-use Filament\Tables\Columns\IconColumn;
-use Filament\Tables\Columns\TextColumn;
-use Illuminate\Database\Eloquent\Model;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\TrashedFilter;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class DimensionResource extends Resource
@@ -71,7 +69,7 @@ class DimensionResource extends Resource
                                         ->query(fn(Builder $query): Builder => $query->where('unreviewed_import', true))
                                         ->label('Unreviewed imported records'),
                 TrashedFilter::make(),
-    
+
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),

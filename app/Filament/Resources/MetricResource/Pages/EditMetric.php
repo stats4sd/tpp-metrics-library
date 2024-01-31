@@ -16,7 +16,7 @@ class EditMetric extends EditRecord
 
     public function getTitle(): string
     {
-        return "Reviewing {$this->getRecord()?->title}";
+        return "{$this->getRecord()?->title}";
     }
 
     public function getSubheading(): string
