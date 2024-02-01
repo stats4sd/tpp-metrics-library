@@ -10,7 +10,7 @@ class EditTool extends EditRecord
 {
     protected static string $resource = ToolResource::class;
 
-    protected function getActions(): array
+    protected function getHeaderActions(): array
     {
         return [
             Actions\DeleteAction::make(),

@@ -14,7 +14,7 @@ class EditCollectionMethod extends EditRecord
 {
     protected static string $resource = CollectionMethodResource::class;
 
-    protected function getActions(): array
+    protected function getHeaderActions(): array
     {
         return [
             Actions\DeleteAction::make(),

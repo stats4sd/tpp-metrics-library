@@ -5,7 +5,7 @@ namespace App\Filament\Templates;
 use App\Filament\Form\Textarea;
 use Closure;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Resources\Table;
+use Filament\Tables\Table;
 use Filament\Tables;
 use Illuminate\Contracts\Support\Htmlable;
 
@@ -17,7 +17,7 @@ class MetricLinkRelationManager extends RelationManager
         return $this->getTitle() . ' for ' . $this->getOwnerRecord()->title;
     }
 
-    public static function table(Table $table): Table
+    public function table(Table $table): Table
     {
         return $table
             ->columns([

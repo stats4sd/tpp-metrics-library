@@ -10,7 +10,7 @@ class ListMetrics extends ListRecords
 {
     protected static string $resource = MetricResource::class;
 
-    protected function getActions(): array
+    protected function getHeaderActions(): array
     {
         return [
             Actions\CreateAction::make(),

@@ -15,7 +15,7 @@ class ListFarmingSystems extends ListRecords
         return 'This page is a placeholder. It will eventually allow a review of the information within the library per farming system, e.g. showing metrics + references etc grouped by farming system.';
     }
 
-    protected function getActions(): array
+    protected function getHeaderActions(): array
     {
         return [
             Actions\CreateAction::make(),

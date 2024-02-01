@@ -12,10 +12,10 @@ class ListDiscussionPoints extends ListRecords
 
     protected function getTableFiltersLayout(): ?string
     {
-        return Layout::AboveContentCollapsible;
+        return \Filament\Tables\Enums\FiltersLayout::AboveContentCollapsible;
     }
 
-    protected function getActions(): array
+    protected function getHeaderActions(): array
     {
         return [
         ];

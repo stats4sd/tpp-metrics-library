@@ -15,7 +15,7 @@ class ListMetricUsers extends ListRecords
         return 'This page is a placeholder. It will eventually allow a review of the information within the library per user group / use case, e.g. showing metrics grouped by user group.';
     }
 
-    protected function getActions(): array
+    protected function getHeaderActions(): array
     {
         return [
             Actions\CreateAction::make(),

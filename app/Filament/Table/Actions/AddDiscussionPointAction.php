@@ -29,7 +29,7 @@ class AddDiscussionPointAction extends Action
 
         $this->label('Discussion Point');
         $this->tooltip('Add discussion point about this item');
-        $this->icon('heroicon-s-external-link');
+        $this->icon('heroicon-m-arrow-top-right-on-square');
 
         $this->form(function (AddDiscussionPointAction $action): array {
 

@@ -5,8 +5,8 @@ namespace App\Filament\Resources\MetricResource\RelationManagers;
 use Filament\Forms\Components\Section;
 use Filament\Tables;
 use App\Models\Metric;
-use Filament\Resources\Form;
-use Filament\Resources\Table;
+use Filament\Forms\Form;
+use Filament\Tables\Table;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use App\Filament\Form\Components\Textarea;
@@ -29,7 +29,7 @@ class ComplimentaryMetricsRelationManager extends RelationManager
         return "Other metrics that are peers of this metric. Perhaps they are often used/collected together, or perhaps they are a measure of similar things or used for similar purposes.";
     }
 
-    public static function form(Form $form): Form
+    public function form(Form $form): Form
     {
         return $form
             ->schema([
@@ -47,7 +47,7 @@ class ComplimentaryMetricsRelationManager extends RelationManager
             ]);
     }
 
-    public static function table(Table $table): Table
+    public function table(Table $table): Table
     {
         return $table
             ->columns([

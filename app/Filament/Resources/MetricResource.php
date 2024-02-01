@@ -8,8 +8,8 @@ use App\Models\Metric;
 use App\Models\Property;
 use App\Models\Dimension;
 use App\Models\SubDimension;
-use Filament\Resources\Form;
-use Filament\Resources\Table;
+use Filament\Forms\Form;
+use Filament\Tables\Table;
 use App\Models\PropertyOption;
 use Filament\Resources\Resource;
 use Illuminate\Support\HtmlString;
@@ -59,7 +59,7 @@ class MetricResource extends Resource
     use HasDiscussionPoints;
 
     protected static ?string $model = Metric::class;
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
 
     public static function form(Form $form): Form

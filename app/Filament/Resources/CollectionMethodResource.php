@@ -4,8 +4,8 @@ namespace App\Filament\Resources;
 
 use Filament\Tables;
 use App\Models\Property;
-use Filament\Resources\Form;
-use Filament\Resources\Table;
+use Filament\Forms\Form;
+use Filament\Tables\Table;
 use App\Models\PropertyOption;
 use App\Models\CollectionMethod;
 use Filament\Resources\Resource;
@@ -29,7 +29,7 @@ class CollectionMethodResource extends Resource
 {
     protected static ?string $model = CollectionMethod::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function form(Form $form): Form
     {
