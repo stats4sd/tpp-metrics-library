@@ -25,6 +25,9 @@ class SubDimensionResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    protected static ?string $navigationGroup = 'TOPICS';
+    protected static ?int $navigationSort = 23;
+
     public static function form(Form $form): Form
     {
         return $form

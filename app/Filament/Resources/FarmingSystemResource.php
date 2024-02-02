@@ -24,6 +24,9 @@ class FarmingSystemResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    protected static ?string $navigationGroup = 'SYSTEMS AND GEOGRAPHIES';
+    protected static ?int $navigationSort = 51;
+
     public static function form(Form $form): Form
     {
         return $form

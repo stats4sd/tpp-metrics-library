@@ -24,6 +24,9 @@ class ReferenceResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    protected static ?string $navigationGroup = 'REFERENCES';
+    protected static ?int $navigationSort = 61;
+
     public static function form(Form $form): Form
     {
         return $form

@@ -28,6 +28,9 @@ class ScaleResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    protected static ?string $navigationGroup = 'SCALES, USERS, USE CASES';
+    protected static ?int $navigationSort = 31;
+
     public static function form(Form $form): Form
     {
         return $form

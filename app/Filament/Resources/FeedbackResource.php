@@ -24,6 +24,9 @@ class FeedbackResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    protected static ?string $navigationGroup = 'REVIEW TOOLS';
+    protected static ?int $navigationSort = 13;
+
     public static function form(Form $form): Form
     {
         return $form
