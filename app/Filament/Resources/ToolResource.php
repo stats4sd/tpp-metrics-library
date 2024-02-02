@@ -12,7 +12,7 @@ use Filament\Forms\Components\Grid;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
-use App\Filament\Form\Components\Textarea;
+use Filament\Forms\Components\Textarea;
 use Filament\Tables\Filters\TrashedFilter;
 use App\Filament\Resources\ToolResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -60,14 +60,14 @@ class ToolResource extends Resource
                 Tables\Actions\DeleteBulkAction::make(),
             ]);
     }
-    
+
     public static function getRelations(): array
     {
         return [
             //
         ];
     }
-    
+
     public static function getPages(): array
     {
         return [
@@ -75,8 +75,8 @@ class ToolResource extends Resource
             'create' => Pages\CreateTool::route('/create'),
             'edit' => Pages\EditTool::route('/{record}/edit'),
         ];
-    }   
-    
+    }
+
     public static function getEloquentQuery(): Builder
     {
     return parent::getEloquentQuery()
@@ -84,5 +84,5 @@ class ToolResource extends Resource
             SoftDeletingScope::class,
         ]);
     }
-    
+
 }

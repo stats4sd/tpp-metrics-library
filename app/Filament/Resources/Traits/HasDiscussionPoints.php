@@ -2,15 +2,15 @@
 
 namespace App\Filament\Resources\Traits;
 
-use App\Models\Flag;
+use Filament\Forms\Components\Textarea;
 use App\Models\DiscussionPoint;
-use Illuminate\Support\HtmlString;
-use Illuminate\Support\Facades\Auth;
-use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\Select;
-use App\Filament\Form\Components\Textarea;
-use Filament\Forms\Components\Placeholder;
+use App\Models\Flag;
 use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\Select;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\HtmlString;
 
 trait HasDiscussionPoints
 {
@@ -20,7 +20,7 @@ trait HasDiscussionPoints
         return fn(): Action => Action::make('discussion_point')
             ->label('Discussion Point')
             ->tooltip(fn(): string => "Add discussion point about this")
-            ->icon('heroicon-s-external-link')
+            ->icon('heroicon-s-link')
             ->form(function (Action $action): array {
 
                 $modelType = $action->getComponent()->getModel();

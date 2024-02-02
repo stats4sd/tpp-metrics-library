@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources\MetricResource\RelationManagers;
 
-use App\Filament\Form\Components\Textarea;
+use Filament\Forms\Components\Textarea;
 use App\Filament\Resources\Traits\HasDiscussionPoints;
 use App\Filament\Table\Actions\AddDiscussionPointAction;
 use App\Models\Scale;

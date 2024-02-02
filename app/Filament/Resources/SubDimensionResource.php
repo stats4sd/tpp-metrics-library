@@ -2,22 +2,21 @@
 
 namespace App\Filament\Resources;
 
-use Filament\Forms;
-use Filament\Tables;
-use App\Models\SubDimension;
-use Filament\Forms\Form;
-use Filament\Tables\Table;
-use Filament\Resources\Resource;
-use Filament\Forms\Components\Grid;
-use Filament\Tables\Columns\TextColumn;
-use App\Filament\Form\Components\Select;
-use Filament\Forms\Components\TextInput;
-use Illuminate\Database\Eloquent\Builder;
-use App\Filament\Form\Components\Textarea;
-use Filament\Tables\Filters\TrashedFilter;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\SubDimensionResource\Pages;
 use App\Filament\Resources\SubDimensionResource\RelationManagers;
+use App\Models\SubDimension;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
+use Filament\Resources\Resource;
+use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\TrashedFilter;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class SubDimensionResource extends Resource
 {
@@ -34,7 +33,7 @@ class SubDimensionResource extends Resource
             ->schema([
                 Grid::make(1)
                 ->schema([
-                    Select::make('dimensionId')->relationship('dimension', 'name')->required(),
+                    Select::make('dimension_id')->relationship('dimension', 'name')->required(),
                     TextInput::make('name')->required(),
                     Textarea::make('definition'),
                     Textarea::make('notes'),
@@ -61,14 +60,14 @@ class SubDimensionResource extends Resource
                 Tables\Actions\DeleteBulkAction::make(),
             ]);
     }
-    
+
     public static function getRelations(): array
     {
         return [
             //
         ];
     }
-    
+
     public static function getPages(): array
     {
         return [
@@ -76,8 +75,8 @@ class SubDimensionResource extends Resource
             'create' => Pages\CreateSubDimension::route('/create'),
             'edit' => Pages\EditSubDimension::route('/{record}/edit'),
         ];
-    }  
-    
+    }
+
     public static function getEloquentQuery(): Builder
     {
     return parent::getEloquentQuery()
@@ -85,5 +84,5 @@ class SubDimensionResource extends Resource
             SoftDeletingScope::class,
         ]);
     }
-    
+
 }

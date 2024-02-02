@@ -19,7 +19,7 @@ use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
-use App\Filament\Form\Components\Textarea;
+use Filament\Forms\Components\Textarea;
 use Filament\Tables\Filters\TrashedFilter;
 use App\Filament\Table\Actions\DeduplicateRecordsAction;
 use App\Filament\Resources\CollectionMethodResource\Pages;
@@ -182,5 +182,5 @@ class CollectionMethodResource extends Resource
             SoftDeletingScope::class,
         ]);
     }
-    
+
 }

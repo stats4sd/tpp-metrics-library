@@ -2,57 +2,57 @@
 
 namespace App\Filament\Resources;
 
-use Filament\Tables;
-use App\Models\Topic;
-use App\Models\Metric;
-use App\Models\Property;
-use App\Models\Dimension;
-use App\Models\SubDimension;
-use Filament\Forms\Form;
-use Filament\Tables\Table;
-use App\Models\PropertyOption;
-use Filament\Resources\Resource;
-use Illuminate\Support\HtmlString;
-use Filament\Forms\Components\Tabs;
-use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\Tabs\Tab;
-use Filament\Tables\Columns\IconColumn;
-use Illuminate\Database\Eloquent\Model;
-use App\Filament\Form\Components\Select;
-use Filament\Forms\Components\TextInput;
-use Illuminate\Database\Eloquent\Builder;
-use App\Filament\Form\Components\Textarea;
-use Filament\Forms\Components\Placeholder;
-use Filament\Tables\Filters\TrashedFilter;
-use Filament\Forms\Components\Actions\Action;
-use App\Filament\Form\Components\CheckboxList;
-use App\Filament\Form\Components\TableRepeater;
 use App\Filament\Resources\MetricResource\Pages;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Awcodes\FilamentBadgeableColumn\Components\Badge;
-use App\Filament\Resources\Traits\HasDiscussionPoints;
-use Filament\Resources\RelationManagers\RelationGroup;
-use App\Filament\Table\Actions\DeduplicateRecordsAction;
-use Awcodes\FilamentBadgeableColumn\Components\BadgeableColumn;
+use App\Filament\Resources\MetricResource\RelationManagers\ChildMetricsRelationManager;
+use App\Filament\Resources\MetricResource\RelationManagers\CollectionMethodsRelationManager;
+use App\Filament\Resources\MetricResource\RelationManagers\CollectorsRelationManager;
+use App\Filament\Resources\MetricResource\RelationManagers\ComplimentaryMetricsRelationManager;
+use App\Filament\Resources\MetricResource\RelationManagers\ComputationGuidanceRelationManager;
+use App\Filament\Resources\MetricResource\RelationManagers\DataSourcesRelationManager;
+use App\Filament\Resources\MetricResource\RelationManagers\DecisionMakerRelationManager;
+use App\Filament\Resources\MetricResource\RelationManagers\FarmingSystemsRelationManager;
+use App\Filament\Resources\MetricResource\RelationManagers\FrameworksRelationManager;
+use App\Filament\Resources\MetricResource\RelationManagers\GeographiesRelationManager;
+use App\Filament\Resources\MetricResource\RelationManagers\ImpactedByRelationManager;
+use App\Filament\Resources\MetricResource\RelationManagers\ParentMetricsRelationManager;
+use App\Filament\Resources\MetricResource\RelationManagers\ReferenceRelationManager;
+use App\Filament\Resources\MetricResource\RelationManagers\ScaleDecisionRelationManager;
+use App\Filament\Resources\MetricResource\RelationManagers\ScaleMeasurementRelationManager;
+use App\Filament\Resources\MetricResource\RelationManagers\ScaleReportingRelationManager;
 use App\Filament\Resources\MetricResource\RelationManagers\ToolsRelationManager;
 use App\Filament\Resources\MetricResource\RelationManagers\UnitsRelationManager;
-use App\Filament\Resources\MetricResource\RelationManagers\ReferenceRelationManager;
-use App\Filament\Resources\MetricResource\RelationManagers\CollectorsRelationManager;
-use App\Filament\Resources\MetricResource\RelationManagers\FrameworksRelationManager;
-use App\Filament\Resources\MetricResource\RelationManagers\ImpactedByRelationManager;
-use App\Filament\Resources\MetricResource\RelationManagers\DataSourcesRelationManager;
-use App\Filament\Resources\MetricResource\RelationManagers\GeographiesRelationManager;
-use App\Filament\Resources\MetricResource\RelationManagers\ChildMetricsRelationManager;
-use App\Filament\Resources\MetricResource\RelationManagers\DecisionMakerRelationManager;
-use App\Filament\Resources\MetricResource\RelationManagers\ParentMetricsRelationManager;
-use App\Filament\Resources\MetricResource\RelationManagers\ScaleDecisionRelationManager;
-use App\Filament\Resources\MetricResource\RelationManagers\FarmingSystemsRelationManager;
-use App\Filament\Resources\MetricResource\RelationManagers\ScaleReportingRelationManager;
-use App\Filament\Resources\MetricResource\RelationManagers\ScaleMeasurementRelationManager;
-use App\Filament\Resources\MetricResource\RelationManagers\CollectionMethodsRelationManager;
-use App\Filament\Resources\MetricResource\RelationManagers\ComputationGuidanceRelationManager;
-use App\Filament\Resources\MetricResource\RelationManagers\ComplimentaryMetricsRelationManager;
+use App\Filament\Resources\Traits\HasDiscussionPoints;
+use App\Filament\Table\Actions\DeduplicateRecordsAction;
+use App\Models\Dimension;
+use App\Models\Metric;
+use App\Models\Property;
+use App\Models\PropertyOption;
+use App\Models\SubDimension;
+use App\Models\Topic;
+use Awcodes\FilamentBadgeableColumn\Components\Badge;
+use Awcodes\FilamentBadgeableColumn\Components\BadgeableColumn;
+use Awcodes\TableRepeater\Components\TableRepeater;
+use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\CheckboxList;
+use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\Tabs\Tab;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Form;
+use Filament\Resources\RelationManagers\RelationGroup;
+use Filament\Resources\Resource;
+use Filament\Tables;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Filters\TrashedFilter;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\HtmlString;
 
 class MetricResource extends Resource
 {
@@ -83,13 +83,13 @@ class MetricResource extends Resource
                                     ->hint('The identifying name for the metric')
                                     ->suffixAction(self::makeDiscussionPointAction()),
 
-                                Placeholder::make('-'),
+                                Placeholder::make('info1'),
 
                                 /** 0.b Alt Names */
                                 TableRepeater::make('altNames')
                                     ->label('0.b. Alternative Names')
                                     ->defaultItems(0)
-                                    ->hideLabels()
+                                    ->hiddenLabel()
                                     ->hint('Any other names the metric is known by')
                                     ->relationship()
                                     ->schema([
@@ -98,14 +98,11 @@ class MetricResource extends Resource
                                         TextInput::make('notes')
                                             ->helperText('E.g. Where is this name used? Who uses it? Is it a common name, or only occasionally used?'),
                                     ])
-                                    ->columnWidths([
-                                        'name' => '250px',
-                                    ])
                                     ->createItemButtonLabel('Add new name')
-                                    ->itemLabel(fn(array $state): ?string => $state['name'] ?? '(new name)')
-                                    ->suffixAction(self::makeDiscussionPointAction()),
+                                    ->itemLabel(fn(array $state): ?string => $state['name'] ?? '(new name)'),
 
-                                Placeholder::make('-')
+
+                                Placeholder::make('info2')
                                     ->content(new HtmlString('<hr/>')),
 
                                 /** 0.i Developer */
@@ -123,16 +120,14 @@ class MetricResource extends Resource
                                 Textarea::make('definition')
                                     ->label('1.a. Definition')
                                     ->inlineLabel()
-                                    ->hint('A brief description of the metric and what it measures')
-                                    ->suffixAction(self::makeDiscussionPointAction()),
+                                    ->hint('A brief description of the metric and what it measures'),
 
                                 Textarea::make('concept')
                                     ->label('1.b. Concept')
                                     ->inlineLabel()
-                                    ->hint('A description of the metric\'s relevance to assessing ag/food system performance')
-                                    ->suffixAction(self::makeDiscussionPointAction()),
+                                    ->hint('A description of the metric\'s relevance to assessing ag/food system performance'),
 
-                                Placeholder::make('-')
+                                Placeholder::make('info3')
                                     ->content(new HtmlString('<hr/>')),
 
                                 Toggle::make('unreviewed_import')
@@ -144,8 +139,8 @@ class MetricResource extends Resource
                                     ->offColor('success')
                                     ->onColor('danger')
                                     ->offIcon('heroicon-s-check')
-                                    ->onIcon('heroicon-s-exclamation-circle')      
-                                    
+                                    ->onIcon('heroicon-s-exclamation-circle'),
+
                             ]),
 
                         Tab::make('Topics and Dimensions')
@@ -158,9 +153,7 @@ class MetricResource extends Resource
                                     ->relationship('topics', 'name')
                                     ->columns(2)
                                     ->options(Topic::orderBy('id')->get()->pluck('name', 'id')->toArray())
-                                    ->reactive()
-                                    ->suffix('Add discussion point')
-                                    ->suffixAction(self::makeDiscussionPointAction()),
+                                    ->reactive(),
 
                                 /** 0.d Dimensions */
                                 Placeholder::make('Dimensions')
@@ -178,9 +171,7 @@ class MetricResource extends Resource
                                         ->get()
                                         ->pluck('name', 'id')->toArray()
                                     )
-                                    ->reactive()
-                                    ->suffix('Add discussion point')
-                                    ->suffixAction(self::makeDiscussionPointAction()),
+                                    ->reactive(),
 
                                 /** 0.e sub-dimensions */
                                 Placeholder::make('Sub Dimensions')
@@ -266,10 +257,6 @@ class MetricResource extends Resource
                                             ->inlineLabel()
                                             ->hint($hint);
 
-                                        if (!$property->select_options) {
-                                            $component = $component->suffixAction(self::makeDiscussionPointAction());
-                                        }
-
                                         $components[] = $component;
                                     }
 
@@ -290,7 +277,7 @@ class MetricResource extends Resource
                 BadgeableColumn::make('title')
                     ->sortable()
                     ->searchable()
-                    ->badges(function ($record): array {
+                    ->suffixBadges(function ($record): array {
                         return $record->topics->map(function ($topic) {
                             return Badge::make($topic->id)
                                 ->label($topic->name)

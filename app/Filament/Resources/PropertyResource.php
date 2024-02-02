@@ -2,8 +2,8 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Form\Components\Repeater;
-use App\Filament\Form\Components\Textarea;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Textarea;
 use App\Filament\Resources\PropertyResource\Pages;
 use App\Filament\Resources\PropertyResource\RelationManagers;
 use App\Models\CollectionMethod;

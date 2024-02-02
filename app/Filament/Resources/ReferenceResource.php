@@ -13,7 +13,7 @@ use Filament\Tables\Filters\Filter;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
-use App\Filament\Form\Components\Textarea;
+use Filament\Forms\Components\Textarea;
 use App\Filament\Resources\ReferenceResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\ReferenceResource\RelationManagers;
@@ -62,14 +62,14 @@ class ReferenceResource extends Resource
                 Tables\Actions\DeleteBulkAction::make(),
             ]);
     }
-    
+
     public static function getRelations(): array
     {
         return [
             //
         ];
     }
-    
+
     public static function getPages(): array
     {
         return [
@@ -77,5 +77,5 @@ class ReferenceResource extends Resource
             'create' => Pages\CreateReference::route('/create'),
             'edit' => Pages\EditReference::route('/{record}/edit'),
         ];
-    }    
+    }
 }

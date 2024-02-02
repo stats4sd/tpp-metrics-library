@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Form\Components\Textarea;
 use App\Filament\Resources\FeedbackResource\Pages;
 use App\Filament\Resources\FeedbackResource\RelationManagers;
 use App\Models\Feedback;
@@ -11,11 +10,12 @@ use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Tables\Table;
 use Filament\Tables;
+use Filament\Tables\Table;
 use Illuminate\Support\Facades\Auth;
 
 class FeedbackResource extends Resource
@@ -56,18 +56,10 @@ class FeedbackResource extends Resource
     {
         return $table
             ->columns(
-//
-//                $followup = $feedback->feedbackFollowups()
-//                    ->map(function($followup) {
-//                        return Tables\Columns\Layout\Panel::make([
-//                            Tables\Columns\TextColumn::make('feedbackFollowup')
-//                            ->description(fn(FeedbackFollowup $followup): string => $followup->comments),
-//                        ]);
-//                    });
-
                 [
                     Tables\Columns\Layout\Split::make([
-                        Tables\Columns\BadgeColumn::make('type')
+                        Tables\Columns\TextColumn::make('type')
+                            ->badge()
                             ->colors([
                                 'danger' => 'bug',
                                 'primary' => 'feature_request',
@@ -82,7 +74,7 @@ class FeedbackResource extends Resource
                             ->color('success'),
 
                     ]),
-                    
+
                     Tables\Columns\Layout\Panel::make([
                         Tables\Columns\TextColumn::make('comments'),
                         Tables\Columns\ViewColumn::make('followup')

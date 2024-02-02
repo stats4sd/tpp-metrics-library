@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Form\Components\Textarea;
+use Filament\Forms\Components\Textarea;
 use App\Filament\Resources\DimensionResource\Pages;
 use App\Filament\Resources\DimensionResource\RelationManagers;
 use App\Filament\Table\Actions\DeduplicateRecordsAction;

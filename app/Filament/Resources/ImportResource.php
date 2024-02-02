@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Form\Components\Textarea;
+use Filament\Forms\Components\Textarea;
 use App\Filament\Resources\ImportResource\Pages;
 use App\Filament\Resources\ImportResource\RelationManagers;
 use App\Models\Import;

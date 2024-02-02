@@ -12,7 +12,7 @@ use Filament\Forms\Components\Grid;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
-use App\Filament\Form\Components\Textarea;
+use Filament\Forms\Components\Textarea;
 use Filament\Tables\Filters\TrashedFilter;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\MetricUserResource\Pages;
@@ -60,14 +60,14 @@ class MetricUserResource extends Resource
                 Tables\Actions\DeleteBulkAction::make(),
             ]);
     }
-    
+
     public static function getRelations(): array
     {
         return [
             //
         ];
     }
-    
+
     public static function getPages(): array
     {
         return [
@@ -75,7 +75,7 @@ class MetricUserResource extends Resource
             'create' => Pages\CreateMetricUser::route('/create'),
             'edit' => Pages\EditMetricUser::route('/{record}/edit'),
         ];
-    }    
+    }
 
     public static function getEloquentQuery(): Builder
     {
@@ -84,5 +84,5 @@ class MetricUserResource extends Resource
             SoftDeletingScope::class,
         ]);
     }
-    
+
 }

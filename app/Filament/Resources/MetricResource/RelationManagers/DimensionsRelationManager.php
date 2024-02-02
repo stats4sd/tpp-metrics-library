@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources\MetricResource\RelationManagers;
 
-use App\Filament\Form\Components\Textarea;
+use Filament\Forms\Components\Textarea;
 use App\Filament\Table\Actions\AddDiscussionPointAction;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
