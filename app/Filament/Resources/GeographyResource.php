@@ -5,8 +5,8 @@ namespace App\Filament\Resources;
 use Filament\Forms;
 use Filament\Tables;
 use App\Models\Geography;
-use Filament\Resources\Form;
-use Filament\Resources\Table;
+use Filament\Forms\Form;
+use Filament\Tables\Table;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Toggle;
@@ -15,7 +15,7 @@ use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
-use App\Filament\Form\Components\Textarea;
+use Filament\Forms\Components\Textarea;
 use Filament\Tables\Filters\TrashedFilter;
 use App\Filament\Resources\GeographyResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -26,7 +26,10 @@ class GeographyResource extends Resource
 {
     protected static ?string $model = Geography::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+    protected static ?string $navigationGroup = 'SYSTEMS AND GEOGRAPHIES';
+    protected static ?int $navigationSort = 52;
 
     public static function form(Form $form): Form
     {
@@ -79,14 +82,14 @@ class GeographyResource extends Resource
                 DeduplicateRecordsAction::make(),
             ]);
     }
-    
+
     public static function getRelations(): array
     {
         return [
             //
         ];
     }
-    
+
     public static function getPages(): array
     {
         return [
@@ -94,7 +97,7 @@ class GeographyResource extends Resource
             'create' => Pages\CreateGeography::route('/create'),
             'edit' => Pages\EditGeography::route('/{record}/edit'),
         ];
-    }    
+    }
 
     public static function getEloquentQuery(): Builder
     {
@@ -103,5 +106,5 @@ class GeographyResource extends Resource
             SoftDeletingScope::class,
         ]);
     }
-    
+
 }

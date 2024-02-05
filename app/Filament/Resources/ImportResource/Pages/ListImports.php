@@ -10,7 +10,7 @@ class ListImports extends ListRecords
 {
     protected static string $resource = ImportResource::class;
 
-    protected function getActions(): array
+    protected function getHeaderActions(): array
     {
         return [
             Actions\CreateAction::make(),

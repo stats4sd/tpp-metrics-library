@@ -10,6 +10,7 @@ use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Filament\Panel;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable implements MustVerifyEmail, FilamentUser
@@ -32,7 +33,12 @@ class User extends Authenticatable implements MustVerifyEmail, FilamentUser
         return true;
     }
 
-    public function canAccessFilament(): bool
+    // public function canAccessPanel(): bool
+    // {
+    //     return true;
+    // }
+
+    public function canAccessPanel(Panel $panel): bool
     {
         return true;
     }

@@ -4,8 +4,8 @@ namespace App\Filament\Resources;
 
 use Filament\Tables;
 use App\Models\Property;
-use Filament\Resources\Form;
-use Filament\Resources\Table;
+use Filament\Forms\Form;
+use Filament\Tables\Table;
 use App\Models\PropertyOption;
 use App\Models\CollectionMethod;
 use Filament\Resources\Resource;
@@ -19,7 +19,7 @@ use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
-use App\Filament\Form\Components\Textarea;
+use Filament\Forms\Components\Textarea;
 use Filament\Tables\Filters\TrashedFilter;
 use App\Filament\Table\Actions\DeduplicateRecordsAction;
 use App\Filament\Resources\CollectionMethodResource\Pages;
@@ -29,7 +29,10 @@ class CollectionMethodResource extends Resource
 {
     protected static ?string $model = CollectionMethod::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+    protected static ?string $navigationGroup = 'TOOLS, METHODS + FRAMEWORKS';
+    protected static ?int $navigationSort = 42;
 
     public static function form(Form $form): Form
     {
@@ -179,5 +182,5 @@ class CollectionMethodResource extends Resource
             SoftDeletingScope::class,
         ]);
     }
-    
+
 }

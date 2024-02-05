@@ -2,16 +2,16 @@
 
 namespace App\Filament\Resources\MetricResource\RelationManagers;
 
-use App\Filament\Form\Components\Textarea;
+use Filament\Forms\Components\Textarea;
 use App\Filament\Table\Actions\AddDiscussionPointAction;
 use App\Models\Tool;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Resources\Form;
+use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Resources\Table;
+use Filament\Tables\Table;
 use Filament\Tables;
 
 class ToolsRelationManager extends RelationManager
@@ -31,7 +31,7 @@ class ToolsRelationManager extends RelationManager
         return false;
     }
 
-    public static function form(Form $form): Form
+    public function form(Form $form): Form
     {
         return $form
             ->columns(1)
@@ -50,7 +50,7 @@ class ToolsRelationManager extends RelationManager
             ]);
     }
 
-    public static function table(Table $table): Table
+    public function table(Table $table): Table
     {
         return $table
             ->columns([

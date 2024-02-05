@@ -10,7 +10,7 @@ class ListFeedback extends ListRecords
 {
     protected static string $resource = FeedbackResource::class;
 
-    protected function getActions(): array
+    protected function getHeaderActions(): array
     {
         return [
             Actions\CreateAction::make(),

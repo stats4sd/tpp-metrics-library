@@ -2,8 +2,8 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Form\Components\Repeater;
-use App\Filament\Form\Components\Textarea;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Textarea;
 use App\Filament\Resources\PropertyResource\Pages;
 use App\Filament\Resources\PropertyResource\RelationManagers;
 use App\Models\CollectionMethod;
@@ -13,16 +13,19 @@ use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Resources\Form;
+use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Resources\Table;
+use Filament\Tables\Table;
 use Filament\Tables;
 
 class PropertyResource extends Resource
 {
     protected static ?string $model = Property::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+    protected static ?string $navigationGroup = '';
+    protected static ?int $navigationSort = 2;
 
     public static function form(Form $form): Form
     {

@@ -5,14 +5,14 @@ namespace App\Filament\Resources;
 use Filament\Forms;
 use Filament\Tables;
 use App\Models\MetricUser;
-use Filament\Resources\Form;
-use Filament\Resources\Table;
+use Filament\Forms\Form;
+use Filament\Tables\Table;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Grid;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
-use App\Filament\Form\Components\Textarea;
+use Filament\Forms\Components\Textarea;
 use Filament\Tables\Filters\TrashedFilter;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\MetricUserResource\Pages;
@@ -22,7 +22,10 @@ class MetricUserResource extends Resource
 {
     protected static ?string $model = MetricUser::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+    protected static ?string $navigationGroup = 'SCALES, USERS, USE CASES';
+    protected static ?int $navigationSort = 32;
 
     public static function form(Form $form): Form
     {
@@ -57,14 +60,14 @@ class MetricUserResource extends Resource
                 Tables\Actions\DeleteBulkAction::make(),
             ]);
     }
-    
+
     public static function getRelations(): array
     {
         return [
             //
         ];
     }
-    
+
     public static function getPages(): array
     {
         return [
@@ -72,7 +75,7 @@ class MetricUserResource extends Resource
             'create' => Pages\CreateMetricUser::route('/create'),
             'edit' => Pages\EditMetricUser::route('/{record}/edit'),
         ];
-    }    
+    }
 
     public static function getEloquentQuery(): Builder
     {
@@ -81,5 +84,5 @@ class MetricUserResource extends Resource
             SoftDeletingScope::class,
         ]);
     }
-    
+
 }
