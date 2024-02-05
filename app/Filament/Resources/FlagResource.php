@@ -5,8 +5,8 @@ namespace App\Filament\Resources;
 use Filament\Forms;
 use App\Models\Flag;
 use Filament\Tables;
-use Filament\Resources\Form;
-use Filament\Resources\Table;
+use Filament\Forms\Form;
+use Filament\Tables\Table;
 use Filament\Resources\Resource;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
@@ -19,7 +19,10 @@ class FlagResource extends Resource
 {
     protected static ?string $model = Flag::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+    protected static ?string $navigationGroup = 'REVIEW TOOLS';
+    protected static ?int $navigationSort = 12;
 
     public static function form(Form $form): Form
     {

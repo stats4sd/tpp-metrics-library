@@ -3,21 +3,18 @@
 namespace App\Filament\Table\Actions;
 
 
-use App\Models\Flag;
 use App\Models\DiscussionPoint;
-use Illuminate\Support\HtmlString;
+use App\Models\Flag;
+use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
 use Filament\Tables\Actions\Action;
 use Illuminate\Support\Facades\Auth;
-use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\Select;
-use App\Filament\Form\Components\Textarea;
-use Filament\Forms\Components\Placeholder;
-use Filament\Tables\Actions\Concerns\InteractsWithRelationship;
+use Illuminate\Support\HtmlString;
 
 class AddDiscussionPointAction extends Action
 {
-    use InteractsWithRelationship;
-
     public static function getDefaultName(): ?string
     {
         return 'add_discussion_point';
@@ -29,13 +26,13 @@ class AddDiscussionPointAction extends Action
 
         $this->label('Discussion Point');
         $this->tooltip('Add discussion point about this item');
-        $this->icon('heroicon-s-external-link');
+        $this->icon('heroicon-m-arrow-top-right-on-square');
 
         $this->form(function (AddDiscussionPointAction $action): array {
 
             $model = $action->getLivewire()->getOwnerRecord();
             $modelType = get_class($model);
-            $property = $action->getLivewire()->getTitle();
+            $property = $action->getTable()->getHeading();
             $propertyModelType = $action->getTable()->getModel();
             $propertyValue = ($action->getRecord()->title ?? $action->getRecord()->name) ?? '';
 

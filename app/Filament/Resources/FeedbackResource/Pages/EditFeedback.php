@@ -10,7 +10,7 @@ class EditFeedback extends EditRecord
 {
     protected static string $resource = FeedbackResource::class;
 
-    protected function getActions(): array
+    protected function getHeaderActions(): array
     {
         return [
             Actions\DeleteAction::make(),

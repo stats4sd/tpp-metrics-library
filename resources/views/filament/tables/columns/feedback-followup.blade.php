@@ -15,7 +15,7 @@
         <div class="font-bold">
             Followup: {{ (new \Carbon\Carbon($followup->created_at))->toDateString() }}
         </div>
-        <x-tables::columns.layout
+        <x-filament-tables::columns.layout
             :components="[
             \Filament\Tables\Columns\TextColumn::make('comments'),
         ]"

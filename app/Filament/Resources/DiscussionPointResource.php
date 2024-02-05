@@ -2,25 +2,29 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Form\Components\Select;
-use App\Filament\Form\Components\Textarea;
 use App\Filament\Resources\DiscussionPointResource\Pages;
 use App\Filament\Resources\DiscussionPointResource\RelationManagers;
 use App\Models\DiscussionPoint;
 use Carbon\Carbon;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Resources\Form;
+use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Resources\Table;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
 class DiscussionPointResource extends Resource
 {
     protected static ?string $model = DiscussionPoint::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+    protected static ?string $navigationGroup = 'REVIEW TOOLS';
+    protected static ?int $navigationSort = 11;
+
 
 
     public static function form(Form $form): Form
@@ -50,7 +54,7 @@ class DiscussionPointResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('subject_type_label')
-                    ->description(fn($record): string => $record->subject->title),
+                    ->description(fn($record): string => $record->subject?->title ?? 'no subject found'),
                 TextColumn::make('property')
                     ->description(fn($record): string => $record->property_value?->name ?? '')
                     ->sortable(),

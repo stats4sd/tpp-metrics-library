@@ -4,15 +4,15 @@ namespace App\Filament\Resources;
 
 use Filament\Forms;
 use Filament\Tables;
-use Filament\Resources\Form;
+use Filament\Forms\Form;
 use App\Models\FarmingSystem;
-use Filament\Resources\Table;
+use Filament\Tables\Table;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Grid;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
-use App\Filament\Form\Components\Textarea;
+use Filament\Forms\Components\Textarea;
 use Filament\Tables\Filters\TrashedFilter;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\FarmingSystemResource\Pages;
@@ -22,7 +22,10 @@ class FarmingSystemResource extends Resource
 {
     protected static ?string $model = FarmingSystem::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+    protected static ?string $navigationGroup = 'SYSTEMS AND GEOGRAPHIES';
+    protected static ?int $navigationSort = 51;
 
     public static function form(Form $form): Form
     {
@@ -57,14 +60,14 @@ class FarmingSystemResource extends Resource
                 Tables\Actions\DeleteBulkAction::make(),
             ]);
     }
-    
+
     public static function getRelations(): array
     {
         return [
             //
         ];
     }
-    
+
     public static function getPages(): array
     {
         return [
@@ -73,7 +76,7 @@ class FarmingSystemResource extends Resource
             'edit' => Pages\EditFarmingSystem::route('/{record}/edit'),
         ];
     }
-    
+
     public static function getEloquentQuery(): Builder
     {
     return parent::getEloquentQuery()
@@ -81,5 +84,5 @@ class FarmingSystemResource extends Resource
             SoftDeletingScope::class,
         ]);
     }
-    
+
 }

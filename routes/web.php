@@ -20,7 +20,7 @@ Route::get('/', function () {
 
 Route::get(config('backpack.base.route_prefix') . '/login', function () {
     return redirect('login');
-});
+})->name('login');
 
 /**
  * For platforms that *do* require a seperate front-end and

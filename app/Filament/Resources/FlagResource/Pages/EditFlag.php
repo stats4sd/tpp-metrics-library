@@ -10,7 +10,7 @@ class EditFlag extends EditRecord
 {
     protected static string $resource = FlagResource::class;
 
-    protected function getActions(): array
+    protected function getHeaderActions(): array
     {
         return [
             Actions\DeleteAction::make(),

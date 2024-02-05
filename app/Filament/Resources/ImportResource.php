@@ -2,16 +2,16 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Form\Components\Textarea;
+use Filament\Forms\Components\Textarea;
 use App\Filament\Resources\ImportResource\Pages;
 use App\Filament\Resources\ImportResource\RelationManagers;
 use App\Models\Import;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Hidden;
-use Filament\Resources\Form;
+use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Resources\Table;
+use Filament\Tables\Table;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Support\Facades\Auth;
@@ -20,7 +20,10 @@ class ImportResource extends Resource
 {
     protected static ?string $model = Import::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+    protected static ?string $navigationGroup = 'IMPORTS';
+    protected static ?int $navigationSort = 71;
 
     public static function form(Form $form): Form
     {

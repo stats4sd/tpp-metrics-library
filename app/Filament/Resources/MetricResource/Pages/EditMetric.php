@@ -16,7 +16,7 @@ class EditMetric extends EditRecord
 
     public function getTitle(): string
     {
-        return "Reviewing {$this->getRecord()?->title}";
+        return "{$this->getRecord()?->title}";
     }
 
     public function getSubheading(): string
@@ -28,12 +28,12 @@ class EditMetric extends EditRecord
         return '';
     }
 
-    public function getFormTabLabel(): string
+    public function getContentTabLabel(): string
     {
         return 'Metric';
     }
 
-    protected function getActions(): array
+    protected function getHeaderActions(): array
     {
         return [
             Actions\DeleteAction::make(),

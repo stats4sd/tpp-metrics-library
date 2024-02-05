@@ -10,7 +10,7 @@ class ListFlags extends ListRecords
 {
     protected static string $resource = FlagResource::class;
 
-    protected function getActions(): array
+    protected function getHeaderActions(): array
     {
         return [
             Actions\CreateAction::make(),

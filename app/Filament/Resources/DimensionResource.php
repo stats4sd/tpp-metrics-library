@@ -2,33 +2,34 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Form\Components\Textarea;
+use Filament\Forms\Components\Textarea;
 use App\Filament\Resources\DimensionResource\Pages;
 use App\Filament\Resources\DimensionResource\RelationManagers;
 use App\Filament\Table\Actions\DeduplicateRecordsAction;
 use App\Models\Dimension;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\Checkbox;
-use Filament\Tables\Columns\IconColumn;
-use Filament\Tables\Columns\TextColumn;
-use Illuminate\Database\Eloquent\Model;
 use Filament\Forms\Components\TextInput;
-use Filament\Resources\Form;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Resources\Table;
+use Filament\Tables\Table;
 use Filament\Tables;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\TrashedFilter;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class DimensionResource extends Resource
 {
     protected static ?string $model = Dimension::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+    protected static ?string $navigationGroup = 'TOPICS';
+    protected static ?int $navigationSort = 22;
 
     public static function form(Form $form): Form
     {
@@ -71,7 +72,7 @@ class DimensionResource extends Resource
                                         ->query(fn(Builder $query): Builder => $query->where('unreviewed_import', true))
                                         ->label('Unreviewed imported records'),
                 TrashedFilter::make(),
-    
+
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
