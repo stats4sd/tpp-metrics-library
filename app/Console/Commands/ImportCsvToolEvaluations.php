@@ -34,7 +34,7 @@ class ImportCsvToolEvaluations extends Command
      */
     public function handle()
     {
-        $filename = 'storage/csv/tool_evaluations_18Oct23.csv';
+        $filename = 'storage/csv/tool_evaluations_18Oct23_three_records.csv';
 
         $this->info('start');
 
@@ -68,9 +68,15 @@ class ImportCsvToolEvaluations extends Command
         // ===== Handle CSV content line by line ===== //
 
         foreach ($data as $row) {
+
+            // skip this row if include column is no
+            if (Str::lower(trim($row['include'])) == 'no') {
+                continue;
+            }
+
+            // create or update tools record
             $tool = Tool::updateOrCreate(['name' => $row['tool_name']]);
         }
-
 
         $this->info('done!');
     }
