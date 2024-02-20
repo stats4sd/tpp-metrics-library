@@ -8,6 +8,7 @@ use App\Models\Developer;
 use App\Models\Dimension;
 use App\Models\Framework;
 use App\Models\Reference;
+use App\Models\MetricUser;
 use Illuminate\Support\Str;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
@@ -33,25 +34,74 @@ class ImportCsvToolEvaluations extends Command
      */
     public function handle()
     {
-        $filename = 'storage/csv/tool_evaluations_18Oct23.csv';
-        // $filename = 'storage/csv/tool_evaluations_18Oct23_three_records.csv';
-
         $this->info('start');
 
 
+        // ===== 0. Remove previous imported records (temporary for testing only) ===== //
+        $this->removePreviousImportedRecords();
+
+
+        // ===== 1. Read CSV file into Laravel collection ===== //
+        $data = $this->readCsvFileIntoCollection();
+
+
+        // ===== 2. Handle CSV content line by line ===== //
+
+        foreach ($data as $row) {
+
+            // skip this row if include column is no
+            if (Str::lower(trim($row['include'])) == 'no') {
+                continue;
+            }
+
+
+            // ===== 3. Update or create tools record ===== //
+            $toolModel = $this->updateOrCreateToolRecord($row);
+
+
+            // ===== 4. Create placeholder for rayyan_ref if it is not existed ===== //
+            $this->handleRayyanRef($row);
+
+
+            // ===== 5. Handle columns for relationship with existing tables ===== //
+            // $this->handleDeveloper($row);
+            // $this->handleDimension($row);
+            // $this->handleFramework($row);
+            // $this->handleStakeholderDesign($row);
+            // $this->handleScaleMeasure($row);
+            // $this->handleScaleReport($row);
+
+            $this->handleColumn($row, 'developer', Developer::class);
+            $this->handleColumn($row, 'dimensions', Dimension::class);
+            $this->handleColumn($row, 'named_framework', Framework::class);
+            $this->handleColumn($row, 'stakeholder_design', MetricUser::class);
+            $this->handleColumn($row, 'scale_measure', Scale::class);
+            $this->handleColumn($row, 'scale_report', Scale::class);
+        }
+
+        $this->info('done!');
+    }
+
+
+    public function removePreviousImportedRecords()
+    {
         // for testing purpose only, delete previous imported records permanently
         $date = '2024-02-18';
 
         Tool::where('created_at', '>', $date)->forceDelete();
         Reference::where('created_at', '>', $date)->forceDelete();
-
         Developer::where('created_at', '>', $date)->forceDelete();
         Dimension::where('created_at', '>', $date)->forceDelete();
         Framework::where('created_at', '>', $date)->forceDelete();
+        MetricUser::where('created_at', '>', $date)->forceDelete();
         Scale::where('created_at', '>', $date)->forceDelete();
+    }
 
 
-        // ===== 1. Read CSV file into Laravel collection ===== //
+    public function readCsvFileIntoCollection()
+    {
+        $filename = 'storage/csv/tool_evaluations_18Oct23.csv';
+        // $filename = 'storage/csv/tool_evaluations_18Oct23_three_records.csv';
 
         // Read CSV file content
         $csvFileContent = File::get($filename);
@@ -68,111 +118,223 @@ class ImportCsvToolEvaluations extends Command
         // Map through the rows and combine them with the header to produce the final collection.
         $data = $rows->map(fn ($row) => $header->combine(str_getcsv($row)));
 
-
-        // ===== 2. Handle CSV content line by line ===== //
-
-        foreach ($data as $row) {
-
-            // skip this row if include column is no
-            if (Str::lower(trim($row['include'])) == 'no') {
-                continue;
-            }
-
-
-            // ===== 3. Update or create tools record ===== //
-            $tool = Tool::updateOrCreate(
-                ['id' => $row['tool_id'], 'name' => $row['tool_name']],
-
-                [
-                    'reviewer_name' => $row['reviewer_name'],
-                    'acronym' => $row['acronym'],
-                    'web_ref' => $row['web_ref'],
-                    'author' => $row['author'],
-                    'year_published' => $this->handleYear($row['year_published']),
-
-                    'updated' => $this->handleBoolean($row['updated']),
-                    'year_updated' => $this->handleYear($row['year_updated']),
-                    'updated_ref' => $row['updated_ref'],
-                    'promoted_tool' => $this->handleBoolean($row['promoted_tool']),
-                    'specify_indicators' => $this->handleBoolean($row['specify_indicators']),
-
-                    'wider_use' => $this->handleBoolean($row['wider_use']),
-                    'wider_use_evidence' => $row['wider_use_evidence'],
-                    'wider_use_notes' => $row['wider_use_notes'],
-                    'adapted' => $this->handleBoolean($row['adapted']),
-                    'adapted_ref' => $row['adapted_ref'],
-
-                    'framing_definition' => $row['framing_definition'],
-                    'framing_indicator_link' => $this->handleBoolean($row['framing_indicator_link']),
-                    'indicator_convenience' => $row['Indicator_convenience'],
-                    'sustainability_view' => $row['sustainability_view'],
-                    'tool_orientiation' => $row['tool_orientiation'],
-
-                    'localisable' => $row['localisable'],
-                    'system_type' => $row['system_type'],
-                    'visualise_framework' => $this->handleBoolean($row['visualise_framework']),
-                    'intended_function' => $row['intended_function'],
-                    'comparison_type' => $row['comparison_type'],
-
-                    'verifiable' => $this->handleBoolean($row['verifiable']),
-                    'local_indicators' => $this->handleBoolean($row['local_indicators']),
-                    'stakeholder_involved' => $this->handleBoolean($row['stakeholder_involved']),
-                    'complexity' => $row['complexity'],
-                    'access' => $row['access'],
-
-                    'paid_access' => $this->handleBoolean($row['paid_access']),
-                    'online_platform' => $this->handleBoolean($row['online_platform']),
-                    'guide_assess' => $this->handleBoolean($row['guide_assess']),
-                    'guide_analysis' => $this->handleBoolean($row['guide_analysis']),
-                    'guide_interpret' => $this->handleBoolean($row['guide_interpret']),
-
-                    'guide_data_gov' => $this->handleBoolean($row['guide_data_gov']),
-                    'informed_consent' => $this->handleBoolean($row['informed_consent']),
-                    'visualise_result' => $this->handleBoolean($row['visualise_result']),
-                    'visualise_type' => $row['visualise_type'],
-                    'assessment_results' => $row['assessment_results'],
-
-                    'metric_no' => $row['metric_no'],
-                    'collection_time' => $row['collection_time'],
-                    'interval' => $row['interval'],
-                    'interaction' => $this->handleBoolean($row['interaction']),
-                    'interaction_expl' => $row['interaction_expl'],
-
-                    'scaleable' => $this->handleBoolean($row['scaleable']),
-                    'aggregation' => $this->handleBoolean($row['aggregation']),
-                    'weighting' => $this->handleBoolean($row['weighting']),
-                    'weighting_preference' => $row['weighting_preference'],
-                    'comments' => $row['comments'],
-
-                    'once_multi' => $row['once_multi'],
-                    'metric_eval' => $this->handleBoolean($row['metric_eval']),
-                ]
-            );
-
-
-            // ===== 4. Create placeholder for rayyan_ref if it is not existed ===== //
-
-            // unify delimiter to semicolon, change all commas to semicolons first
-            $rayyanRef = str_replace(',', ';', $row['rayyan_ref']);
-
-            $rayyanRefs = str_getcsv($rayyanRef, ';');
-            foreach ($rayyanRefs as $rayyanRef) {
-                $rayyanKey = Str::lower(trim($rayyanRef));
-
-                if (Str::lower(trim($rayyanRef)) != 'na') {
-                    $reference = Reference::firstOrCreate([
-                        'name' => $rayyanKey,
-                        'rayyan_key' => $rayyanKey,
-                    ]);
-                }
-            }
-        }
-
-        $this->info('done!');
+        return $data;
     }
 
 
-    public function handleYear($value)
+    public function updateOrCreateToolRecord($row)
+    {
+        $toolModel = Tool::updateOrCreate(
+            ['id' => $row['tool_id'], 'name' => $row['tool_name']],
+
+            [
+                'reviewer_name' => $row['reviewer_name'],
+                'acronym' => $row['acronym'],
+                'web_ref' => $row['web_ref'],
+                'author' => $row['author'],
+                'year_published' => $this->getYear($row['year_published']),
+
+                'updated' => $this->getBoolean($row['updated']),
+                'year_updated' => $this->getYear($row['year_updated']),
+                'updated_ref' => $row['updated_ref'],
+                'promoted_tool' => $this->getBoolean($row['promoted_tool']),
+                'specify_indicators' => $this->getBoolean($row['specify_indicators']),
+
+                'wider_use' => $this->getBoolean($row['wider_use']),
+                'wider_use_evidence' => $row['wider_use_evidence'],
+                'wider_use_notes' => $row['wider_use_notes'],
+                'adapted' => $this->getBoolean($row['adapted']),
+                'adapted_ref' => $row['adapted_ref'],
+
+                'framing_definition' => $row['framing_definition'],
+                'framing_indicator_link' => $this->getBoolean($row['framing_indicator_link']),
+                'indicator_convenience' => $row['Indicator_convenience'],
+                'sustainability_view' => $row['sustainability_view'],
+                'tool_orientiation' => $row['tool_orientiation'],
+
+                'localisable' => $row['localisable'],
+                'system_type' => $row['system_type'],
+                'visualise_framework' => $this->getBoolean($row['visualise_framework']),
+                'intended_function' => $row['intended_function'],
+                'comparison_type' => $row['comparison_type'],
+
+                'verifiable' => $this->getBoolean($row['verifiable']),
+                'local_indicators' => $this->getBoolean($row['local_indicators']),
+                'stakeholder_involved' => $this->getBoolean($row['stakeholder_involved']),
+                'complexity' => $row['complexity'],
+                'access' => $row['access'],
+
+                'paid_access' => $this->getBoolean($row['paid_access']),
+                'online_platform' => $this->getBoolean($row['online_platform']),
+                'guide_assess' => $this->getBoolean($row['guide_assess']),
+                'guide_analysis' => $this->getBoolean($row['guide_analysis']),
+                'guide_interpret' => $this->getBoolean($row['guide_interpret']),
+
+                'guide_data_gov' => $this->getBoolean($row['guide_data_gov']),
+                'informed_consent' => $this->getBoolean($row['informed_consent']),
+                'visualise_result' => $this->getBoolean($row['visualise_result']),
+                'visualise_type' => $row['visualise_type'],
+                'assessment_results' => $row['assessment_results'],
+
+                'metric_no' => $row['metric_no'],
+                'collection_time' => $row['collection_time'],
+                'interval' => $row['interval'],
+                'interaction' => $this->getBoolean($row['interaction']),
+                'interaction_expl' => $row['interaction_expl'],
+
+                'scaleable' => $this->getBoolean($row['scaleable']),
+                'aggregation' => $this->getBoolean($row['aggregation']),
+                'weighting' => $this->getBoolean($row['weighting']),
+                'weighting_preference' => $row['weighting_preference'],
+                'comments' => $row['comments'],
+
+                'once_multi' => $row['once_multi'],
+                'metric_eval' => $this->getBoolean($row['metric_eval']),
+            ]
+        );
+
+        return $toolModel;
+    }
+
+
+    public function handleRayyanRef($row)
+    {
+        // unify delimiter to semicolon, change all commas to semicolons first
+        $colRayyanRef = str_replace(',', ';', $row['rayyan_ref']);
+
+        $rayyanRefs = str_getcsv($colRayyanRef, ';');
+        foreach ($rayyanRefs as $rayyanRef) {
+            if (Str::lower(trim($rayyanRef)) != 'na' && Str::lower(trim($rayyanRef)) != '') {
+                $referenceModel = Reference::firstOrCreate([
+                    'name' => trim($rayyanRef),
+                    'rayyan_key' => trim($rayyanRef),
+                ]);
+            }
+        }
+    }
+
+
+    // a generic function to create entity record and relationship between tool and entity
+    public function handleColumn($row, $columnName, $entityModel)
+    {
+        // TODO: change delimiter comma to semicolon if necessary
+
+        $entries = str_getcsv($row[$columnName], ';');
+        foreach ($entries as $entry) {
+            if (Str::lower(trim($entry)) != 'na' && Str::lower(trim($entry)) != '') {
+                $model = $entityModel::firstOrCreate([
+                    'name' => Str::substr(trim($entry), 0, 254),
+                ]);
+            }
+        }
+
+        // TODO: add records in link table
+    }
+
+
+    // public function handleDeveloper($row)
+    // {
+    //     // unify delimiter to semicolon, change all commas to semicolons first
+    //     $colDeveloper = str_replace(',', ';', $row['developer']);
+
+    //     $developers = str_getcsv($colDeveloper, ';');
+    //     foreach ($developers as $developer) {
+    //         if (Str::lower(trim($developer)) != 'na' && Str::lower(trim($developer)) != '') {
+    //             $developerModel = Developer::firstOrCreate([
+    //                 'name' => trim($developer),
+    //             ]);
+    //         }
+    //     }
+
+    //     // Question: need to add a link table to define relationship with tools?
+    // }
+
+
+    // public function handleDimension($row)
+    // {
+    //     $dimensions = str_getcsv($row['dimensions'], ';');
+    //     foreach ($dimensions as $dimension) {
+    //         if (Str::lower(trim($dimension)) != 'na' && Str::lower(trim($dimension)) != '') {
+    //             $dimensionModel = Dimension::firstOrCreate([
+    //                 'name' => trim($dimension),
+    //             ]);
+    //         }
+    //     }
+
+    //     // Question: need to add a link table to define relationship with tools?
+    // }
+
+
+    // public function handleFramework($row)
+    // {
+    //     $frameworks = str_getcsv($row['named_framework'], ';');
+    //     foreach ($frameworks as $framework) {
+    //         if (Str::lower(trim($framework)) != 'na' && Str::lower(trim($framework)) != '') {
+    //             $frameworkModel = Framework::firstOrCreate([
+    //                 'name' => Str::substr(trim($framework), 0, 254),
+    //             ]);
+    //         }
+    //     }
+
+    //     // TODO: add records in link table framework_tool
+    // }
+
+
+    // public function handleStakeholderDesign($row)
+    // {
+    //     // unify delimiter to semicolon, change all commas to semicolons first
+    //     $colStakeholderDesign = str_replace(',', ';', $row['stakeholder_design']);
+
+    //     $stakeholderDesigns = str_getcsv($colStakeholderDesign, ';');
+    //     foreach ($stakeholderDesigns as $stakeholderDesign) {
+    //         if (Str::lower(trim($stakeholderDesign)) != 'na' && Str::lower(trim($stakeholderDesign)) != '') {
+    //             $metricUserModel = MetricUser::firstOrCreate([
+    //                 'name' => trim($stakeholderDesign),
+    //             ]);
+    //         }
+    //     }
+
+    //     // TODO: add records in link table metric_metric_user
+    // }
+
+
+    // public function handleScaleMeasure($row)
+    // {
+    //     // unify delimiter to semicolon, change all commas to semicolons first
+    //     $colScaleMeasure = str_replace(',', ';', $row['scale_measure']);
+
+    //     $scaleMeasures = str_getcsv($colScaleMeasure, ';');
+    //     foreach ($scaleMeasures as $scaleMeasure) {
+    //         if (Str::lower(trim($scaleMeasure)) != 'na' && Str::lower(trim($scaleMeasure)) != '') {
+    //             $scaleModel = Scale::firstOrCreate([
+    //                 'name' => trim($scaleMeasure),
+    //             ]);
+    //         }
+    //     }
+
+    //     // TODO: add records in link table metric_scale
+    // }
+
+    // public function handleScaleReport($row)
+    // {
+    //     // unify delimiter to semicolon, change all commas to semicolons first
+    //     $colScaleReport = str_replace(',', ';', $row['scale_report']);
+
+    //     $scaleReports = str_getcsv($colScaleReport, ';');
+    //     foreach ($scaleReports as $scaleReport) {
+    //         if (Str::lower(trim($scaleReport)) != 'na' && Str::lower(trim($scaleReport)) != '') {
+    //             $scaleModel = Scale::firstOrCreate([
+    //                 'name' => trim($scaleReport),
+    //             ]);
+    //         }
+    //     }
+
+    //     // TODO: add records in link table metric_scale
+    // }
+
+
+
+    public function getYear($value)
     {
         // define what are considered as null
         $array = ['na', 'n/a', 'no', 'unknown'];
@@ -185,7 +347,7 @@ class ImportCsvToolEvaluations extends Command
     }
 
 
-    public function handleBoolean($value)
+    public function getBoolean($value)
     {
         // define what are considered as true or false, anything else are considered as null
         $trueArray = ['yes', 'yes (framework)', 'yes (article is not open access', 'yea', 'complete'];
