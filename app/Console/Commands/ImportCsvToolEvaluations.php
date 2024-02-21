@@ -4,14 +4,27 @@ namespace App\Console\Commands;
 
 use App\Models\Tool;
 use App\Models\Scale;
+use App\Models\Country;
+use App\Models\DataType;
 use App\Models\Developer;
 use App\Models\Dimension;
 use App\Models\Framework;
 use App\Models\Reference;
 use App\Models\MetricUser;
+use App\Models\CountryTool;
+use App\Models\MetricScale;
 use Illuminate\Support\Str;
+use App\Models\DataTypeTool;
+use App\Models\DeveloperTool;
+use App\Models\DimensionTool;
+use App\Models\FrameworkTool;
+use App\Models\DataCollection;
+use App\Models\MetricUserTool;
 use Illuminate\Console\Command;
+use App\Models\DataCollectionTool;
+use App\Models\IndicatorSelection;
 use Illuminate\Support\Facades\File;
+use App\Models\IndicatorSelectionTool;
 
 class ImportCsvToolEvaluations extends Command
 {
@@ -47,6 +60,8 @@ class ImportCsvToolEvaluations extends Command
 
         // ===== 2. Handle CSV content line by line ===== //
 
+        $this->comment('Handling ' . count($data) . ' records...');
+
         foreach ($data as $row) {
 
             // skip this row if include column is no
@@ -56,27 +71,46 @@ class ImportCsvToolEvaluations extends Command
 
 
             // ===== 3. Update or create tools record ===== //
-            $toolModel = $this->updateOrCreateToolRecord($row);
+            $tool = $this->updateOrCreateToolRecord($row);
 
 
             // ===== 4. Create placeholder for rayyan_ref if it is not existed ===== //
             $this->handleRayyanRef($row);
 
 
-            // ===== 5. Handle columns for relationship with existing tables ===== //
-            // $this->handleDeveloper($row);
-            // $this->handleDimension($row);
-            // $this->handleFramework($row);
-            // $this->handleStakeholderDesign($row);
-            // $this->handleScaleMeasure($row);
-            // $this->handleScaleReport($row);
+            // ===== 5. Handle columns for entity tables and link tables ===== //
 
-            $this->handleColumn($row, ',', ';', 'developer', Developer::class);
-            $this->handleColumn($row, null, ';', 'dimensions', Dimension::class);
-            $this->handleColumn($row, null, ';', 'named_framework', Framework::class);
-            $this->handleColumn($row, ',', ';', 'stakeholder_design', MetricUser::class);
-            $this->handleColumn($row, ',', ';', 'scale_measure', Scale::class);
-            $this->handleColumn($row, ',', ';', 'scale_report', Scale::class);
+            $this->handleColumn($tool, $row, true, 'developer', Developer::class, DeveloperTool::class, 'developer_id');
+
+            $this->handleColumn($tool, $row, false, 'dimensions', Dimension::class, DimensionTool::class, 'dimension_id');
+
+            $this->handleColumn($tool, $row, false, 'named_framework', Framework::class, FrameworkTool::class, 'framework_id');
+
+            $this->handleColumn($tool, $row, true, 'stakeholder_design', MetricUser::class, MetricUserTool::class, 'metric_user_id');
+
+            $this->handleColumn($tool, $row, true, 'scale_measure', Scale::class, null, null);
+            // TODO: add records in link table metric_scale with type measurement?
+
+            $this->handleColumn($tool, $row, true, 'scale_report', Scale::class, null, null);
+            // TODO: add records in link table metric_scale with type reporting?
+
+
+            $this->handleColumn($tool, $row, true, 'country_use', Country::class, CountryTool::class, 'country_id');
+
+            $this->handleColumn($tool, $row, true, 'indicator_selection', IndicatorSelection::class, IndicatorSelectionTool::class, 'indicator_selection_id');
+
+            $this->handleColumn($tool, $row, true, 'data_type', DataType::class, DataTypeTool::class, 'data_type_id');
+
+            $this->handleColumn($tool, $row, true, 'data_collection', DataCollection::class, DataCollectionTool::class, 'data_collection_id');
+
+
+            // TODO: target_user, check metric_users table
+
+            // TODO: sgd, sustainable goal definition, create new model
+
+            // TODO: themes, social_themes, enviro_themes, economic_themes, human_themes, gov_themes, product_themes, create new model with column "type"
+            // TODO: sustain_framing, Conceptual_framing, create new model with column "type"
+
         }
 
         $this->info('done!');
@@ -84,32 +118,41 @@ class ImportCsvToolEvaluations extends Command
 
 
     // a generic function to create entity record and relationship between tool and entity
-    public function handleColumn($row, $fromDelimiter, $toDelimiter, $columnName, $entityModel)
+    public function handleColumn($tool, $row, $changeDelimiter, $columnName, $entityModel, $relationshipModel, $linkTableIdColumn)
     {
         $cellValue = $row[$columnName];
 
         // change delimiter if necessary
-        if ($fromDelimiter != null && $toDelimiter != null) {
+        if ($changeDelimiter) {
             // $this->info($cellValue);
-            $cellValue = str_replace($fromDelimiter, $toDelimiter, $cellValue);
+            $cellValue = str_replace(',', ';', $cellValue);
         }
 
         // $this->info($cellValue);
 
-        $entries = str_getcsv($cellValue, $toDelimiter);
+        $entries = str_getcsv($cellValue, ';');
         foreach ($entries as $entry) {
             if (Str::lower(trim($entry)) != 'na' && Str::lower(trim($entry)) != '') {
                 // $this->comment(Str::substr(trim($entry), 0, 254));
+
+                // add entity record
                 $model = $entityModel::firstOrCreate([
                     'name' => Str::substr(trim($entry), 0, 254),
                 ]);
+
+                // add link table record
+                if ($relationshipModel != null) {
+                    $link = $relationshipModel::firstOrCreate([
+                        $linkTableIdColumn => $model->id,
+                        'tool_id' => $tool->id
+                    ]);
+                }
             }
         }
-
-        // TODO: add records in link table
     }
 
 
+    // ========== //
 
 
     public function removePreviousImportedRecords()
@@ -118,12 +161,35 @@ class ImportCsvToolEvaluations extends Command
         $date = '2024-02-18';
 
         Tool::where('created_at', '>', $date)->forceDelete();
+
         Reference::where('created_at', '>', $date)->forceDelete();
+
         Developer::where('created_at', '>', $date)->forceDelete();
+        DeveloperTool::where('created_at', '>', $date)->forceDelete();
+
         Dimension::where('created_at', '>', $date)->forceDelete();
+        DimensionTool::where('created_at', '>', $date)->forceDelete();
+
         Framework::where('created_at', '>', $date)->forceDelete();
+        FrameworkTool::where('created_at', '>', $date)->forceDelete();
+
         MetricUser::where('created_at', '>', $date)->forceDelete();
+        MetricUserTool::where('created_at', '>', $date)->forceDelete();
+
         Scale::where('created_at', '>', $date)->forceDelete();
+        MetricScale::where('created_at', '>', $date)->forceDelete();
+
+        Country::where('created_at', '>', $date)->forceDelete();
+        CountryTool::where('created_at', '>', $date)->forceDelete();
+
+        IndicatorSelection::where('created_at', '>', $date)->forceDelete();
+        IndicatorSelectionTool::where('created_at', '>', $date)->forceDelete();
+
+        DataType::where('created_at', '>', $date)->forceDelete();
+        DataTypeTool::where('created_at', '>', $date)->forceDelete();
+
+        DataCollection::where('created_at', '>', $date)->forceDelete();
+        DataCollectionTool::where('created_at', '>', $date)->forceDelete();
     }
 
 
@@ -241,108 +307,6 @@ class ImportCsvToolEvaluations extends Command
             }
         }
     }
-
-
-    // public function handleDeveloper($row)
-    // {
-    //     // unify delimiter to semicolon, change all commas to semicolons first
-    //     $colDeveloper = str_replace(',', ';', $row['developer']);
-
-    //     $developers = str_getcsv($colDeveloper, ';');
-    //     foreach ($developers as $developer) {
-    //         if (Str::lower(trim($developer)) != 'na' && Str::lower(trim($developer)) != '') {
-    //             $developerModel = Developer::firstOrCreate([
-    //                 'name' => trim($developer),
-    //             ]);
-    //         }
-    //     }
-
-    //     // Question: need to add a link table to define relationship with tools?
-    // }
-
-
-    // public function handleDimension($row)
-    // {
-    //     $dimensions = str_getcsv($row['dimensions'], ';');
-    //     foreach ($dimensions as $dimension) {
-    //         if (Str::lower(trim($dimension)) != 'na' && Str::lower(trim($dimension)) != '') {
-    //             $dimensionModel = Dimension::firstOrCreate([
-    //                 'name' => trim($dimension),
-    //             ]);
-    //         }
-    //     }
-
-    //     // Question: need to add a link table to define relationship with tools?
-    // }
-
-
-    // public function handleFramework($row)
-    // {
-    //     $frameworks = str_getcsv($row['named_framework'], ';');
-    //     foreach ($frameworks as $framework) {
-    //         if (Str::lower(trim($framework)) != 'na' && Str::lower(trim($framework)) != '') {
-    //             $frameworkModel = Framework::firstOrCreate([
-    //                 'name' => Str::substr(trim($framework), 0, 254),
-    //             ]);
-    //         }
-    //     }
-
-    //     // TODO: add records in link table framework_tool
-    // }
-
-
-    // public function handleStakeholderDesign($row)
-    // {
-    //     // unify delimiter to semicolon, change all commas to semicolons first
-    //     $colStakeholderDesign = str_replace(',', ';', $row['stakeholder_design']);
-
-    //     $stakeholderDesigns = str_getcsv($colStakeholderDesign, ';');
-    //     foreach ($stakeholderDesigns as $stakeholderDesign) {
-    //         if (Str::lower(trim($stakeholderDesign)) != 'na' && Str::lower(trim($stakeholderDesign)) != '') {
-    //             $metricUserModel = MetricUser::firstOrCreate([
-    //                 'name' => trim($stakeholderDesign),
-    //             ]);
-    //         }
-    //     }
-
-    //     // TODO: add records in link table metric_metric_user
-    // }
-
-
-    // public function handleScaleMeasure($row)
-    // {
-    //     // unify delimiter to semicolon, change all commas to semicolons first
-    //     $colScaleMeasure = str_replace(',', ';', $row['scale_measure']);
-
-    //     $scaleMeasures = str_getcsv($colScaleMeasure, ';');
-    //     foreach ($scaleMeasures as $scaleMeasure) {
-    //         if (Str::lower(trim($scaleMeasure)) != 'na' && Str::lower(trim($scaleMeasure)) != '') {
-    //             $scaleModel = Scale::firstOrCreate([
-    //                 'name' => trim($scaleMeasure),
-    //             ]);
-    //         }
-    //     }
-
-    //     // TODO: add records in link table metric_scale
-    // }
-
-    // public function handleScaleReport($row)
-    // {
-    //     // unify delimiter to semicolon, change all commas to semicolons first
-    //     $colScaleReport = str_replace(',', ';', $row['scale_report']);
-
-    //     $scaleReports = str_getcsv($colScaleReport, ';');
-    //     foreach ($scaleReports as $scaleReport) {
-    //         if (Str::lower(trim($scaleReport)) != 'na' && Str::lower(trim($scaleReport)) != '') {
-    //             $scaleModel = Scale::firstOrCreate([
-    //                 'name' => trim($scaleReport),
-    //             ]);
-    //         }
-    //     }
-
-    //     // TODO: add records in link table metric_scale
-    // }
-
 
 
     public function getYear($value)
