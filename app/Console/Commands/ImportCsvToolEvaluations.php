@@ -71,16 +71,45 @@ class ImportCsvToolEvaluations extends Command
             // $this->handleScaleMeasure($row);
             // $this->handleScaleReport($row);
 
-            $this->handleColumn($row, 'developer', Developer::class);
-            $this->handleColumn($row, 'dimensions', Dimension::class);
-            $this->handleColumn($row, 'named_framework', Framework::class);
-            $this->handleColumn($row, 'stakeholder_design', MetricUser::class);
-            $this->handleColumn($row, 'scale_measure', Scale::class);
-            $this->handleColumn($row, 'scale_report', Scale::class);
+            $this->handleColumn($row, ',', ';', 'developer', Developer::class);
+            $this->handleColumn($row, null, ';', 'dimensions', Dimension::class);
+            $this->handleColumn($row, null, ';', 'named_framework', Framework::class);
+            $this->handleColumn($row, ',', ';', 'stakeholder_design', MetricUser::class);
+            $this->handleColumn($row, ',', ';', 'scale_measure', Scale::class);
+            $this->handleColumn($row, ',', ';', 'scale_report', Scale::class);
         }
 
         $this->info('done!');
     }
+
+
+    // a generic function to create entity record and relationship between tool and entity
+    public function handleColumn($row, $fromDelimiter, $toDelimiter, $columnName, $entityModel)
+    {
+        $cellValue = $row[$columnName];
+
+        // change delimiter if necessary
+        if ($fromDelimiter != null && $toDelimiter != null) {
+            // $this->info($cellValue);
+            $cellValue = str_replace($fromDelimiter, $toDelimiter, $cellValue);
+        }
+
+        // $this->info($cellValue);
+
+        $entries = str_getcsv($cellValue, $toDelimiter);
+        foreach ($entries as $entry) {
+            if (Str::lower(trim($entry)) != 'na' && Str::lower(trim($entry)) != '') {
+                // $this->comment(Str::substr(trim($entry), 0, 254));
+                $model = $entityModel::firstOrCreate([
+                    'name' => Str::substr(trim($entry), 0, 254),
+                ]);
+            }
+        }
+
+        // TODO: add records in link table
+    }
+
+
 
 
     public function removePreviousImportedRecords()
@@ -211,24 +240,6 @@ class ImportCsvToolEvaluations extends Command
                 ]);
             }
         }
-    }
-
-
-    // a generic function to create entity record and relationship between tool and entity
-    public function handleColumn($row, $columnName, $entityModel)
-    {
-        // TODO: change delimiter comma to semicolon if necessary
-
-        $entries = str_getcsv($row[$columnName], ';');
-        foreach ($entries as $entry) {
-            if (Str::lower(trim($entry)) != 'na' && Str::lower(trim($entry)) != '') {
-                $model = $entityModel::firstOrCreate([
-                    'name' => Str::substr(trim($entry), 0, 254),
-                ]);
-            }
-        }
-
-        // TODO: add records in link table
     }
 
 
