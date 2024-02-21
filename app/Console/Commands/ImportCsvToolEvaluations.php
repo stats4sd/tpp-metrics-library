@@ -4,14 +4,18 @@ namespace App\Console\Commands;
 
 use App\Models\Tool;
 use App\Models\Scale;
+use App\Models\Theme;
 use App\Models\Country;
+use App\Models\Framing;
 use App\Models\DataType;
 use App\Models\Developer;
 use App\Models\Dimension;
 use App\Models\Framework;
 use App\Models\Reference;
+use App\Models\ThemeTool;
 use App\Models\MetricUser;
 use App\Models\CountryTool;
+use App\Models\FramingTool;
 use App\Models\MetricScale;
 use Illuminate\Support\Str;
 use App\Models\DataTypeTool;
@@ -80,36 +84,41 @@ class ImportCsvToolEvaluations extends Command
 
             // ===== 5. Handle columns for entity tables and link tables ===== //
 
-            $this->handleColumn($tool, $row, true, 'developer', Developer::class, DeveloperTool::class, 'developer_id');
+            $this->handleColumn($tool, $row, true, 'developer', Developer::class, DeveloperTool::class, 'developer_id', null);
+            $this->handleColumn($tool, $row, false, 'dimensions', Dimension::class, DimensionTool::class, 'dimension_id', null);
+            $this->handleColumn($tool, $row, false, 'named_framework', Framework::class, FrameworkTool::class, 'framework_id', null);
+            $this->handleColumn($tool, $row, true, 'stakeholder_design', MetricUser::class, MetricUserTool::class, 'metric_user_id', null);
 
-            $this->handleColumn($tool, $row, false, 'dimensions', Dimension::class, DimensionTool::class, 'dimension_id');
-
-            $this->handleColumn($tool, $row, false, 'named_framework', Framework::class, FrameworkTool::class, 'framework_id');
-
-            $this->handleColumn($tool, $row, true, 'stakeholder_design', MetricUser::class, MetricUserTool::class, 'metric_user_id');
-
-            $this->handleColumn($tool, $row, true, 'scale_measure', Scale::class, null, null);
+            $this->handleColumn($tool, $row, true, 'scale_measure', Scale::class, null, null, null);
             // TODO: add records in link table metric_scale with type measurement?
 
-            $this->handleColumn($tool, $row, true, 'scale_report', Scale::class, null, null);
+            $this->handleColumn($tool, $row, true, 'scale_report', Scale::class, null, null, null);
             // TODO: add records in link table metric_scale with type reporting?
 
 
-            $this->handleColumn($tool, $row, true, 'country_use', Country::class, CountryTool::class, 'country_id');
-
-            $this->handleColumn($tool, $row, true, 'indicator_selection', IndicatorSelection::class, IndicatorSelectionTool::class, 'indicator_selection_id');
-
-            $this->handleColumn($tool, $row, true, 'data_type', DataType::class, DataTypeTool::class, 'data_type_id');
-
-            $this->handleColumn($tool, $row, true, 'data_collection', DataCollection::class, DataCollectionTool::class, 'data_collection_id');
+            $this->handleColumn($tool, $row, true, 'country_use', Country::class, CountryTool::class, 'country_id', null);
+            $this->handleColumn($tool, $row, true, 'indicator_selection', IndicatorSelection::class, IndicatorSelectionTool::class, 'indicator_selection_id', null);
+            $this->handleColumn($tool, $row, true, 'data_type', DataType::class, DataTypeTool::class, 'data_type_id', null);
+            $this->handleColumn($tool, $row, true, 'data_collection', DataCollection::class, DataCollectionTool::class, 'data_collection_id', null);
 
 
             // TODO: target_user, check metric_users table
 
             // TODO: sgd, sustainable goal definition, create new model
 
-            // TODO: themes, social_themes, enviro_themes, economic_themes, human_themes, gov_themes, product_themes, create new model with column "type"
-            // TODO: sustain_framing, Conceptual_framing, create new model with column "type"
+
+            $this->handleColumn($tool, $row, true, 'social_themes', Theme::class, ThemeTool::class, 'theme_id', 'social');
+            $this->handleColumn($tool, $row, true, 'enviro_themes', Theme::class, ThemeTool::class, 'theme_id', 'enviro');
+            $this->handleColumn($tool, $row, true, 'economic_themes', Theme::class, ThemeTool::class, 'theme_id', 'economic');
+            $this->handleColumn($tool, $row, true, 'human_themes', Theme::class, ThemeTool::class, 'theme_id', 'human');
+            $this->handleColumn($tool, $row, true, 'gov_themes', Theme::class, ThemeTool::class, 'theme_id', 'gov');
+            $this->handleColumn($tool, $row, true, 'product_themes', Theme::class, ThemeTool::class, 'theme_id', 'product');
+
+            $this->handleColumn($tool, $row, true, 'sustain_framing', Framing::class, FramingTool::class, 'framing_id', 'sustain');
+            $this->handleColumn($tool, $row, true, 'Conceptual_framing', Framing::class, FramingTool::class, 'framing_id', 'conceptual');
+
+
+            // TODO: framing_definition should relate to conceptual_framing. It should belong to framing entity instead of tool entity
 
         }
 
@@ -118,7 +127,7 @@ class ImportCsvToolEvaluations extends Command
 
 
     // a generic function to create entity record and relationship between tool and entity
-    public function handleColumn($tool, $row, $changeDelimiter, $columnName, $entityModel, $relationshipModel, $linkTableIdColumn)
+    public function handleColumn($tool, $row, $changeDelimiter, $columnName, $entityModel, $relationshipModel, $linkTableIdColumn, $type)
     {
         $cellValue = $row[$columnName];
 
@@ -142,10 +151,13 @@ class ImportCsvToolEvaluations extends Command
 
                 // add link table record
                 if ($relationshipModel != null) {
-                    $link = $relationshipModel::firstOrCreate([
-                        $linkTableIdColumn => $model->id,
-                        'tool_id' => $tool->id
-                    ]);
+                    $recordContent = [$linkTableIdColumn => $model->id, 'tool_id' => $tool->id];
+
+                    if ($type != null) {
+                        $recordContent['type'] = $type;
+                    }
+
+                    $link = $relationshipModel::firstOrCreate($recordContent);
                 }
             }
         }
@@ -190,6 +202,12 @@ class ImportCsvToolEvaluations extends Command
 
         DataCollection::where('created_at', '>', $date)->forceDelete();
         DataCollectionTool::where('created_at', '>', $date)->forceDelete();
+
+        Theme::where('created_at', '>', $date)->forceDelete();
+        ThemeTool::where('created_at', '>', $date)->forceDelete();
+
+        Framing::where('created_at', '>', $date)->forceDelete();
+        FramingTool::where('created_at', '>', $date)->forceDelete();
     }
 
 
