@@ -19,18 +19,18 @@ use App\Models\MetricUser;
 use App\Models\CountryTool;
 use App\Models\FramingTool;
 use App\Models\MetricScale;
-use Illuminate\Support\Str;
 use App\Models\DataTypeTool;
 use App\Models\DeveloperTool;
 use App\Models\DimensionTool;
 use App\Models\FrameworkTool;
-use App\Models\DataCollection;
 use App\Models\MetricUserTool;
-use Illuminate\Console\Command;
+use App\Models\DataCollection;
 use App\Models\DataCollectionTool;
 use App\Models\IndicatorSelection;
-use Illuminate\Support\Facades\File;
 use App\Models\IndicatorSelectionTool;
+use Illuminate\Support\Str;
+use Illuminate\Console\Command;
+use Illuminate\Support\Facades\File;
 
 class ImportCsvToolEvaluations extends Command
 {
@@ -56,7 +56,7 @@ class ImportCsvToolEvaluations extends Command
         $this->info('start');
 
 
-        // ===== 0. Remove previous imported records (temporary for testing only) ===== //
+        // ===== 0. Remove previously imported records permanently (temporary for testing purpose only) ===== //
         $this->removePreviousImportedRecords();
 
 
@@ -65,7 +65,6 @@ class ImportCsvToolEvaluations extends Command
 
 
         // ===== 2. Handle CSV content line by line ===== //
-
         $this->comment('Handling ' . count($data) . ' records...');
 
         foreach ($data as $row) {
@@ -85,7 +84,6 @@ class ImportCsvToolEvaluations extends Command
 
 
             // ===== 5. Handle columns for entity tables and link tables ===== //
-
             $this->handleColumn($tool, $row, true, 'developer', Developer::class, DeveloperTool::class, 'developer_id', null);
             $this->handleColumn($tool, $row, true, 'sustain_framing', Framing::class, FramingTool::class, 'framing_id', 'sustain');
             $this->handleColumn($tool, $row, false, 'dimensions', Dimension::class, DimensionTool::class, 'dimension_id', null);
@@ -98,16 +96,17 @@ class ImportCsvToolEvaluations extends Command
             $this->handleColumn($tool, $row, true, 'product_themes', Theme::class, ThemeTool::class, 'theme_id', 'product');
 
             $this->handleColumn($tool, $row, false, 'named_framework', Framework::class, FrameworkTool::class, 'framework_id', null);
+
             $this->handleColumn($tool, $row, true, 'Conceptual_framing', Framing::class, FramingTool::class, 'framing_id', 'conceptual');
+            $this->updateFramingDefinition($row, true, 'Conceptual_framing', Framing::class, $row['framing_definition']);
 
-            // TODO: framing_definition should relate to conceptual_framing. It should belong to framing entity instead of tool entity
+            $this->handleSdgs($tool, $row, 'sgd', Sdg::class, SdgTool::class, 'sdg_id');
 
-            $this->handleColumn($tool, $row, true, 'sgd', Sdg::class, SdgTool::class, 'sdg_id', null);
             $this->handleColumn($tool, $row, true, 'stakeholder_design', MetricUser::class, MetricUserTool::class, 'metric_user_id', null);
 
             // Question:
-            // We do not know the relationship between metric_scale at this moment.
-            // We need to import metric evaluation csv file first, and then load tool evaluation csv file in another command to add relationship for metric and scale.
+            // We do not know the relationship between metric and scale at this moment.
+            // We need to import metric evaluation csv file first, and then import tool evaluation csv file in another command to add relationship for metric and scale.
             $this->handleColumn($tool, $row, true, 'scale_measure', Scale::class, null, null, null);
             $this->handleColumn($tool, $row, true, 'scale_report', Scale::class, null, null, null);
 
@@ -122,7 +121,7 @@ class ImportCsvToolEvaluations extends Command
     }
 
 
-    // a generic function to create entity record and relationship between tool and entity
+    // a generic function to create entity record and link table record for tool and entity
     public function handleColumn($tool, $row, $changeDelimiter, $columnName, $entityModel, $relationshipModel, $linkTableIdColumn, $type)
     {
         $cellValue = $row[$columnName];
@@ -159,8 +158,58 @@ class ImportCsvToolEvaluations extends Command
         }
     }
 
+    public function handleSdgs($tool, $row, $columnName, $entityModel, $relationshipModel, $linkTableIdColumn)
+    {
+        $cellValue = $row[$columnName];
 
-    // ========== //
+        // change delimiter
+        // $this->info($cellValue);
+        $cellValue = str_replace(',', ';', $cellValue);
+        $cellValue = str_replace(':', ';', $cellValue);
+
+        // suppose it should contains numbers only, remove ? and NA
+        $cellValue = str_replace('?', '', $cellValue);
+        $cellValue = str_replace('NA', '', $cellValue);
+
+        // $this->info($cellValue);
+
+        $entries = str_getcsv($cellValue, ';');
+        foreach ($entries as $entry) {
+            if (Str::lower(trim($entry)) != 'na' && Str::lower(trim($entry)) != '') {
+                // $this->comment(Str::substr(trim($entry), 0, 254));
+
+                // get entity record
+                $model = $entityModel::find(Str::lower(trim($entry)));
+
+                // add link table record
+                if ($relationshipModel != null) {
+                    $link = $relationshipModel::firstOrCreate([
+                        $linkTableIdColumn => $model->id,
+                        'tool_id' => $tool->id
+                    ]);
+                }
+            }
+        }
+    }
+
+    public function updateFramingDefinition($row, $changeDelimiter, $columnName, $entityModel, $defintion)
+    {
+        $cellValue = $row[$columnName];
+
+        // change delimiter if necessary
+        if ($changeDelimiter) {
+            $cellValue = str_replace(',', ';', $cellValue);
+        }
+
+        $entries = str_getcsv($cellValue, ';');
+        foreach ($entries as $entry) {
+            if (Str::lower(trim($entry)) != 'na' && Str::lower(trim($entry)) != '') {
+                $model = $entityModel::where('name', Str::substr(trim($entry), 0, 254))->first();
+                $model->definition = $defintion;
+                $model->save();
+            }
+        }
+    }
 
 
     public function removePreviousImportedRecords()
@@ -175,11 +224,20 @@ class ImportCsvToolEvaluations extends Command
         Developer::where('created_at', '>', $date)->forceDelete();
         DeveloperTool::where('created_at', '>', $date)->forceDelete();
 
+        Framing::where('created_at', '>', $date)->forceDelete();
+        FramingTool::where('created_at', '>', $date)->forceDelete();
+
         Dimension::where('created_at', '>', $date)->forceDelete();
         DimensionTool::where('created_at', '>', $date)->forceDelete();
 
+        Theme::where('created_at', '>', $date)->forceDelete();
+        ThemeTool::where('created_at', '>', $date)->forceDelete();
+
         Framework::where('created_at', '>', $date)->forceDelete();
         FrameworkTool::where('created_at', '>', $date)->forceDelete();
+
+        Sdg::where('created_at', '>', $date)->forceDelete();
+        SdgTool::where('created_at', '>', $date)->forceDelete();
 
         MetricUser::where('created_at', '>', $date)->forceDelete();
         MetricUserTool::where('created_at', '>', $date)->forceDelete();
@@ -198,15 +256,6 @@ class ImportCsvToolEvaluations extends Command
 
         DataCollection::where('created_at', '>', $date)->forceDelete();
         DataCollectionTool::where('created_at', '>', $date)->forceDelete();
-
-        Theme::where('created_at', '>', $date)->forceDelete();
-        ThemeTool::where('created_at', '>', $date)->forceDelete();
-
-        Framing::where('created_at', '>', $date)->forceDelete();
-        FramingTool::where('created_at', '>', $date)->forceDelete();
-
-        Sdg::where('created_at', '>', $date)->forceDelete();
-        SdgTool::where('created_at', '>', $date)->forceDelete();
     }
 
 
@@ -215,8 +264,8 @@ class ImportCsvToolEvaluations extends Command
         $filename = 'storage/csv/tool_evaluations_18Oct23.csv';
         // $filename = 'storage/csv/tool_evaluations_18Oct23_three_records.csv';
 
-        // Read CSV file content
-        $csvFileContent = File::get($filename);
+        // Read CSV file content, call trim() to remove last blank line
+        $csvFileContent = trim(File::get($filename));
 
         // Split by new line. Use the PHP_EOL constant for cross-platform compatibility.
         $lines = explode(PHP_EOL, $csvFileContent);
@@ -258,49 +307,48 @@ class ImportCsvToolEvaluations extends Command
                 'adapted' => $this->getBoolean($row['adapted']),
                 'adapted_ref' => $row['adapted_ref'],
 
-                'framing_definition' => $row['framing_definition'],
                 'framing_indicator_link' => $this->getBoolean($row['framing_indicator_link']),
                 'indicator_convenience' => $row['Indicator_convenience'],
                 'sustainability_view' => $row['sustainability_view'],
                 'tool_orientiation' => $row['tool_orientiation'],
-
                 'localisable' => $row['localisable'],
+
                 'system_type' => $row['system_type'],
                 'visualise_framework' => $this->getBoolean($row['visualise_framework']),
                 'intended_function' => $row['intended_function'],
                 'comparison_type' => $row['comparison_type'],
-
                 'verifiable' => $this->getBoolean($row['verifiable']),
+
                 'local_indicators' => $this->getBoolean($row['local_indicators']),
                 'stakeholder_involved' => $this->getBoolean($row['stakeholder_involved']),
                 'complexity' => $row['complexity'],
                 'access' => $row['access'],
-
                 'paid_access' => $this->getBoolean($row['paid_access']),
+
                 'online_platform' => $this->getBoolean($row['online_platform']),
                 'guide_assess' => $this->getBoolean($row['guide_assess']),
                 'guide_analysis' => $this->getBoolean($row['guide_analysis']),
                 'guide_interpret' => $this->getBoolean($row['guide_interpret']),
-
                 'guide_data_gov' => $this->getBoolean($row['guide_data_gov']),
+
                 'informed_consent' => $this->getBoolean($row['informed_consent']),
                 'visualise_result' => $this->getBoolean($row['visualise_result']),
                 'visualise_type' => $row['visualise_type'],
                 'assessment_results' => $row['assessment_results'],
-
                 'metric_no' => $row['metric_no'],
+
                 'collection_time' => $row['collection_time'],
                 'interval' => $row['interval'],
                 'interaction' => $this->getBoolean($row['interaction']),
                 'interaction_expl' => $row['interaction_expl'],
-
                 'scaleable' => $this->getBoolean($row['scaleable']),
+
                 'aggregation' => $this->getBoolean($row['aggregation']),
                 'weighting' => $this->getBoolean($row['weighting']),
                 'weighting_preference' => $row['weighting_preference'],
                 'comments' => $row['comments'],
-
                 'once_multi' => $row['once_multi'],
+
                 'metric_eval' => $this->getBoolean($row['metric_eval']),
             ]
         );
