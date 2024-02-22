@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('theme_id')->constrained('themes')->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreignId('tool_id')->constrained('tools')->cascadeOnDelete()->cascadeOnUpdate();
             $table->boolean('unreviewed_import')->default(false);
-            $table->text('notes')->nullable();
+            $table->text('relation_notes')->nullable();
             $table->text('type')->nullable()->comment('should be "social, enviro, economic, human, gov or product"');
             $table->timestamps();
         });

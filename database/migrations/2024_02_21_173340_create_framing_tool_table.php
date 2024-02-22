@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('framing_id')->constrained('framings')->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreignId('tool_id')->constrained('tools')->cascadeOnDelete()->cascadeOnUpdate();
             $table->boolean('unreviewed_import')->default(false);
-            $table->text('notes')->nullable();
+            $table->text('relation_notes')->nullable();
             $table->text('type')->nullable()->comment('should be "sustain or conceptual"');
             $table->timestamps();
         });

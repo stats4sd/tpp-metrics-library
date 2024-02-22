@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('data_type_id')->constrained('data_types')->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreignId('tool_id')->constrained('tools')->cascadeOnDelete()->cascadeOnUpdate();
             $table->boolean('unreviewed_import')->default(false);
-            $table->text('notes')->nullable();
+            $table->text('relation_notes')->nullable();
             $table->timestamps();
         });
     }
