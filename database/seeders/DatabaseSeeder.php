@@ -23,5 +23,7 @@ class DatabaseSeeder extends Seeder
         $this->call(DimensionSeeder::class);
         $this->call(MetricPropertySeeder::class);
         $this->call(CollectionPropertySeeder::class);
+
+        $this->call(SdgsSeeder::class);
     }
 }
