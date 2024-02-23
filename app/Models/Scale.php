@@ -19,7 +19,8 @@ class Scale extends Model
     public function metrics(): BelongsToMany
     {
         return $this->belongsToMany(Metric::class, 'metric_scale')
-            ->withPivot('relation_notes', 'commonly_used', 'type');
+            ->withPivot('relation_notes', 'commonly_used', 'type')
+            ->withTimestamps();
     }
 
     public function metricDecision(): BelongsToMany

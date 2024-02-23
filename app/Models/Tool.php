@@ -16,7 +16,8 @@ class Tool extends Model
     public function metrics(): BelongsToMany
     {
         return $this->belongsToMany(Metric::class, 'metric_tool')
-            ->withPivot('relation_notes');
+            ->withPivot('relation_notes')
+            ->withTimestamps();
     }
 
     public function frameworks(): BelongsToMany

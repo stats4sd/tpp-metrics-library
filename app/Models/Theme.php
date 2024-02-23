@@ -18,4 +18,9 @@ class Theme extends Model
     {
         return $this->belongsToMany(Tool::class)->withTimestamps();
     }
+
+    public function metrics(): BelongsToMany
+    {
+        return $this->belongsToMany(Metric::class)->withTimestamps();
+    }
 }

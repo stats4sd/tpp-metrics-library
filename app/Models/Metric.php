@@ -83,7 +83,6 @@ class Metric extends Model
         return $this->belongsToMany(Scale::class, 'metric_scale')
             ->wherePivot('type', '=', 'measurement')
             ->withPivot('relation_notes', 'commonly_used', 'type');
-
     }
 
     // 1.e Scale - reporting
@@ -98,7 +97,8 @@ class Metric extends Model
     public function tools(): BelongsToMany
     {
         return $this->belongsToMany(Tool::class, 'metric_tool')
-            ->withPivot('relation_notes');
+            ->withPivot('relation_notes')
+            ->withTimestamps();
     }
 
     // 0.h Frameworks
@@ -127,7 +127,6 @@ class Metric extends Model
     {
         return $this->belongsToMany(CollectionMethod::class, 'metric_collection_method')
             ->withPivot('relation_notes');
-
     }
 
     // 6.a. ****** Use cases / users ********* //
@@ -185,7 +184,7 @@ class Metric extends Model
     {
         return $this->morphToMany(Reference::class, 'referencable')
             ->wherePivot('reference_type', '=', 'data source')
-        ->withPivot('reference_type', 'relation_notes', 'id');
+            ->withPivot('reference_type', 'relation_notes', 'id');
     }
 
     // 5.d. Computation guidance
@@ -200,9 +199,8 @@ class Metric extends Model
     public function references(): MorphToMany
     {
         return $this->morphToMany(Reference::class, 'referencable')
-            ->wherePivot('reference_type',  '=' , 'reference')
+            ->wherePivot('reference_type',  '=', 'reference')
             ->withPivot('reference_type', 'relation_notes', 'id');
-
     }
 
     public function discussionPoints(): MorphMany
@@ -210,5 +208,10 @@ class Metric extends Model
         return $this->morphMany(DiscussionPoint::class, 'subject');
     }
 
-
+    public function themes(): BelongsToMany
+    {
+        return $this->belongsToMany(Theme::class, 'metric_theme')
+            ->withPivot('relation_notes', 'unreviewd_import')
+            ->withTimestamps();
+    }
 }

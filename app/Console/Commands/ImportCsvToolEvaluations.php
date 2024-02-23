@@ -125,10 +125,16 @@ class ImportCsvToolEvaluations extends Command
             if (Str::lower(trim($entry)) != 'na' && Str::lower(trim($entry)) != '') {
                 // $this->comment(Str::substr(trim($entry), 0, 254));
 
+                $modelContent = [];
+                $modelContent['name'] = Str::substr(trim($entry), 0, 254);
+
+                // if entry is longer than 255 characters, add entry content to note column for future reference
+                if (Str::length($entry) > 255) {
+                    $modelContent['notes'] = $entry;
+                }
+
                 // add entity record
-                $model = $entityModel::firstOrCreate([
-                    'name' => Str::substr(trim($entry), 0, 254),
-                ]);
+                $model = $entityModel::firstOrCreate($modelContent);
 
                 // optionally prepare array for other properties
                 $array = [];

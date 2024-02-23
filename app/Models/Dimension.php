@@ -19,7 +19,8 @@ class Dimension extends Model
     public function metrics(): BelongsToMany
     {
         return $this->belongsToMany(Metric::class, 'metric_dimension')
-            ->withPivot('relation_notes');
+            ->withPivot('relation_notes')
+            ->withTimestamps();
     }
 
     public function topic(): BelongsTo
