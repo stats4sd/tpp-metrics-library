@@ -21,8 +21,10 @@ class MetricUser extends Model
 
     public function metricDecisionMakers(): BelongsToMany
     {
-        return $this->belongsToMany(Metric::class,
-            'metric_metric_user')
+        return $this->belongsToMany(
+            Metric::class,
+            'metric_metric_user'
+        )
             ->withPivot('relation_notes', 'type', 'id')
             ->wherePivot('type', '=', 'decision maker');
     }
@@ -41,4 +43,8 @@ class MetricUser extends Model
             ->wherePivot('type', '=', 'impacted by');
     }
 
+    public function tools(): BelongsToMany
+    {
+        return $this->belongsToMany(Tool::class)->withTimestamps();
+    }
 }

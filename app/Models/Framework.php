@@ -22,7 +22,7 @@ class Framework extends Model
     public function tools(): BelongsToMany
     {
         return $this->belongsToMany(Tool::class, 'framework_tool')
-        ->withPivot('relation_notes');
+            ->withPivot('relation_notes', 'unreviewed_import')
+            ->withTimestamps();
     }
-
 }

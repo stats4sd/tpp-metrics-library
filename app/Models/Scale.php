@@ -53,4 +53,9 @@ class Scale extends Model
         return $this->morphToMany(Reference::class, 'referencable')
             ->withPivot('reference_type', 'relation_notes', 'id');
     }
+
+    public function tools(): BelongsToMany
+    {
+        return $this->belongsToMany(Tool::class)->withTimestamps();
+    }
 }
