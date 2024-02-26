@@ -2,14 +2,14 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Tool;
+use App\Models\Dimension;
+use App\Models\Metric;
 use App\Models\Scale;
 use App\Models\Theme;
-use App\Models\Metric;
-use App\Models\Dimension;
-use Illuminate\Support\Str;
+use App\Models\Tool;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
 
 class ImportCsvMetricEvaluations extends Command
 {
@@ -142,8 +142,8 @@ class ImportCsvMetricEvaluations extends Command
     public function readCsvFileIntoCollection()
     {
         // TODO: the original csv file cannot be read properly, possible cause should be related to tidiness of some rows
-        // $filename = 'storage/csv/metric_evaluations_18Oct23.csv';
-        $filename = 'storage/csv/metric_evaluations_18Oct23_one_hundred_records.csv';
+
+        $filename = 'storage/csv/metric_evaluations_18Oct23.csv';
 
         // Read CSV file content, call trim() to remove last blank line
         $csvFileContent = trim(File::get($filename));
@@ -154,11 +154,19 @@ class ImportCsvMetricEvaluations extends Command
         // Extract the header and convert it into a Laravel collection.
         $header = collect(str_getcsv(array_shift($lines)));
 
+        dump($header);
+
         // Convert the rows into a Laravel collection.
         $rows = collect($lines);
 
         // Map through the rows and combine them with the header to produce the final collection.
-        $data = $rows->map(fn ($row) => $header->combine(str_getcsv($row)));
+        $data = $rows->map(function ($row) use ($header) {
+
+        dump(str_getcsv($row));
+            $header->combine(str_getcsv($row));
+        });
+
+        dd($data);
 
         return $data;
     }

@@ -230,7 +230,7 @@ class ImportCsvToolEvaluations extends Command
 
     public function readCsvFileIntoCollection()
     {
-        $filename = 'storage/csv/tool_evaluations_18Oct23.csv';
+        $filename = 'storage/csv/holistic_tools_clean_21Jan24.csv';
         // $filename = 'storage/csv/tool_evaluations_18Oct23_three_records.csv';
 
         // Read CSV file content, call trim() to remove last blank line
@@ -258,7 +258,7 @@ class ImportCsvToolEvaluations extends Command
             ['id' => $row['tool_id'], 'name' => $row['tool_name']],
 
             [
-                'reviewer_name' => $row['reviewer_name'],
+                //'reviewer_name' => $row['reviewer_name'], -- removed in 'cleaned' version
                 'acronym' => $row['acronym'],
                 'web_ref' => $row['web_ref'],
                 'author' => $row['author'],
@@ -276,11 +276,11 @@ class ImportCsvToolEvaluations extends Command
                 'adapted' => $this->getBoolean($row['adapted']),
                 'adapted_ref' => $row['adapted_ref'],
 
-                'conceptual_framing' => $row['Conceptual_framing'],
+                'conceptual_framing' => $row['conceptual_framing'],
                 'framing_definition' => $row['framing_definition'],
 
                 'framing_indicator_link' => $this->getBoolean($row['framing_indicator_link']),
-                'indicator_convenience' => $row['Indicator_convenience'],
+                'indicator_convenience' => $row['indicator_convenience'],
                 'sustainability_view' => $row['sustainability_view'],
                 'tool_orientiation' => $row['tool_orientiation'],
                 'localisable' => $row['localisable'],
@@ -307,7 +307,7 @@ class ImportCsvToolEvaluations extends Command
                 'visualise_result' => $this->getBoolean($row['visualise_result']),
                 'visualise_type' => $row['visualise_type'],
                 'assessment_results' => $row['assessment_results'],
-                'metric_no' => $row['metric_no'],
+                //'metric_no' => $row['metric_no'],
 
                 'collection_time' => $row['collection_time'],
                 'interval' => $row['interval'],
@@ -321,7 +321,7 @@ class ImportCsvToolEvaluations extends Command
                 'comments' => $row['comments'],
                 'once_multi' => $row['once_multi'],
 
-                'metric_eval' => $this->getBoolean($row['metric_eval']),
+                //'metric_eval' => $this->getBoolean($row['metric_eval']),
             ]
         );
 
