@@ -2,10 +2,11 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Tool extends Model
 {
@@ -29,6 +30,12 @@ class Tool extends Model
 
     // ========== //
 
+
+    public function references(): MorphToMany
+    {
+        return $this->morphToMany(Reference::class, 'referencable')
+            ->withPivot('reference_type', 'relation_notes', 'id');
+    }
 
     public function developers(): BelongsToMany
     {
