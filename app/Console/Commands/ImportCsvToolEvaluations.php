@@ -2,24 +2,24 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Sdg;
-use App\Models\Tool;
-use App\Models\Scale;
-use App\Models\Theme;
 use App\Models\Country;
-use App\Models\Framing;
+use App\Models\DataCollection;
 use App\Models\DataType;
 use App\Models\Developer;
 use App\Models\Dimension;
 use App\Models\Framework;
-use App\Models\Reference;
-use App\Models\MetricUser;
-use App\Models\MetricScale;
-use App\Models\DataCollection;
+use App\Models\Framing;
 use App\Models\IndicatorSelection;
-use Illuminate\Support\Str;
+use App\Models\MetricScale;
+use App\Models\MetricUser;
+use App\Models\Reference;
+use App\Models\Scale;
+use App\Models\Sdg;
+use App\Models\Theme;
+use App\Models\Tool;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
 
 class ImportCsvToolEvaluations extends Command
 {
@@ -86,8 +86,10 @@ class ImportCsvToolEvaluations extends Command
 
             $this->handleColumn($tool, $row, false, 'named_framework', Framework::class, null);
 
-            $this->handleColumn($tool, $row, true, 'Conceptual_framing', Framing::class, 'conceptual');
-            $this->updateFramingDefinition($row, true, 'Conceptual_framing', Framing::class, $row['framing_definition']);
+            // 'sustain_framing' seems to be a selection of a limited number of options ("Classical view", "Classical productive view", etc. After de-duplicating, I see 16 possible values.
+            // However, the column 'Conceptual_framing' seems to be a free text field. Entries vary between short "named" framings ("Public Goods", "Sustainable Intensification" and references or longer descriptions. I don't think this is worth putting into a separate table at this stage, and it certainly seems quite different to the 'sustain_framing' column. For now, I'll put this as a property of the tool, and it might get extracted out to a separate table later.
+            // $this->handleColumn($tool, $row, true, 'Conceptual_framing', Framing::class, 'conceptual');
+            // $this->updateFramingDefinition($row, true, 'Conceptual_framing', Framing::class, $row['framing_definition']);
 
             $this->handleSdgs($tool, $row, 'sgd', Sdg::class);
 
@@ -137,7 +139,10 @@ class ImportCsvToolEvaluations extends Command
                 $model = $entityModel::firstOrCreate($modelContent);
 
                 // optionally prepare array for other properties
-                $array = [];
+                $array = [
+                    'unreviewed_import' => 1,
+                ];
+
                 if ($type != null) {
                     $array['type'] = $type;
                 }
@@ -271,6 +276,9 @@ class ImportCsvToolEvaluations extends Command
                 'adapted' => $this->getBoolean($row['adapted']),
                 'adapted_ref' => $row['adapted_ref'],
 
+                'conceptual_framing' => $row['Conceptual_framing'],
+                'framing_definition' => $row['framing_definition'],
+
                 'framing_indicator_link' => $this->getBoolean($row['framing_indicator_link']),
                 'indicator_convenience' => $row['Indicator_convenience'],
                 'sustainability_view' => $row['sustainability_view'],
@@ -333,6 +341,9 @@ class ImportCsvToolEvaluations extends Command
                     'name' => trim($rayyanRef),
                     'rayyan_key' => trim($rayyanRef),
                 ]);
+
+                $referenceModel->tools()->attach($row['tool_id']);
+
             }
         }
     }
