@@ -342,7 +342,9 @@ class ImportCsvToolEvaluations extends Command
                     'rayyan_key' => trim($rayyanRef),
                 ]);
 
-                $referenceModel->tools()->attach($row['tool_id']);
+                $referenceModel->tools()->attach(
+                    id: $row['tool_id'],
+                    attributes: ['reference_type' => 'reference']);
 
             }
         }
