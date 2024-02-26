@@ -18,6 +18,7 @@ use App\Models\Sdg;
 use App\Models\Theme;
 use App\Models\Tool;
 use Illuminate\Console\Command;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 
@@ -49,8 +50,10 @@ class ImportCsvToolEvaluations extends Command
         $this->removePreviousImportedRecords();
 
 
+        $this->bringInThemes();
+
         // ===== 1. Read CSV file into Laravel collection ===== //
-        $data = $this->readCsvFileIntoCollection();
+        $data = $this->readCsvFileIntoCollection('storage/csv/holistic_tools_clean_21Jan24.csv');
 
 
         // ===== 2. Handle CSV content line by line ===== //
@@ -77,12 +80,16 @@ class ImportCsvToolEvaluations extends Command
             $this->handleColumn($tool, $row, true, 'sustain_framing', Framing::class, 'sustain');
             $this->handleColumn($tool, $row, false, 'dimensions', Dimension::class, null);
 
-            $this->handleColumn($tool, $row, true, 'social_themes', Theme::class, 'social');
-            $this->handleColumn($tool, $row, true, 'enviro_themes', Theme::class, 'enviro');
-            $this->handleColumn($tool, $row, true, 'economic_themes', Theme::class, 'economic');
-            $this->handleColumn($tool, $row, true, 'human_themes', Theme::class, 'human');
-            $this->handleColumn($tool, $row, true, 'gov_themes', Theme::class, 'gov');
-            $this->handleColumn($tool, $row, true, 'product_themes', Theme::class, 'product');
+            // handle all themes together. The themes should already exist;
+            $this->handleColumn($tool, $row, false, 'themes', Theme::class, null);
+
+            // Lets bring in the list of themes separately. The theme type is not really a property of the tool-theme relationship, but of the theme. (a theme of 'land reform' will always have the same "dimension", regardless of the tool we're looking at.)
+//            $this->handleColumn($tool, $row, true, 'social_themes', Theme::class, 'social');
+//            $this->handleColumn($tool, $row, true, 'enviro_themes', Theme::class, 'enviro');
+//            $this->handleColumn($tool, $row, true, 'economic_themes', Theme::class, 'economic');
+//            $this->handleColumn($tool, $row, true, 'human_themes', Theme::class, 'human');
+//            $this->handleColumn($tool, $row, true, 'gov_themes', Theme::class, 'gov');
+//            $this->handleColumn($tool, $row, true, 'product_themes', Theme::class, 'product');
 
             $this->handleColumn($tool, $row, false, 'named_framework', Framework::class, null);
 
@@ -91,7 +98,7 @@ class ImportCsvToolEvaluations extends Command
             // $this->handleColumn($tool, $row, true, 'Conceptual_framing', Framing::class, 'conceptual');
             // $this->updateFramingDefinition($row, true, 'Conceptual_framing', Framing::class, $row['framing_definition']);
 
-            $this->handleSdgs($tool, $row, 'sgd', Sdg::class);
+            $this->handleSdgs($tool, $row, 'sdg', Sdg::class);
 
             $this->handleColumn($tool, $row, true, 'stakeholder_design', MetricUser::class, null);
 
@@ -228,9 +235,8 @@ class ImportCsvToolEvaluations extends Command
     }
 
 
-    public function readCsvFileIntoCollection()
+    public function readCsvFileIntoCollection($filename): Collection
     {
-        $filename = 'storage/csv/holistic_tools_clean_21Jan24.csv';
         // $filename = 'storage/csv/tool_evaluations_18Oct23_three_records.csv';
 
         // Read CSV file content, call trim() to remove last blank line
@@ -246,7 +252,7 @@ class ImportCsvToolEvaluations extends Command
         $rows = collect($lines);
 
         // Map through the rows and combine them with the header to produce the final collection.
-        $data = $rows->map(fn ($row) => $header->combine(str_getcsv($row)));
+        $data = $rows->map(fn($row) => $header->combine(str_getcsv($row)));
 
         return $data;
     }
@@ -376,6 +382,59 @@ class ImportCsvToolEvaluations extends Command
             return false;
         } else {
             return null;
+        }
+    }
+
+
+    // bring in the themes from the list
+    public function bringInThemes()
+    {
+        $themeData = $this->readCsvFileIntoCollection('storage/csv/tool_evaluations_18Oct23.csv');
+
+        $themeData->each(function ($row) {
+
+            $socialThemes = str_getcsv($row['social_themes'], ';');
+            $enviroThemes = str_getcsv($row['enviro_themes'], ';');
+            $economicThemes = str_getcsv($row['economic_themes'], ';');
+            $humanThemes = str_getcsv($row['human_themes'], ';');
+            $govThemes = str_getcsv($row['gov_themes'], ';');
+            $productThemes = str_getcsv($row['product_themes'], ';');
+
+            $this->addThemes($socialThemes, 'social');
+            $this->addThemes($enviroThemes, 'enviro');
+            $this->addThemes($economicThemes, 'economic');
+            $this->addThemes($humanThemes, 'human');
+            $this->addThemes($govThemes, 'gov');
+            $this->addThemes($productThemes, 'product');
+
+        });
+
+    }
+
+    public function addThemes($themes, $type): void
+    {
+        foreach ($themes as $theme) {
+            if (Str::lower(trim($theme)) != 'na' && Str::lower(trim($theme)) != '') {
+
+                // check themes are consistent
+                $existingTheme = Theme::firstWhere('name', Str::lower(trim($theme)));
+
+
+                // if the theme already exists and the current type is not already in the notes, add it
+                if ($existingTheme && !Str::contains($existingTheme->notes, $type)) {
+                    $existingTheme->notes .= "; $type";
+                    $existingTheme->save();
+                } else {
+                    $themeModel = Theme::updateOrCreate(
+                        [
+                            'name' => Str::lower(trim($theme)),
+                        ],
+                        [
+                            'notes' => "Types = $type",
+                        ]
+                    );
+                }
+            }
         }
     }
 }

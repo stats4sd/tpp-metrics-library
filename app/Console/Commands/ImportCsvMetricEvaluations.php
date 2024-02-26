@@ -4,7 +4,6 @@ namespace App\Console\Commands;
 
 use App\Models\Dimension;
 use App\Models\Metric;
-use App\Models\Scale;
 use App\Models\Theme;
 use App\Models\Tool;
 use Illuminate\Console\Command;
@@ -49,17 +48,18 @@ class ImportCsvMetricEvaluations extends Command
 
         foreach ($data as $row) {
 
+            $this->info('Handling record ' . $row['metric_question'] . '...');
+
             // // ===== 3. Update or create metrics record ===== //
             $metric = $this->updateOrCreateMetricRecord($row);
 
             // ===== 4. Add record in link table metric_tool ===== //
-            $this->handleToolId($metric, $row, 'Tool_ID');
+            $this->handleToolId($metric, $row, 'tool_id');
 
 
             // ===== 5. Handle columns for entity tables and link tables ===== //
-            $this->handleColumn($metric, $row, true, 'Scale of evaluation/reporting', Scale::class, 'reporting');
-            $this->handleColumn($metric, $row, true, 'Dimensions (Economic; social; human; environmental; agricultural productivity; institutional)', Dimension::class, null);
-            $this->handleColumn($metric, $row, true, 'Themes', Theme::class, null);
+            $this->handleColumn($metric, $row, true, 'dimensions', Dimension::class, null);
+            $this->handleColumn($metric, $row, true, 'themes', Theme::class, null);
         }
 
         $this->info('done!');
@@ -67,7 +67,7 @@ class ImportCsvMetricEvaluations extends Command
 
 
     // create record in link table metric_tool
-    public function handleToolId($metric, $row, $columnName)
+    public function handleToolId($metric, $row, $columnName): void
     {
         $toolId = $row[$columnName];
 
@@ -143,10 +143,14 @@ class ImportCsvMetricEvaluations extends Command
     {
         // TODO: the original csv file cannot be read properly, possible cause should be related to tidiness of some rows
 
-        $filename = 'storage/csv/metric_evaluations_18Oct23.csv';
+        $filename = 'storage/csv/holistic_metrics_clean_21Jan24.csv';
 
         // Read CSV file content, call trim() to remove last blank line
         $csvFileContent = trim(File::get($filename));
+
+        // remove newlines within cells
+        $csvFileContent = preg_replace('/\"(.+)\n\"/', '$1', $csvFileContent);
+
 
         // Split by new line. Use the PHP_EOL constant for cross-platform compatibility.
         $lines = explode(PHP_EOL, $csvFileContent);
@@ -154,44 +158,32 @@ class ImportCsvMetricEvaluations extends Command
         // Extract the header and convert it into a Laravel collection.
         $header = collect(str_getcsv(array_shift($lines)));
 
-        dump($header);
-
         // Convert the rows into a Laravel collection.
         $rows = collect($lines);
 
         // Map through the rows and combine them with the header to produce the final collection.
         $data = $rows->map(function ($row) use ($header) {
-
-        dump(str_getcsv($row));
-            $header->combine(str_getcsv($row));
+            return $header->combine(str_getcsv($row));
         });
-
-        dd($data);
 
         return $data;
     }
 
 
-    public function updateOrCreateMetricRecord($row)
+    public function updateOrCreateMetricRecord($row): Metric
     {
-        $title = trim($row['Metric/question']);
+        $title = trim($row['metric_question']);
 
         $keyAttributes = [];
-        $keyAttributes['title'] = $title;
+        $keyAttributes['title'] = Str::limit($title, 254, '');
 
         // if title is longer than 255 characters, add title content to note column for future reference
         if (Str::length($title) > 255) {
             $keyAttribute['notes'] = $title;
         }
 
-        $otherAttributes = [];
-        $otherAttributes['system_interest'] = $this->getSystemInterest($row['Does it measure the state of the system of interest or a pressure on the system of interest (i.e. external to system)? (options = state; pressure; NA; don\'t know)']);
-        $otherAttributes['require_assessment'] = $this->getRequireAssessment($row['Does it require assessment of change or a comparison? (options = yes; no; don\'t know; NA)']);
-        $otherAttributes['based'] = $this->getBased($row['Do the authors see the metric as being practice-based or performance based? (based on the perspective of the authors/assessment) (Options = practice; performance; don\'t know; NA)']);
-
         $metricModel = Metric::firstOrCreate(
             $keyAttributes,
-            $otherAttributes,
         );
 
         return $metricModel;
