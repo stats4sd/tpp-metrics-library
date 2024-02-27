@@ -99,7 +99,7 @@ class MetricResource extends Resource
                                             ->helperText('E.g. Where is this name used? Who uses it? Is it a common name, or only occasionally used?'),
                                     ])
                                     ->createItemButtonLabel('Add new name')
-                                    ->itemLabel(fn(array $state): ?string => $state['name'] ?? '(new name)'),
+                                    ->itemLabel(fn (array $state): ?string => $state['name'] ?? '(new name)'),
 
 
                                 Placeholder::make('info2')
@@ -133,7 +133,7 @@ class MetricResource extends Resource
                                 Toggle::make('unreviewed_import')
                                     ->label('Mark this imported record as reviewed')
                                     ->visible(function (Model $record): bool {
-                                        $visible = $record->unreviewed_import==1;
+                                        $visible = $record->unreviewed_import == 1;
                                         return $visible;
                                     })
                                     ->offColor('success')
@@ -159,17 +159,18 @@ class MetricResource extends Resource
                                 Placeholder::make('Dimensions')
                                     ->label('0.d. Dimensions')
                                     ->content('Select one or more Topics to see available dimensions')
-                                    ->hidden(fn(callable $get) => $get('topics') !== []),
+                                    ->hidden(fn (callable $get) => $get('topics') !== []),
 
                                 CheckboxList::make('dimensions')
                                     ->label('0.d. Dimensions')
-                                    ->hidden(fn(callable $get) => $get('topics') === [])
+                                    ->hidden(fn (callable $get) => $get('topics') === [])
                                     ->relationship('dimensions', 'name')
                                     ->columns(3)
-                                    ->options(fn(callable $get) => Dimension::whereIn('topic_id', $get('topics'))
-                                        ->orderBy('topic_id')
-                                        ->get()
-                                        ->pluck('name', 'id')->toArray()
+                                    ->options(
+                                        fn (callable $get) => Dimension::whereIn('topic_id', $get('topics'))
+                                            ->orderBy('topic_id')
+                                            ->get()
+                                            ->pluck('name', 'id')->toArray()
                                     )
                                     ->reactive(),
 
@@ -177,16 +178,17 @@ class MetricResource extends Resource
                                 Placeholder::make('Sub Dimensions')
                                     ->label('0.e. Sub-dimensions')
                                     ->content('Select one or more Dimensions before selecting sub-dimensions')
-                                    ->hidden(fn(callable $get) => $get('dimensions') !== []),
+                                    ->hidden(fn (callable $get) => $get('dimensions') !== []),
 
                                 Select::make('subDimensions')
                                     ->label('0.e. Sub-dimensions')
-                                    ->hidden(fn(callable $get) => $get('dimensions') === [])
+                                    ->hidden(fn (callable $get) => $get('dimensions') === [])
                                     ->relationship('subDimensions', 'name')
-                                    ->options(fn(callable $get) => SubDimension::whereIn('dimension_id', $get('dimensions'))
-                                        ->orderBy('dimension_id')
-                                        ->get()
-                                        ->pluck('name', 'id')->toArray()
+                                    ->options(
+                                        fn (callable $get) => SubDimension::whereIn('dimension_id', $get('dimensions'))
+                                            ->orderBy('dimension_id')
+                                            ->get()
+                                            ->pluck('name', 'id')->toArray()
                                     )
                                     ->createOptionForm([
                                         Select::make('dimension_id')
@@ -199,7 +201,7 @@ class MetricResource extends Resource
                                         Textarea::make('notes'),
                                     ])
                                     ->multiple()
-                                    ->createOptionAction(fn(Action $action): Action => $action->tooltip('Create new'))
+                                    ->createOptionAction(fn (Action $action): Action => $action->tooltip('Create new'))
                                     ->suffixAction(self::makeDiscussionPointAction()),
                             ]),
                         Tab::make('Properties')
@@ -220,7 +222,7 @@ class MetricResource extends Resource
                                             ->inlineLabel()
                                             ->hint($property->definition)
                                             ->multiple($property->select_multiple)
-                                            ->options(fn() => PropertyOption::where('property_id', '=', $property->id)
+                                            ->options(fn () => PropertyOption::where('property_id', '=', $property->id)
                                                 ->pluck('name', 'id')->toArray())
                                             ->suffixAction(self::makeDiscussionPointAction());
 
@@ -239,7 +241,6 @@ class MetricResource extends Resource
                                         }
 
                                         $components[] = $component;
-
                                     }
 
                                     if ($property->free_text) {
@@ -262,12 +263,10 @@ class MetricResource extends Resource
 
 
                                     return $components;
-
                                 })->flatten()->toArray();
                             })
                     ])
             ]);
-
     }
 
     public static function table(Table $table): Table
@@ -283,23 +282,23 @@ class MetricResource extends Resource
                                 ->label($topic->name)
                                 ->color('success');
                         })->toArray();
-
                     }),
                 Tables\Columns\TextColumn::make('developer.name'),
                 Tables\Columns\TextColumn::make('updated_at')
                     ->label('Last Updated'),
                 IconColumn::make('unreviewed_import')
-                    ->options(['heroicon-o-exclamation-circle' => fn($state): bool => (bool)$state])
+                    ->options(['heroicon-o-exclamation-circle' => fn ($state): bool => (bool)$state])
                     ->color('danger')
                     ->sortable(),
             ])
             ->filters([
                 Tables\Filters\Filter::make('unreviewed_import')
-                                        ->query(fn(Builder $query): Builder => $query->where('unreviewed_import', true))
-                                        ->label('Unreviewed imported records'),
+                    ->query(fn (Builder $query): Builder => $query->where('unreviewed_import', true))
+                    ->label('Unreviewed imported records'),
                 TrashedFilter::make(),
             ])
             ->actions([
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
@@ -313,11 +312,11 @@ class MetricResource extends Resource
     {
         return [
 
-//            RelationGroup::make('Topics', [
-//                TopicsRelationManager::class,
-//                DimensionsRelationManager::class,
-//                SubDimensionsRelationManager::class,
-//            ]),
+            //            RelationGroup::make('Topics', [
+            //                TopicsRelationManager::class,
+            //                DimensionsRelationManager::class,
+            //                SubDimensionsRelationManager::class,
+            //            ]),
 
             RelationGroup::make('Scales', [
                 ScaleDecisionRelationManager::class,
@@ -365,14 +364,15 @@ class MetricResource extends Resource
             'index' => Pages\ListMetrics::route('/'),
             'create' => Pages\CreateMetric::route('/create'),
             'edit' => Pages\EditMetric::route('/{record}/edit'),
+            'view' => Pages\ViewMetric::route('/{record}/view'),
         ];
     }
 
     public static function getEloquentQuery(): Builder
     {
-    return parent::getEloquentQuery()
-        ->withoutGlobalScopes([
-            SoftDeletingScope::class,
-        ]);
+        return parent::getEloquentQuery()
+            ->withoutGlobalScopes([
+                SoftDeletingScope::class,
+            ]);
     }
 }
