@@ -364,7 +364,7 @@ class MetricResource extends Resource
             'index' => Pages\ListMetrics::route('/'),
             'create' => Pages\CreateMetric::route('/create'),
             'edit' => Pages\EditMetric::route('/{record}/edit'),
-            'view' => Pages\ViewMetric::route('/{record}/view'),
+            'view' => Pages\ViewMetric::route('/{record}'),
         ];
     }
 
