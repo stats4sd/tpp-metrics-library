@@ -59,7 +59,8 @@ class Metric extends Model
     public function dimensions(): BelongsToMany
     {
         return $this->belongsToMany(Dimension::class, 'metric_dimension')
-            ->withPivot('relation_notes');
+            ->withPivot('relation_notes', 'needs_review')
+            ->withTimestamps();
     }
 
     // 0.e Sub-dimensions
@@ -74,7 +75,8 @@ class Metric extends Model
     {
         return $this->belongsToMany(Scale::class, 'metric_scale')
             ->wherePivot('type', '=', 'decision making')
-            ->withPivot('relation_notes', 'commonly_used', 'type');
+            ->withPivot('relation_notes', 'needs_review', 'commonly_used', 'type')
+            ->withTimestamps();
     }
 
     // 1.c Scale - measurement
@@ -82,7 +84,8 @@ class Metric extends Model
     {
         return $this->belongsToMany(Scale::class, 'metric_scale')
             ->wherePivot('type', '=', 'measurement')
-            ->withPivot('relation_notes', 'commonly_used', 'type');
+            ->withPivot('relation_notes', 'needs_review', 'commonly_used', 'type')
+            ->withTimestamps();
     }
 
     // 1.e Scale - reporting
@@ -90,14 +93,15 @@ class Metric extends Model
     {
         return $this->belongsToMany(Scale::class, 'metric_scale')
             ->wherePivot('type', '=', 'reporting')
-            ->withPivot('relation_notes', 'type', 'commonly_used');
+            ->withPivot('relation_notes', 'needs_review', 'commonly_used', 'type')
+            ->withTimestamps();
     }
 
     // 0.g Tools
     public function tools(): BelongsToMany
     {
         return $this->belongsToMany(Tool::class, 'metric_tool')
-            ->withPivot('relation_notes')
+            ->withPivot('relation_notes', 'needs_review')
             ->withTimestamps();
     }
 
@@ -126,7 +130,8 @@ class Metric extends Model
     public function collectionMethods(): BelongsToMany
     {
         return $this->belongsToMany(CollectionMethod::class, 'metric_collection_method')
-            ->withPivot('relation_notes');
+            ->withPivot('relation_notes', 'needs_review')
+            ->withTimestamps();
     }
 
     // 6.a. ****** Use cases / users ********* //
@@ -176,7 +181,8 @@ class Metric extends Model
     public function geographies(): BelongsToMany
     {
         return $this->belongsToMany(Geography::class, 'metric_geography')
-            ->withPivot('relation_notes');
+            ->withPivot('relation_notes', 'needs_review')
+            ->withTimestamps();
     }
 
     // 4.c Data sources
