@@ -10,7 +10,7 @@ use App\Filament\Resources\MetricResource\RelationManagers\ComplimentaryMetricsR
 use App\Filament\Resources\MetricResource\RelationManagers\ComputationGuidanceRelationManager;
 use App\Filament\Resources\MetricResource\RelationManagers\DataSourcesRelationManager;
 use App\Filament\Resources\MetricResource\RelationManagers\DecisionMakerRelationManager;
-use App\Filament\Resources\MetricResource\RelationManagers\FarmingSystemsRelationManager;
+// use App\Filament\Resources\MetricResource\RelationManagers\FarmingSystemsRelationManager;
 use App\Filament\Resources\MetricResource\RelationManagers\FrameworksRelationManager;
 use App\Filament\Resources\MetricResource\RelationManagers\GeographiesRelationManager;
 use App\Filament\Resources\MetricResource\RelationManagers\ImpactedByRelationManager;
@@ -143,15 +143,17 @@ class MetricResource extends Resource
 
                             ]),
 
-                        Tab::make('Topics and Dimensions')
+                        Tab::make('Dimensions')
                             ->hiddenOn(Pages\CreateMetric::class)
                             ->schema([
 
                                 /** 0.c Topics */
+                                // do not show topics in front end
                                 CheckboxList::make('topics')
                                     ->label('0.c. Topics')
                                     ->relationship('topics', 'name')
                                     ->columns(2)
+                                    ->hidden()
                                     ->options(Topic::orderBy('id')->get()->pluck('name', 'id')->toArray())
                                     ->reactive(),
 
@@ -175,34 +177,35 @@ class MetricResource extends Resource
                                     ->reactive(),
 
                                 /** 0.e sub-dimensions */
-                                Placeholder::make('Sub Dimensions')
-                                    ->label('0.e. Sub-dimensions')
-                                    ->content('Select one or more Dimensions before selecting sub-dimensions')
-                                    ->hidden(fn (callable $get) => $get('dimensions') !== []),
+                                // do not show sub-dimentsions in front end
+                                // Placeholder::make('Sub Dimensions')
+                                //     ->label('0.e. Sub-dimensions')
+                                //     ->content('Select one or more Dimensions before selecting sub-dimensions')
+                                //     ->hidden(fn (callable $get) => $get('dimensions') !== []),
 
-                                Select::make('subDimensions')
-                                    ->label('0.e. Sub-dimensions')
-                                    ->hidden(fn (callable $get) => $get('dimensions') === [])
-                                    ->relationship('subDimensions', 'name')
-                                    ->options(
-                                        fn (callable $get) => SubDimension::whereIn('dimension_id', $get('dimensions'))
-                                            ->orderBy('dimension_id')
-                                            ->get()
-                                            ->pluck('name', 'id')->toArray()
-                                    )
-                                    ->createOptionForm([
-                                        Select::make('dimension_id')
-                                            ->required()
-                                            ->relationship('dimension', 'name'),
-                                        Select::make('parent_id')
-                                            ->relationship('parent', 'name')
-                                            ->label('Is this is a descendant of another sub-dimension?'),
-                                        TextInput::make('name'),
-                                        Textarea::make('notes'),
-                                    ])
-                                    ->multiple()
-                                    ->createOptionAction(fn (Action $action): Action => $action->tooltip('Create new'))
-                                    ->suffixAction(self::makeDiscussionPointAction()),
+                                // Select::make('subDimensions')
+                                //     ->label('0.e. Sub-dimensions')
+                                //     ->hidden(fn (callable $get) => $get('dimensions') === [])
+                                //     ->relationship('subDimensions', 'name')
+                                //     ->options(
+                                //         fn (callable $get) => SubDimension::whereIn('dimension_id', $get('dimensions'))
+                                //             ->orderBy('dimension_id')
+                                //             ->get()
+                                //             ->pluck('name', 'id')->toArray()
+                                //     )
+                                //     ->createOptionForm([
+                                //         Select::make('dimension_id')
+                                //             ->required()
+                                //             ->relationship('dimension', 'name'),
+                                //         Select::make('parent_id')
+                                //             ->relationship('parent', 'name')
+                                //             ->label('Is this is a descendant of another sub-dimension?'),
+                                //         TextInput::make('name'),
+                                //         Textarea::make('notes'),
+                                //     ])
+                                //     ->multiple()
+                                //     ->createOptionAction(fn (Action $action): Action => $action->tooltip('Create new'))
+                                //     ->suffixAction(self::makeDiscussionPointAction()),
                             ]),
                         Tab::make('Properties')
                             ->hiddenOn(Pages\CreateMetric::class)
@@ -275,14 +278,15 @@ class MetricResource extends Resource
             ->columns([
                 BadgeableColumn::make('title')
                     ->sortable()
-                    ->searchable()
-                    ->suffixBadges(function ($record): array {
-                        return $record->topics->map(function ($topic) {
-                            return Badge::make($topic->id)
-                                ->label($topic->name)
-                                ->color('success');
-                        })->toArray();
-                    }),
+                    ->searchable(),
+                // do not show topics as badge in Title column
+                // ->suffixBadges(function ($record): array {
+                //     return $record->topics->map(function ($topic) {
+                //         return Badge::make($topic->id)
+                //             ->label($topic->name)
+                //             ->color('success');
+                //     })->toArray();
+                // }),
                 Tables\Columns\TextColumn::make('developer.name'),
                 Tables\Columns\TextColumn::make('updated_at')
                     ->label('Last Updated'),
@@ -345,7 +349,7 @@ class MetricResource extends Resource
             ]),
 
             RelationGroup::make('Systems and Geographies', [
-                FarmingSystemsRelationManager::class,
+                // FarmingSystemsRelationManager::class,
                 GeographiesRelationManager::class,
             ]),
 
