@@ -25,6 +25,7 @@ use Filament\Resources\RelationManagers\RelationGroup;
 use App\Filament\Table\Actions\DeduplicateRecordsAction;
 use App\Filament\Resources\DimensionResource\RelationManagers;
 use App\Filament\Resources\MetricResource\RelationManagers\MetricsRelationManager;
+use App\Filament\Resources\MetricResource\RelationManagers\DimensionMetricsRelationManager;
 
 class DimensionResource extends Resource
 {
@@ -93,7 +94,7 @@ class DimensionResource extends Resource
         return [
 
             RelationGroup::make('Metrics', [
-                MetricsRelationManager::class,
+                DimensionMetricsRelationManager::class,
             ]),
 
         ];

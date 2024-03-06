@@ -16,7 +16,7 @@ use Filament\Tables;
 // NOTE - CURRENTLY UNUSED
 // ***********************
 // class DimensionsRelationManager extends RelationManager
-class MetricsRelationManager extends RelationManager
+class DimensionMetricsRelationManager extends RelationManager
 {
     // protected static string $relationship = 'dimensions';
     protected static string $relationship = 'metrics';

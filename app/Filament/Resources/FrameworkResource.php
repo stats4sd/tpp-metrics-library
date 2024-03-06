@@ -4,19 +4,21 @@ namespace App\Filament\Resources;
 
 use Filament\Forms;
 use Filament\Tables;
-use App\Models\Framework;
 use Filament\Forms\Form;
+use App\Models\Framework;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
-use Filament\Forms\Components\Textarea;
 use Filament\Tables\Filters\TrashedFilter;
 use App\Filament\Resources\FrameworkResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Resources\RelationManagers\RelationGroup;
 use App\Filament\Resources\FrameworkResource\RelationManagers;
+use App\Filament\Resources\MetricResource\RelationManagers\FrameworkMetricsRelationManager;
 
 class FrameworkResource extends Resource
 {
@@ -32,11 +34,11 @@ class FrameworkResource extends Resource
         return $form
             ->schema([
                 Grid::make(1)
-                ->schema([
-                    TextInput::make('name')->required(),
-                    Textarea::make('definition'),
-                    Textarea::make('notes'),
-                ])
+                    ->schema([
+                        TextInput::make('name')->required(),
+                        Textarea::make('definition'),
+                        Textarea::make('notes'),
+                    ])
             ]);
     }
 
@@ -64,7 +66,11 @@ class FrameworkResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+
+            RelationGroup::make('Metrics', [
+                FrameworkMetricsRelationManager::class,
+            ]),
+
         ];
     }
 
@@ -79,10 +85,9 @@ class FrameworkResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-    return parent::getEloquentQuery()
-        ->withoutGlobalScopes([
-            SoftDeletingScope::class,
-        ]);
+        return parent::getEloquentQuery()
+            ->withoutGlobalScopes([
+                SoftDeletingScope::class,
+            ]);
     }
-
 }

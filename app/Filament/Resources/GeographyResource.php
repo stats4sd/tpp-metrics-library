@@ -4,23 +4,25 @@ namespace App\Filament\Resources;
 
 use Filament\Forms;
 use Filament\Tables;
-use App\Models\Geography;
 use Filament\Forms\Form;
+use App\Models\Geography;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
-use Filament\Forms\Components\Textarea;
 use Filament\Tables\Filters\TrashedFilter;
 use App\Filament\Resources\GeographyResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Resources\RelationManagers\RelationGroup;
 use App\Filament\Table\Actions\DeduplicateRecordsAction;
 use App\Filament\Resources\GeographyResource\RelationManagers;
+use App\Filament\Resources\MetricResource\RelationManagers\GeographyMetricsRelationManager;
 
 class GeographyResource extends Resource
 {
@@ -86,7 +88,11 @@ class GeographyResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+
+            RelationGroup::make('Metrics', [
+                GeographyMetricsRelationManager::class,
+            ]),
+
         ];
     }
 
