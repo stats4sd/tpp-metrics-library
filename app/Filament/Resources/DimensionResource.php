@@ -33,7 +33,7 @@ class DimensionResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     protected static ?string $navigationGroup = 'TOPICS';
-    protected static ?int $navigationSort = 22;
+    protected static ?int $navigationSort = 21;
 
     public static function form(Form $form): Form
     {
