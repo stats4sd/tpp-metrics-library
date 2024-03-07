@@ -23,11 +23,6 @@ class Dimension extends Model
             ->withTimestamps();
     }
 
-    public function topic(): BelongsTo
-    {
-        return $this->belongsTo(Topic::class);
-    }
-
     public function references(): MorphToMany
     {
         return $this->morphToMany(Reference::class, 'referencable')

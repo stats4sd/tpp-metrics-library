@@ -42,7 +42,6 @@ class DimensionResource extends Resource
             ->schema([
                 Grid::make(1)
                     ->schema([
-                        Select::make('topic_id')->relationship('topic', 'name')->required(),
                         TextInput::make('name')->required(),
                         Textarea::make('definition'),
                         Textarea::make('notes'),
