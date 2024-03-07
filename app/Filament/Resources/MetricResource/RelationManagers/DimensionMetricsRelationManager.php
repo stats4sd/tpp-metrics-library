@@ -2,43 +2,26 @@
 
 namespace App\Filament\Resources\MetricResource\RelationManagers;
 
-use Filament\Forms\Components\Textarea;
-use App\Filament\Table\Actions\AddDiscussionPointAction;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
-use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Tables\Table;
 use Filament\Tables;
+use Filament\Forms\Form;
+use Filament\Tables\Table;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Textarea;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Forms\Components\TextInput;
+use Filament\Resources\RelationManagers\RelationManager;
 
-// ***********************
-// NOTE - CURRENTLY UNUSED
-// ***********************
-// class DimensionsRelationManager extends RelationManager
 class DimensionMetricsRelationManager extends RelationManager
 {
-    // protected static string $relationship = 'dimensions';
     protected static string $relationship = 'metrics';
 
-    // protected static ?string $recordTitleAttribute = 'name';
     protected static ?string $recordTitleAttribute = 'title';
 
     public function getTableHeading(): string
     {
-        // return 'Dimensions for ' . $this->ownerRecord->title;
         return 'Metrics for ' . $this->ownerRecord->name;
     }
-
-    // public function getTableDescription(): string
-    // {
-
-    //     $topicNames = $this->ownerRecord->topics
-    //         ->map(fn ($topic) => $topic->name)
-    //         ->join(', ');
-
-    //     return "(Existing Topics: {$topicNames} )";
-    // }
 
     public function form(Form $form): Form
     {
@@ -50,9 +33,18 @@ class DimensionMetricsRelationManager extends RelationManager
                             ->inlineLabel()
                             ->disabled(),
                     ]),
+
+                Toggle::make('needs_review')
+                    ->label('Mark this imported record as needs review')
+                    ->columnSpan(2)
+                    ->offColor('success')
+                    ->onColor('danger')
+                    ->offIcon('heroicon-s-check')
+                    ->onIcon('heroicon-s-exclamation-circle'),
+
                 Textarea::make('relation_notes')
-                    // ->label('Add any extra information about why this metric is associated to the other'),
-                    ->label('Add any extra information about why this metric is associated to the dimension'),
+                    ->label('Add any extra information about why this metric is associated to the dimension')
+                    ->columnSpan(2),
             ]);
     }
 
@@ -60,8 +52,11 @@ class DimensionMetricsRelationManager extends RelationManager
     {
         return $table
             ->columns([
-                // Tables\Columns\TextColumn::make('name'),
                 Tables\Columns\TextColumn::make('title'),
+                IconColumn::make('needs_review')
+                    ->options(['heroicon-o-exclamation-circle' => fn ($state): bool => (bool)$state])
+                    ->color('danger')
+                    ->sortable(),
             ])
             ->filters([
                 //
@@ -69,24 +64,6 @@ class DimensionMetricsRelationManager extends RelationManager
             ->headerActions([
                 Tables\Actions\AttachAction::make()
                     ->preloadRecordSelect()
-                // ->recordSelect(
-                //     fn (Select $select) => $select
-                //         ->multiple()
-                //         ->createOptionForm([
-                //             Select::make('topic_id')
-                //                 ->relationship('topic', 'name'),
-                //             TextInput::make('title')
-                //                 ->label('Enter the name of the new dimension'),
-                //             Textarea::make('notes')
-                //                 ->label('Add any notes about this dimension'),
-                //         ])
-                // )
-                // ->form(fn (Tables\Actions\AttachAction $action): array => [
-                //     $action->getRecordSelect(),
-                //     Textarea::make('relation_notes')
-                //         // ->hint('Add any extra information about how/why this metric is linked to this dimension.'),
-                //         ->hint('Add any extra information about how/why this metric is linked to this metric.'),
-                // ]),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
