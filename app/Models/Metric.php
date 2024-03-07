@@ -153,11 +153,19 @@ class Metric extends Model
     }
 
     // 6.a. ****** Use cases / users ********* //
+    public function metricUsers(): BelongsToMany
+    {
+        return $this->belongsToMany(MetricUser::class)
+            ->wherePivot('type', '=', '')
+            ->withPivot('relation_notes', 'type', 'id', 'needs_review')
+            ->withTimestamps();
+    }
+
     public function collectors(): BelongsToMany
     {
         return $this->belongsToMany(MetricUser::class)
             ->wherePivot('type', '=', 'collector')
-            ->withPivot('relation_notes', 'type', 'id')
+            ->withPivot('relation_notes', 'type', 'id', 'needs_review')
             ->withTimestamps();
     }
 
@@ -165,7 +173,7 @@ class Metric extends Model
     {
         return $this->belongsToMany(MetricUser::class)
             ->wherePivot('type', '=', 'decision maker')
-            ->withPivot('relation_notes', 'type', 'id')
+            ->withPivot('relation_notes', 'type', 'id', 'needs_review')
             ->withTimestamps();
     }
 
@@ -173,7 +181,7 @@ class Metric extends Model
     {
         return $this->belongsToMany(MetricUser::class)
             ->wherePivot('type', '=', 'impacted by')
-            ->withPivot('relation_notes', 'type', 'id')
+            ->withPivot('relation_notes', 'type', 'id', 'needs_review')
             ->withTimestamps();
     }
 
