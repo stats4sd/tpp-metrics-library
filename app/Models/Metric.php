@@ -249,7 +249,7 @@ class Metric extends Model
     public function themes(): BelongsToMany
     {
         return $this->belongsToMany(Theme::class, 'metric_theme')
-            ->withPivot('relation_notes', 'unreviewd_import')
+            ->withPivot('relation_notes', 'unreviewd_import', 'needs_review')
             ->withTimestamps();
     }
 }
