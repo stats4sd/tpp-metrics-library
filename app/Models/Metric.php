@@ -80,7 +80,6 @@ class Metric extends Model
     public function scales(): BelongsToMany
     {
         return $this->belongsToMany(Scale::class, 'metric_scale')
-            ->wherePivot('type', '=', '')
             ->withPivot('relation_notes', 'commonly_used', 'type', 'needs_review')
             ->withTimestamps();
     }
@@ -156,7 +155,6 @@ class Metric extends Model
     public function metricUsers(): BelongsToMany
     {
         return $this->belongsToMany(MetricUser::class)
-            ->wherePivot('type', '=', '')
             ->withPivot('relation_notes', 'type', 'id', 'needs_review')
             ->withTimestamps();
     }
