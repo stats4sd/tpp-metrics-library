@@ -51,28 +51,11 @@ class Metric extends Model
             ->withTimestamps();
     }
 
-
-    // 0.c Topics
-    public function topics(): BelongsToMany
-    {
-        return $this->belongsToMany(Topic::class, 'metric_topic')
-            ->withPivot('relation_notes')
-            ->withTimestamps();
-    }
-
     // 0.d Dimensions
     public function dimensions(): BelongsToMany
     {
         return $this->belongsToMany(Dimension::class, 'metric_dimension')
             ->withPivot('relation_notes', 'needs_review')
-            ->withTimestamps();
-    }
-
-    // 0.e Sub-dimensions
-    public function subDimensions(): BelongsToMany
-    {
-        return $this->belongsToMany(SubDimension::class, 'metric_sub_dimension')
-            ->withPivot('relation_notes')
             ->withTimestamps();
     }
 
@@ -195,15 +178,6 @@ class Metric extends Model
     public function developer(): BelongsTo
     {
         return $this->belongsTo(Developer::class);
-    }
-
-    // 6.b Farming systems
-    // TODO: remove it
-    public function farmingSystems(): BelongsToMany
-    {
-        return $this->belongsToMany(FarmingSystem::class, 'metric_farming_system')
-            ->withPivot('relation_notes')
-            ->withTimestamps();
     }
 
     // 6.c Geographies

@@ -23,17 +23,7 @@ class DimensionsRelationManager extends RelationManager
 
     public function getTableHeading(): string
     {
-        return 'Dimensions for ' . $this->ownerRecord->title;
-    }
-
-    public function getTableDescription(): string
-    {
-
-        $topicNames = $this->ownerRecord->topics
-            ->map(fn($topic) => $topic->name)
-            ->join(', ');
-
-        return "(Existing Topics: {$topicNames} )";
+        return '0.d Dimensions for ' . $this->ownerRecord->title;
     }
 
     public function form(Form $form): Form
@@ -66,18 +56,17 @@ class DimensionsRelationManager extends RelationManager
             ->headerActions([
                 Tables\Actions\AttachAction::make()
                     ->preloadRecordSelect()
-                    ->recordSelect(fn(Select $select) => $select
-                        ->multiple()
-                        ->createOptionForm([
-                            Select::make('topic_id')
-                                ->relationship('topic', 'name'),
-                            TextInput::make('name')
-                                ->label('Enter the name of the new dimension'),
-                            Textarea::make('notes')
-                                ->label('Add any notes about this dimension'),
-                        ])
+                    ->recordSelect(
+                        fn (Select $select) => $select
+                            ->multiple()
+                            ->createOptionForm([
+                                TextInput::make('name')
+                                    ->label('Enter the name of the new dimension'),
+                                Textarea::make('notes')
+                                    ->label('Add any notes about this dimension'),
+                            ])
                     )
-                    ->form(fn(Tables\Actions\AttachAction $action): array => [
+                    ->form(fn (Tables\Actions\AttachAction $action): array => [
                         $action->getRecordSelect(),
                         Textarea::make('relation_notes')
                             ->hint('Add any extra information about how/why this metric is linked to this dimension.'),
