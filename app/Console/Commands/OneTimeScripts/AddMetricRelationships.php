@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Console\Commands;
+namespace App\Console\Commands\OneTimeScripts;
 
 use Illuminate\Console\Command;
 
