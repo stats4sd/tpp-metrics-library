@@ -21,13 +21,12 @@ class StatsWidget extends BaseWidget
         $metricCount = Stat::make('Total Metrics', Metric::count());
         $themeCount = Stat::make('Total Themes', Theme::count());
         $dimensionCount = Stat::make('Total Dimensions', Dimension::count());
-        $geographyCount = Stat::make('Total Geographies', Geography::count());
-        $countryCount = Stat::make('Total Countries', Country::count());
+        $countryCount = Stat::make('Total Countries', Geography::count() + Country::count());
         $toolCount = Stat::make('Total Tools', Tool::count());
         $frameworkCount = Stat::make('Total Frameworks', Framework::count());
         $scaleCount = Stat::make('Total Scales', Scale::count());
         $metricUserCount = Stat::make('Total Metric Users', MetricUser::count());
 
-        return [$metricCount, $themeCount, $dimensionCount, $geographyCount, $countryCount, $toolCount, $frameworkCount, $scaleCount, $metricUserCount];
+        return [$metricCount, $themeCount, $dimensionCount, $countryCount, $toolCount, $frameworkCount, $scaleCount, $metricUserCount];
     }
 }
