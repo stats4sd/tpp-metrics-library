@@ -2,15 +2,16 @@
 
 namespace App\Filament\Resources\MetricResource\RelationManagers;
 
-use Filament\Forms\Components\Textarea;
+use App\Filament\Resources\DimensionResource;
 use App\Filament\Table\Actions\AddDiscussionPointAction;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Tables\Table;
 use Filament\Tables;
+use Filament\Tables\Table;
 
 // ***********************
 // NOTE - CURRENTLY UNUSED
@@ -20,11 +21,6 @@ class DimensionsRelationManager extends RelationManager
     protected static string $relationship = 'dimensions';
 
     protected static ?string $recordTitleAttribute = 'name';
-
-    public function getTableHeading(): string
-    {
-        return '0.d Dimensions for ' . $this->ownerRecord->title;
-    }
 
     public function form(Form $form): Form
     {
@@ -73,6 +69,7 @@ class DimensionsRelationManager extends RelationManager
                     ]),
             ])
             ->actions([
+                Tables\Actions\ViewAction::make()->url(fn ($record) => DimensionResource::getUrl('view', ['record' => $record])),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DetachAction::make(),
                 AddDiscussionPointAction::make(),

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\DimensionResource\RelationManagers;
 
+use App\Filament\Resources\MetricResource;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Textarea;
@@ -62,6 +63,7 @@ class DimensionMetricsRelationManager extends RelationManager
                     ->preloadRecordSelect()
             ])
             ->actions([
+                Tables\Actions\ViewAction::make()->url(fn ($record) => MetricResource::getUrl('view', ['record' => $record]) . '?activeRelationManager=0'),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DetachAction::make(),
             ])
