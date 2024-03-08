@@ -16,8 +16,6 @@ class DimensionFactory extends Factory
             'notes' => $this->faker->text(),
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
-
-            // 'topic_id' => Topic::factory(),
         ];
     }
 }

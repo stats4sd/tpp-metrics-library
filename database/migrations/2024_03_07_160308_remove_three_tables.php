@@ -13,6 +13,10 @@ return new class extends Migration
     {
         Schema::disableForeignKeyConstraints();
 
+        Schema::dropIfExists('metric_topic');
+        Schema::dropIfExists('metric_sub_dimension');
+        Schema::dropIfExists('metric_farming_system');
+
         Schema::table('dimensions', function (Blueprint $table) {
             $table->dropForeign('dimensions_topic_id_foreign');
             $table->dropColumn('topic_id');

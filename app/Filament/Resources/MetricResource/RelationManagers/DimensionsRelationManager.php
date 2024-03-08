@@ -60,8 +60,6 @@ class DimensionsRelationManager extends RelationManager
                         fn (Select $select) => $select
                             ->multiple()
                             ->createOptionForm([
-                                // Select::make('topic_id')
-                                //     ->relationship('topic', 'name'),
                                 TextInput::make('name')
                                     ->label('Enter the name of the new dimension'),
                                 Textarea::make('notes')
