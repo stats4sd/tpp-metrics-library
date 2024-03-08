@@ -2,7 +2,6 @@
 
 namespace App\Console\Commands\OneTimeScripts;
 
-use App\Models\CollectionMethod;
 use App\Models\Metric;
 use Illuminate\Console\Command;
 
@@ -27,7 +26,7 @@ class RemoveDuplicateLinkTableEntries extends Command
      */
     public function handle()
     {
-        // Pretty sure this is only for metric_ relationships.
+
         $metrics = Metric::all();
 
         $metrics->each(function (Metric $metric) {
@@ -37,21 +36,49 @@ class RemoveDuplicateLinkTableEntries extends Command
                 $this->comment('----');
                 $this->info('metric ID' . $metric->id);
 
-                $collectionMethods = $metric->collectionMethods->mapWithKeys(function(CollectionMethod $collectionMethod) {
-                    return [$collectionMethod->id => [
-                        'relation_notes' => $collectionMethod->pivot->relation_notes,
-                        'needs_review' => $collectionMethod->pivot->needs_review
-                    ]];
-                });
+                $this->deduplicateRelationship($metric, 'collectionMethods');
+                $this->deduplicateRelationship($metric, 'dimensions');
+                $this->deduplicateRelationship($metric, 'scales');
+                $this->deduplicateRelationship($metric, 'tools');
+                $this->deduplicateRelationship($metric, 'frameworks');
+                $this->deduplicateRelationship($metric, 'units');
+                $this->deduplicateRelationship($metric, 'metricUsers');
+                $this->deduplicateRelationship($metric, 'geographies');
+                $this->deduplicateRelationship($metric, 'scales');
 
-                $metric->collectionMethods()->detach($metric->collectionMethods->pluck('id')->toArray());
-                $metric->collectionMethods()->sync($collectionMethods);
+                // referencables are all unique for metrics;
 
             }
-
-            // $metric->collectionMethods()->sync($metric->collectionMethods->unique('id')->pluck('id'));
         });
 
 
+    }
+
+    /**
+     * @param Metric $metric
+     * @return void
+     */
+    protected function deduplicateRelationship(Metric $metric, string $relationship): void
+    {
+
+        $count = $metric->$relationship()->count();
+
+        // This would not work if there were duplicate entries with different pivot values.
+        // A manual review of the database says this is not the case, so this is fine.
+        $entriesWithPivotValues = $metric->$relationship->mapWithKeys(function ($relatedEntry) {
+            return [$relatedEntry->id => [
+                'relation_notes' => $relatedEntry->pivot->relation_notes,
+                'needs_review' => $relatedEntry->pivot->needs_review
+            ]];
+        });
+
+        $metric->$relationship()->detach($metric->$relationship->pluck('id')->toArray());
+        $metric->$relationship()->sync($entriesWithPivotValues);
+
+        $newCount = $metric->$relationship()->count();
+
+        if($count !== $newCount) {
+            $this->comment('Removed ' . ($count - $newCount) . ' duplicate entries from ' . $relationship);
+        }
     }
 }
