@@ -44,7 +44,7 @@ class RemoveDuplicateLinkTableEntries extends Command
                 $this->deduplicateRelationship($metric, 'units');
                 $this->deduplicateRelationship($metric, 'metricUsers');
                 $this->deduplicateRelationship($metric, 'geographies');
-                $this->deduplicateRelationship($metric, 'scales');
+                $this->deduplicateRelationship($metric, 'themes');
 
                 // referencables are all unique for metrics;
 
