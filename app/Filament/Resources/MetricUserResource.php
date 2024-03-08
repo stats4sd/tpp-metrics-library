@@ -4,19 +4,21 @@ namespace App\Filament\Resources;
 
 use Filament\Forms;
 use Filament\Tables;
-use App\Models\MetricUser;
 use Filament\Forms\Form;
+use App\Models\MetricUser;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
-use Filament\Forms\Components\Textarea;
 use Filament\Tables\Filters\TrashedFilter;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\MetricUserResource\Pages;
+use Filament\Resources\RelationManagers\RelationGroup;
 use App\Filament\Resources\MetricUserResource\RelationManagers;
+use App\Filament\Resources\MetricResource\RelationManagers\MetricUserMetricsRelationManager;
 
 class MetricUserResource extends Resource
 {
@@ -32,11 +34,11 @@ class MetricUserResource extends Resource
         return $form
             ->schema([
                 Grid::make(1)
-                ->schema([
-                    TextInput::make('name')->required(),
-                    Textarea::make('definition'),
-                    Textarea::make('notes'),
-                ])
+                    ->schema([
+                        TextInput::make('name')->required(),
+                        Textarea::make('definition'),
+                        Textarea::make('notes'),
+                    ])
             ]);
     }
 
@@ -64,7 +66,11 @@ class MetricUserResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+
+            RelationGroup::make('Metrics', [
+                MetricUserMetricsRelationManager::class,
+            ]),
+
         ];
     }
 
@@ -79,10 +85,9 @@ class MetricUserResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-    return parent::getEloquentQuery()
-        ->withoutGlobalScopes([
-            SoftDeletingScope::class,
-        ]);
+        return parent::getEloquentQuery()
+            ->withoutGlobalScopes([
+                SoftDeletingScope::class,
+            ]);
     }
-
 }

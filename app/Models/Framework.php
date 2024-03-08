@@ -16,7 +16,8 @@ class Framework extends Model
     public function metrics(): BelongsToMany
     {
         return $this->belongsToMany(Metric::class, 'metric_framework')
-            ->withPivot('relation_notes');
+            ->withPivot('relation_notes', 'needs_review')
+            ->withTimestamps();
     }
 
     public function tools(): BelongsToMany

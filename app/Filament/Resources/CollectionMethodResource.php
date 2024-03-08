@@ -14,16 +14,18 @@ use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Tabs\Tab;
+use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
-use Filament\Forms\Components\Textarea;
 use Filament\Tables\Filters\TrashedFilter;
+use Filament\Resources\RelationManagers\RelationGroup;
 use App\Filament\Table\Actions\DeduplicateRecordsAction;
 use App\Filament\Resources\CollectionMethodResource\Pages;
 use App\Filament\Resources\CollectionMethodResource\RelationManagers;
+use App\Filament\Resources\MetricResource\RelationManagers\CollectionMethodMetricsRelationManager;
 
 class CollectionMethodResource extends Resource
 {
@@ -43,22 +45,22 @@ class CollectionMethodResource extends Resource
                     ->schema([
 
                         Tab::make('Core Info')
-                        ->schema([
-                            TextInput::make('title')->required(),
-                            Textarea::make('description'),
-                            Textarea::make('pros_cons')->label('Pros/Cons'),
-                            Textarea::make('notes'),
-                            Toggle::make('unreviewed_import')
+                            ->schema([
+                                TextInput::make('title')->required(),
+                                Textarea::make('description'),
+                                Textarea::make('pros_cons')->label('Pros/Cons'),
+                                Textarea::make('notes'),
+                                Toggle::make('unreviewed_import')
                                     ->label('Mark this imported record as reviewed')
                                     ->visible(function (Model $record): bool {
-                                        $visible = $record->unreviewed_import==1;
+                                        $visible = $record->unreviewed_import == 1;
                                         return $visible;
                                     })
                                     ->offColor('success')
                                     ->onColor('danger')
                                     ->offIcon('heroicon-s-check')
                                     ->onIcon('heroicon-s-exclamation-circle')
-                        ]),
+                            ]),
 
                         Tab::make('Properties')
                             ->hiddenOn(Pages\CreateCollectionMethod::class)
@@ -78,9 +80,9 @@ class CollectionMethodResource extends Resource
                                             ->inlineLabel()
                                             ->hint($property->definition)
                                             ->multiple($property->select_multiple)
-                                            ->options(fn() => PropertyOption::where('property_id', '=', $property->id)
+                                            ->options(fn () => PropertyOption::where('property_id', '=', $property->id)
                                                 ->pluck('name', 'id')->toArray());
-                                            // ->suffixAction(self::makeDiscussionPointAction());
+                                        // ->suffixAction(self::makeDiscussionPointAction());
 
                                         if ($property->editable_options) {
                                             $component = $component->createOptionForm([
@@ -97,7 +99,6 @@ class CollectionMethodResource extends Resource
                                         }
 
                                         $components[] = $component;
-
                                     }
 
                                     if ($property->free_text) {
@@ -124,7 +125,6 @@ class CollectionMethodResource extends Resource
 
 
                                     return $components;
-
                                 })->flatten()->toArray();
                             })
                     ])
@@ -140,14 +140,14 @@ class CollectionMethodResource extends Resource
                 TextColumn::make('pros_cons')->label('Pros/Cons'),
                 TextColumn::make('metrics_count')->counts('metrics')->sortable(),
                 IconColumn::make('unreviewed_import')
-                            ->options(['heroicon-o-exclamation-circle' => fn($state): bool => (bool)$state])
-                            ->color('danger')
-                            ->sortable(),
+                    ->options(['heroicon-o-exclamation-circle' => fn ($state): bool => (bool)$state])
+                    ->color('danger')
+                    ->sortable(),
             ])
             ->filters([
                 Tables\Filters\Filter::make('unreviewed_import')
-                                        ->query(fn(Builder $query): Builder => $query->where('unreviewed_import', true))
-                                        ->label('Unreviewed imported records'),
+                    ->query(fn (Builder $query): Builder => $query->where('unreviewed_import', true))
+                    ->label('Unreviewed imported records'),
                 TrashedFilter::make(),
             ])
             ->actions([
@@ -162,7 +162,11 @@ class CollectionMethodResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+
+            RelationGroup::make('Metrics', [
+                CollectionMethodMetricsRelationManager::class,
+            ]),
+
         ];
     }
 
@@ -177,10 +181,9 @@ class CollectionMethodResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-    return parent::getEloquentQuery()
-        ->withoutGlobalScopes([
-            SoftDeletingScope::class,
-        ]);
+        return parent::getEloquentQuery()
+            ->withoutGlobalScopes([
+                SoftDeletingScope::class,
+            ]);
     }
-
 }

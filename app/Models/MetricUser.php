@@ -16,7 +16,8 @@ class MetricUser extends Model
     public function metrics(): BelongsToMany
     {
         return $this->belongsToMany(Metric::class, 'metric_metric_user')
-            ->withPivot('relation_notes', 'type', 'id');
+            ->withPivot('relation_notes', 'type', 'id', 'needs_review')
+            ->withTimestamps();
     }
 
     public function metricDecisionMakers(): BelongsToMany
@@ -25,22 +26,25 @@ class MetricUser extends Model
             Metric::class,
             'metric_metric_user'
         )
-            ->withPivot('relation_notes', 'type', 'id')
-            ->wherePivot('type', '=', 'decision maker');
+            ->withPivot('relation_notes', 'type', 'id', 'needs_review')
+            ->wherePivot('type', '=', 'decision maker')
+            ->withTimestamps();
     }
 
     public function metricCollectors(): BelongsToMany
     {
         return $this->belongsToMany(Metric::class, 'metric_metric_user')
-            ->withPivot('relation_notes', 'type', 'id')
-            ->wherePivot('type', '=', 'collector');
+            ->withPivot('relation_notes', 'type', 'id', 'needs_review')
+            ->wherePivot('type', '=', 'collector')
+            ->withTimestamps();
     }
 
     public function metricImpactedBy(): BelongsToMany
     {
         return $this->belongsToMany(Metric::class, 'metric_metric_user')
-            ->withPivot('relation_notes', 'type', 'id')
-            ->wherePivot('type', '=', 'impacted by');
+            ->withPivot('relation_notes', 'type', 'id', 'needs_review')
+            ->wherePivot('type', '=', 'impacted by')
+            ->withTimestamps();
     }
 
     public function tools(): BelongsToMany
