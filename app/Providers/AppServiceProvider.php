@@ -5,7 +5,6 @@ namespace App\Providers;
 use App\Filament\Resources\MethodResource;
 use App\Filament\Resources\MetricPropertyResource;
 use App\Filament\Resources\PropertyTypeResource;
-use Filament\Forms\Components\Textarea;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -27,7 +26,60 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        // set text area default number of rows across entire app
-        Textarea::configureUsing(fn($config) => $config->rows(6));
+
+
+//        FilamentEnvironmentIndicator::configureUsing(function (FilamentEnvironmentIndicator $indicator) {
+//            $indicator->visible = fn() => auth()->user()?->hasRole('admin');
+//        }, isImportant: true);
+
+        // Filament::navigation(function (NavigationBuilder $builder): NavigationBuilder {
+        //     return $builder
+        //         ->item(...MetricResource::getNavigationItems())
+        //         ->item(...PropertyResource::getNavigationItems())
+        //         ->groups([
+        //             NavigationGroup::make('Review Tools')
+        //                 ->items([
+        //                     ...DiscussionPointResource::getNavigationItems(),
+        //                     ...FlagResource::getNavigationItems(),
+        //                     ...FeedbackResource::getNavigationItems(),
+        //                 ]),
+        //             NavigationGroup::make('Topics')
+        //                 ->items([
+        //                     ...TopicResource::getNavigationItems(),
+        //                     ...DimensionResource::getNavigationItems(),
+        //                     ...SubDimensionResource::getNavigationItems(),
+        //                 ]),
+        //             NavigationGroup::make('Scales, Users, Use Cases')
+        //                 ->items([
+        //                     ...ScaleResource::getNavigationItems(),
+        //                     ...MetricUserResource::getNavigationItems(),
+        //                 ]),
+        //             NavigationGroup::make('Tools, Methods + Frameworks')
+        //                 ->items([
+        //                     ...ToolResource::getNavigationItems(),
+        //                     ...CollectionMethodResource::getNavigationItems(),
+        //                     ...FrameworkResource::getNavigationItems(),
+        //                 ]),
+        //             NavigationGroup::make('Systems and Geographies')
+        //                 ->items([
+        //                     ...FarmingSystemResource::getNavigationItems(),
+        //                     ...GeographyResource::getNavigationItems(),
+        //                 ]),
+        //             NavigationGroup::make('References')
+        //                 ->items([
+        //                     ...ReferenceResource::getNavigationItems(),
+        //                 ]),
+        //             NavigationGroup::make('Imports')
+        //                 ->items([
+        //                     ...ImportResource::getNavigationItems(),
+        //                 ]),
+        //             NavigationGroup::make('Users and Roles')
+        //             ->items([
+        //                 ...UserResource::getNavigationItems(),
+        //                 ...RoleResource::getNavigationItems(),
+        //                 ...PermissionResource::getNavigationItems(),
+        //             ]),
+        //         ]);
+        // });
     }
 }
