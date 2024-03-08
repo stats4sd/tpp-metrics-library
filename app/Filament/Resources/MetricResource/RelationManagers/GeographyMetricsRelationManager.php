@@ -5,8 +5,8 @@ namespace App\Filament\Resources\MetricResource\RelationManagers;
 use Filament\Tables;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
-use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Forms\Components\TextInput;
@@ -34,13 +34,9 @@ class GeographyMetricsRelationManager extends RelationManager
                             ->disabled(),
                     ]),
 
-                Toggle::make('needs_review')
+                Checkbox::make('needs_review')
                     ->label('Mark this imported record as needs review')
-                    ->columnSpan(2)
-                    ->offColor('success')
-                    ->onColor('danger')
-                    ->offIcon('heroicon-s-check')
-                    ->onIcon('heroicon-s-exclamation-circle'),
+                    ->columnSpan(2),
 
                 Textarea::make('relation_notes')
                     ->label('Add any extra information about why this metric is associated to the geography')
