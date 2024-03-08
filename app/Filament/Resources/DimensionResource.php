@@ -25,6 +25,7 @@ use Filament\Resources\RelationManagers\RelationGroup;
 use App\Filament\Table\Actions\DeduplicateRecordsAction;
 use App\Filament\Resources\DimensionResource\RelationManagers;
 use App\Filament\Resources\MetricResource\RelationManagers\MetricsRelationManager;
+use App\Filament\Resources\MetricResource\RelationManagers\DimensionMetricsRelationManager;
 
 class DimensionResource extends Resource
 {
@@ -32,7 +33,7 @@ class DimensionResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?string $navigationGroup = 'TOPICS';
+    protected static ?string $navigationGroup = 'THEMES';
     protected static ?int $navigationSort = 22;
 
     public static function form(Form $form): Form
@@ -41,7 +42,6 @@ class DimensionResource extends Resource
             ->schema([
                 Grid::make(1)
                     ->schema([
-                        Select::make('topic_id')->relationship('topic', 'name')->required(),
                         TextInput::make('name')->required(),
                         Textarea::make('definition'),
                         Textarea::make('notes'),
@@ -93,7 +93,7 @@ class DimensionResource extends Resource
         return [
 
             RelationGroup::make('Metrics', [
-                MetricsRelationManager::class,
+                DimensionMetricsRelationManager::class,
             ]),
 
         ];

@@ -18,12 +18,14 @@ class Geography extends Model
     public function metrics(): BelongsToMany
     {
         return $this->belongsToMany(Metric::class, 'metric_geography')
-            ->withPivot('relation_notes');
+            ->withPivot('relation_notes', 'needs_review')
+            ->withTimestamps();
     }
 
     public function references(): MorphToMany
     {
         return $this->morphToMany(Reference::class, 'referencable')
-            ->withPivot('reference_type', 'relation_notes', 'id');
+            ->withPivot('reference_type', 'relation_notes', 'id')
+            ->withTimestamps();
     }
 }

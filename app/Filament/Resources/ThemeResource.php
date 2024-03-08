@@ -4,39 +4,39 @@ namespace App\Filament\Resources;
 
 use Filament\Forms;
 use Filament\Tables;
+use App\Models\Theme;
 use Filament\Forms\Form;
-use App\Models\FarmingSystem;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
-use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
-use Filament\Forms\Components\Textarea;
-use Filament\Tables\Filters\TrashedFilter;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\Resources\FarmingSystemResource\Pages;
-use App\Filament\Resources\FarmingSystemResource\RelationManagers;
+use App\Filament\Resources\ThemeResource\Pages;
+use Filament\Resources\RelationManagers\RelationGroup;
+use App\Filament\Table\Actions\DeduplicateRecordsAction;
+use App\Filament\Resources\ThemeResource\RelationManagers;
+use App\Filament\Resources\MetricResource\RelationManagers\ThemeMetricsRelationManager;
 
-class FarmingSystemResource extends Resource
+class ThemeResource extends Resource
 {
-    protected static ?string $model = FarmingSystem::class;
+    protected static ?string $model = Theme::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?string $navigationGroup = 'SYSTEMS AND GEOGRAPHIES';
-    protected static ?int $navigationSort = 51;
+    protected static ?string $navigationGroup = 'THEMES';
+    protected static ?int $navigationSort = 21;
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Grid::make(1)
-                ->schema([
-                    TextInput::make('name')->required(),
-                    Textarea::make('definition'),
-                    Textarea::make('notes'),
-                ])
+                Forms\Components\Grid::make(1)
+                    ->schema([
+                        TextInput::make('name')->required(),
+                        Textarea::make('definition'),
+                        Textarea::make('notes'),
+                    ])
             ]);
     }
 
@@ -46,11 +46,10 @@ class FarmingSystemResource extends Resource
             ->columns([
                 TextColumn::make('name')->searchable()->sortable(),
                 TextColumn::make('definition'),
-                TextColumn::make('notes'),
                 TextColumn::make('metrics_count')->counts('metrics')->sortable(),
             ])
             ->filters([
-                TrashedFilter::make(),
+                //
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
@@ -58,31 +57,27 @@ class FarmingSystemResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
+                DeduplicateRecordsAction::make(),
             ]);
     }
 
     public static function getRelations(): array
     {
         return [
-            //
+
+            RelationGroup::make('Metrics', [
+                ThemeMetricsRelationManager::class,
+            ]),
+
         ];
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListFarmingSystems::route('/'),
-            'create' => Pages\CreateFarmingSystem::route('/create'),
-            'edit' => Pages\EditFarmingSystem::route('/{record}/edit'),
+            'index' => Pages\ListThemes::route('/'),
+            'create' => Pages\CreateTheme::route('/create'),
+            'edit' => Pages\EditTheme::route('/{record}/edit'),
         ];
     }
-
-    public static function getEloquentQuery(): Builder
-    {
-    return parent::getEloquentQuery()
-        ->withoutGlobalScopes([
-            SoftDeletingScope::class,
-        ]);
-    }
-
 }

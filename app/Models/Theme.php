@@ -21,6 +21,8 @@ class Theme extends Model
 
     public function metrics(): BelongsToMany
     {
-        return $this->belongsToMany(Metric::class)->withTimestamps();
+        return $this->belongsToMany(Metric::class, 'metric_theme')
+            ->withPivot('relation_notes', 'needs_review')
+            ->withTimestamps();
     }
 }
