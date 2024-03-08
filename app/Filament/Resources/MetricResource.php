@@ -2,57 +2,55 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\MetricResource\Pages;
-use App\Filament\Resources\MetricResource\RelationManagers\ChildMetricsRelationManager;
-use App\Filament\Resources\MetricResource\RelationManagers\CollectionMethodsRelationManager;
-use App\Filament\Resources\MetricResource\RelationManagers\CollectorsRelationManager;
-use App\Filament\Resources\MetricResource\RelationManagers\ComplimentaryMetricsRelationManager;
-use App\Filament\Resources\MetricResource\RelationManagers\ComputationGuidanceRelationManager;
-use App\Filament\Resources\MetricResource\RelationManagers\DataSourcesRelationManager;
-use App\Filament\Resources\MetricResource\RelationManagers\DecisionMakerRelationManager;
-use App\Filament\Resources\MetricResource\RelationManagers\FarmingSystemsRelationManager;
-use App\Filament\Resources\MetricResource\RelationManagers\FrameworksRelationManager;
-use App\Filament\Resources\MetricResource\RelationManagers\GeographiesRelationManager;
-use App\Filament\Resources\MetricResource\RelationManagers\ImpactedByRelationManager;
-use App\Filament\Resources\MetricResource\RelationManagers\ParentMetricsRelationManager;
-use App\Filament\Resources\MetricResource\RelationManagers\ReferenceRelationManager;
-use App\Filament\Resources\MetricResource\RelationManagers\ScaleDecisionRelationManager;
-use App\Filament\Resources\MetricResource\RelationManagers\ScaleMeasurementRelationManager;
-use App\Filament\Resources\MetricResource\RelationManagers\ScaleReportingRelationManager;
-use App\Filament\Resources\MetricResource\RelationManagers\ToolsRelationManager;
-use App\Filament\Resources\MetricResource\RelationManagers\UnitsRelationManager;
-use App\Filament\Resources\Traits\HasDiscussionPoints;
-use App\Filament\Table\Actions\DeduplicateRecordsAction;
-use App\Models\Dimension;
+use Filament\Tables;
 use App\Models\Metric;
 use App\Models\Property;
+use Filament\Forms\Form;
+use App\Models\Dimension;
+use Filament\Tables\Table;
 use App\Models\PropertyOption;
-use App\Models\SubDimension;
-use App\Models\Topic;
-use Awcodes\FilamentBadgeableColumn\Components\Badge;
-use Awcodes\FilamentBadgeableColumn\Components\BadgeableColumn;
-use Awcodes\TableRepeater\Components\TableRepeater;
-use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\CheckboxList;
-use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Components\Select;
+use Filament\Resources\Resource;
+use Illuminate\Support\HtmlString;
 use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
-use Filament\Forms\Form;
-use Filament\Resources\RelationManagers\RelationGroup;
-use Filament\Resources\Resource;
-use Filament\Tables;
 use Filament\Tables\Columns\IconColumn;
-use Filament\Tables\Filters\TrashedFilter;
-use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Filament\Forms\Components\TextInput;
+use Illuminate\Database\Eloquent\Builder;
+use Filament\Forms\Components\Placeholder;
+use Filament\Tables\Filters\TrashedFilter;
+use Filament\Forms\Components\CheckboxList;
+use Filament\Forms\Components\Actions\Action;
+use App\Filament\Resources\MetricResource\Pages;
+use Awcodes\TableRepeater\Components\TableRepeater;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Illuminate\Support\HtmlString;
+use Awcodes\FilamentBadgeableColumn\Components\Badge;
+use App\Filament\Resources\Traits\HasDiscussionPoints;
+use Filament\Resources\RelationManagers\RelationGroup;
+use App\Filament\Table\Actions\DeduplicateRecordsAction;
+use Awcodes\FilamentBadgeableColumn\Components\BadgeableColumn;
+use App\Filament\Resources\MetricResource\RelationManagers\ToolsRelationManager;
+use App\Filament\Resources\MetricResource\RelationManagers\UnitsRelationManager;
+use App\Filament\Resources\MetricResource\RelationManagers\ReferenceRelationManager;
+use App\Filament\Resources\MetricResource\RelationManagers\CollectorsRelationManager;
+use App\Filament\Resources\MetricResource\RelationManagers\DimensionsRelationManager;
+use App\Filament\Resources\MetricResource\RelationManagers\FrameworksRelationManager;
+use App\Filament\Resources\MetricResource\RelationManagers\ImpactedByRelationManager;
+use App\Filament\Resources\MetricResource\RelationManagers\DataSourcesRelationManager;
+use App\Filament\Resources\MetricResource\RelationManagers\GeographiesRelationManager;
+use App\Filament\Resources\MetricResource\RelationManagers\ChildMetricsRelationManager;
+use App\Filament\Resources\MetricResource\RelationManagers\DecisionMakerRelationManager;
+use App\Filament\Resources\MetricResource\RelationManagers\ParentMetricsRelationManager;
+use App\Filament\Resources\MetricResource\RelationManagers\ScaleDecisionRelationManager;
+use App\Filament\Resources\MetricResource\RelationManagers\ScaleReportingRelationManager;
+use App\Filament\Resources\MetricResource\RelationManagers\ScaleMeasurementRelationManager;
+use App\Filament\Resources\MetricResource\RelationManagers\CollectionMethodsRelationManager;
+use App\Filament\Resources\MetricResource\RelationManagers\ComputationGuidanceRelationManager;
+use App\Filament\Resources\MetricResource\RelationManagers\ComplimentaryMetricsRelationManager;
 
 class MetricResource extends Resource
 {
@@ -99,7 +97,7 @@ class MetricResource extends Resource
                                             ->helperText('E.g. Where is this name used? Who uses it? Is it a common name, or only occasionally used?'),
                                     ])
                                     ->createItemButtonLabel('Add new name')
-                                    ->itemLabel(fn(array $state): ?string => $state['name'] ?? '(new name)'),
+                                    ->itemLabel(fn (array $state): ?string => $state['name'] ?? '(new name)'),
 
 
                                 Placeholder::make('info2')
@@ -133,7 +131,7 @@ class MetricResource extends Resource
                                 Toggle::make('unreviewed_import')
                                     ->label('Mark this imported record as reviewed')
                                     ->visible(function (Model $record): bool {
-                                        $visible = $record->unreviewed_import==1;
+                                        $visible = $record->unreviewed_import == 1;
                                         return $visible;
                                     })
                                     ->offColor('success')
@@ -143,65 +141,6 @@ class MetricResource extends Resource
 
                             ]),
 
-                        Tab::make('Topics and Dimensions')
-                            ->hiddenOn(Pages\CreateMetric::class)
-                            ->schema([
-
-                                /** 0.c Topics */
-                                CheckboxList::make('topics')
-                                    ->label('0.c. Topics')
-                                    ->relationship('topics', 'name')
-                                    ->columns(2)
-                                    ->options(Topic::orderBy('id')->get()->pluck('name', 'id')->toArray())
-                                    ->reactive(),
-
-                                /** 0.d Dimensions */
-                                Placeholder::make('Dimensions')
-                                    ->label('0.d. Dimensions')
-                                    ->content('Select one or more Topics to see available dimensions')
-                                    ->hidden(fn(callable $get) => $get('topics') !== []),
-
-                                CheckboxList::make('dimensions')
-                                    ->label('0.d. Dimensions')
-                                    ->hidden(fn(callable $get) => $get('topics') === [])
-                                    ->relationship('dimensions', 'name')
-                                    ->columns(3)
-                                    ->options(fn(callable $get) => Dimension::whereIn('topic_id', $get('topics'))
-                                        ->orderBy('topic_id')
-                                        ->get()
-                                        ->pluck('name', 'id')->toArray()
-                                    )
-                                    ->reactive(),
-
-                                /** 0.e sub-dimensions */
-                                Placeholder::make('Sub Dimensions')
-                                    ->label('0.e. Sub-dimensions')
-                                    ->content('Select one or more Dimensions before selecting sub-dimensions')
-                                    ->hidden(fn(callable $get) => $get('dimensions') !== []),
-
-                                Select::make('subDimensions')
-                                    ->label('0.e. Sub-dimensions')
-                                    ->hidden(fn(callable $get) => $get('dimensions') === [])
-                                    ->relationship('subDimensions', 'name')
-                                    ->options(fn(callable $get) => SubDimension::whereIn('dimension_id', $get('dimensions'))
-                                        ->orderBy('dimension_id')
-                                        ->get()
-                                        ->pluck('name', 'id')->toArray()
-                                    )
-                                    ->createOptionForm([
-                                        Select::make('dimension_id')
-                                            ->required()
-                                            ->relationship('dimension', 'name'),
-                                        Select::make('parent_id')
-                                            ->relationship('parent', 'name')
-                                            ->label('Is this is a descendant of another sub-dimension?'),
-                                        TextInput::make('name'),
-                                        Textarea::make('notes'),
-                                    ])
-                                    ->multiple()
-                                    ->createOptionAction(fn(Action $action): Action => $action->tooltip('Create new'))
-                                    ->suffixAction(self::makeDiscussionPointAction()),
-                            ]),
                         Tab::make('Properties')
                             ->hiddenOn(Pages\CreateMetric::class)
                             ->schema(function () {
@@ -220,7 +159,7 @@ class MetricResource extends Resource
                                             ->inlineLabel()
                                             ->hint($property->definition)
                                             ->multiple($property->select_multiple)
-                                            ->options(fn() => PropertyOption::where('property_id', '=', $property->id)
+                                            ->options(fn () => PropertyOption::where('property_id', '=', $property->id)
                                                 ->pluck('name', 'id')->toArray())
                                             ->suffixAction(self::makeDiscussionPointAction());
 
@@ -239,7 +178,6 @@ class MetricResource extends Resource
                                         }
 
                                         $components[] = $component;
-
                                     }
 
                                     if ($property->free_text) {
@@ -262,12 +200,10 @@ class MetricResource extends Resource
 
 
                                     return $components;
-
                                 })->flatten()->toArray();
                             })
                     ])
             ]);
-
     }
 
     public static function table(Table $table): Table
@@ -276,30 +212,23 @@ class MetricResource extends Resource
             ->columns([
                 BadgeableColumn::make('title')
                     ->sortable()
-                    ->searchable()
-                    ->suffixBadges(function ($record): array {
-                        return $record->topics->map(function ($topic) {
-                            return Badge::make($topic->id)
-                                ->label($topic->name)
-                                ->color('success');
-                        })->toArray();
-
-                    }),
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('developer.name'),
                 Tables\Columns\TextColumn::make('updated_at')
                     ->label('Last Updated'),
                 IconColumn::make('unreviewed_import')
-                    ->options(['heroicon-o-exclamation-circle' => fn($state): bool => (bool)$state])
+                    ->options(['heroicon-o-exclamation-circle' => fn ($state): bool => (bool)$state])
                     ->color('danger')
                     ->sortable(),
             ])
             ->filters([
                 Tables\Filters\Filter::make('unreviewed_import')
-                                        ->query(fn(Builder $query): Builder => $query->where('unreviewed_import', true))
-                                        ->label('Unreviewed imported records'),
+                    ->query(fn (Builder $query): Builder => $query->where('unreviewed_import', true))
+                    ->label('Unreviewed imported records'),
                 TrashedFilter::make(),
             ])
             ->actions([
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
@@ -313,11 +242,9 @@ class MetricResource extends Resource
     {
         return [
 
-//            RelationGroup::make('Topics', [
-//                TopicsRelationManager::class,
-//                DimensionsRelationManager::class,
-//                SubDimensionsRelationManager::class,
-//            ]),
+            RelationGroup::make('Dimensions', [
+                DimensionsRelationManager::class,
+            ]),
 
             RelationGroup::make('Scales', [
                 ScaleDecisionRelationManager::class,
@@ -346,7 +273,6 @@ class MetricResource extends Resource
             ]),
 
             RelationGroup::make('Systems and Geographies', [
-                FarmingSystemsRelationManager::class,
                 GeographiesRelationManager::class,
             ]),
 
@@ -365,14 +291,15 @@ class MetricResource extends Resource
             'index' => Pages\ListMetrics::route('/'),
             'create' => Pages\CreateMetric::route('/create'),
             'edit' => Pages\EditMetric::route('/{record}/edit'),
+            'view' => Pages\ViewMetric::route('/{record}'),
         ];
     }
 
     public static function getEloquentQuery(): Builder
     {
-    return parent::getEloquentQuery()
-        ->withoutGlobalScopes([
-            SoftDeletingScope::class,
-        ]);
+        return parent::getEloquentQuery()
+            ->withoutGlobalScopes([
+                SoftDeletingScope::class,
+            ]);
     }
 }

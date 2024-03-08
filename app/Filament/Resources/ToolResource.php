@@ -9,14 +9,16 @@ use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
-use Filament\Forms\Components\Textarea;
 use Filament\Tables\Filters\TrashedFilter;
 use App\Filament\Resources\ToolResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Resources\RelationManagers\RelationGroup;
 use App\Filament\Resources\ToolResource\RelationManagers;
+use App\Filament\Resources\MetricResource\RelationManagers\ToolMetricsRelationManager;
 
 class ToolResource extends Resource
 {
@@ -32,11 +34,11 @@ class ToolResource extends Resource
         return $form
             ->schema([
                 Grid::make(1)
-                ->schema([
-                    TextInput::make('name')->required(),
-                    Textarea::make('definition'),
-                    Textarea::make('notes'),
-                ])
+                    ->schema([
+                        TextInput::make('name')->required(),
+                        Textarea::make('definition'),
+                        Textarea::make('notes'),
+                    ])
             ]);
     }
 
@@ -64,7 +66,11 @@ class ToolResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+
+            RelationGroup::make('Metrics', [
+                ToolMetricsRelationManager::class,
+            ]),
+
         ];
     }
 
@@ -79,10 +85,9 @@ class ToolResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-    return parent::getEloquentQuery()
-        ->withoutGlobalScopes([
-            SoftDeletingScope::class,
-        ]);
+        return parent::getEloquentQuery()
+            ->withoutGlobalScopes([
+                SoftDeletingScope::class,
+            ]);
     }
-
 }

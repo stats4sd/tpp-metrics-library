@@ -19,17 +19,19 @@ class Dimension extends Model
     public function metrics(): BelongsToMany
     {
         return $this->belongsToMany(Metric::class, 'metric_dimension')
-            ->withPivot('relation_notes');
-    }
-
-    public function topic(): BelongsTo
-    {
-        return $this->belongsTo(Topic::class);
+            ->withPivot('relation_notes', 'needs_review')
+            ->withTimestamps();
     }
 
     public function references(): MorphToMany
     {
         return $this->morphToMany(Reference::class, 'referencable')
-            ->withPivot('reference_type', 'relation_notes', 'id');
+            ->withPivot('reference_type', 'relation_notes', 'id')
+            ->withTimestamps();
+    }
+
+    public function tools(): BelongsToMany
+    {
+        return $this->belongsToMany(Tool::class)->withTimestamps();
     }
 }

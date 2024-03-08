@@ -47,6 +47,12 @@ class Reference extends Model
             ->withPivot('reference_type', 'relation_notes', 'id');
     }
 
+    public function tools(): MorphToMany
+    {
+        return $this->morphedByMany(Tool::class, 'referencable')
+        ->withPivot('reference_type', 'relation_notes', 'id');
+    }
+
     public function referencables(): HasMany
     {
         return $this->hasMany(Referencable::class);

@@ -13,15 +13,17 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        $this->call(RoleSeeder::class);
+        // $this->call(RoleSeeder::class);
 
-        if (config('app.env') === "local") {
-            $this->call(TestSeeder::class);
-        }
+        // if (config('app.env') === "local") {
+        //     $this->call(TestSeeder::class);
+        // }
 
-        $this->call(TopicSeeder::class);
-        $this->call(DimensionSeeder::class);
-        $this->call(MetricPropertySeeder::class);
-        $this->call(CollectionPropertySeeder::class);
+        // $this->call(TopicSeeder::class);
+        // $this->call(DimensionSeeder::class);
+        // $this->call(MetricPropertySeeder::class);
+        // $this->call(CollectionPropertySeeder::class);
+
+        $this->call(SdgsSeeder::class);
     }
 }

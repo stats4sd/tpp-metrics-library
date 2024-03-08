@@ -4,23 +4,25 @@ namespace App\Filament\Resources;
 
 use Filament\Forms;
 use Filament\Tables;
-use App\Models\Geography;
 use Filament\Forms\Form;
+use App\Models\Geography;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
-use Filament\Forms\Components\Textarea;
 use Filament\Tables\Filters\TrashedFilter;
 use App\Filament\Resources\GeographyResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Resources\RelationManagers\RelationGroup;
 use App\Filament\Table\Actions\DeduplicateRecordsAction;
 use App\Filament\Resources\GeographyResource\RelationManagers;
+use App\Filament\Resources\MetricResource\RelationManagers\GeographyMetricsRelationManager;
 
 class GeographyResource extends Resource
 {
@@ -29,28 +31,28 @@ class GeographyResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     protected static ?string $navigationGroup = 'SYSTEMS AND GEOGRAPHIES';
-    protected static ?int $navigationSort = 52;
+    protected static ?int $navigationSort = 51;
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Grid::make(1)
-                ->schema([
-                    TextInput::make('name')->required(),
-                    Textarea::make('definition'),
-                    Textarea::make('notes'),
-                    Toggle::make('unreviewed_import')
+                    ->schema([
+                        TextInput::make('name')->required(),
+                        Textarea::make('definition'),
+                        Textarea::make('notes'),
+                        Toggle::make('unreviewed_import')
                             ->label('Mark this imported record as reviewed')
                             ->visible(function (Model $record): bool {
-                                $visible = $record->unreviewed_import==1;
+                                $visible = $record->unreviewed_import == 1;
                                 return $visible;
                             })
                             ->offColor('success')
                             ->onColor('danger')
                             ->offIcon('heroicon-s-check')
                             ->onIcon('heroicon-s-exclamation-circle')
-                ])
+                    ])
             ]);
     }
 
@@ -63,14 +65,14 @@ class GeographyResource extends Resource
                 TextColumn::make('notes'),
                 TextColumn::make('metrics_count')->counts('metrics')->sortable(),
                 IconColumn::make('unreviewed_import')
-                            ->options(['heroicon-o-exclamation-circle' => fn($state): bool => (bool)$state])
-                            ->color('danger')
-                            ->sortable(),
+                    ->options(['heroicon-o-exclamation-circle' => fn ($state): bool => (bool)$state])
+                    ->color('danger')
+                    ->sortable(),
             ])
             ->filters([
                 Tables\Filters\Filter::make('unreviewed_import')
-                                        ->query(fn(Builder $query): Builder => $query->where('unreviewed_import', true))
-                                        ->label('Unreviewed imported records'),
+                    ->query(fn (Builder $query): Builder => $query->where('unreviewed_import', true))
+                    ->label('Unreviewed imported records'),
                 TrashedFilter::make(),
             ])
             ->actions([
@@ -86,7 +88,11 @@ class GeographyResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+
+            RelationGroup::make('Metrics', [
+                GeographyMetricsRelationManager::class,
+            ]),
+
         ];
     }
 
@@ -101,10 +107,9 @@ class GeographyResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-    return parent::getEloquentQuery()
-        ->withoutGlobalScopes([
-            SoftDeletingScope::class,
-        ]);
+        return parent::getEloquentQuery()
+            ->withoutGlobalScopes([
+                SoftDeletingScope::class,
+            ]);
     }
-
 }

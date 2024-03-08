@@ -19,28 +19,32 @@ class Scale extends Model
     public function metrics(): BelongsToMany
     {
         return $this->belongsToMany(Metric::class, 'metric_scale')
-            ->withPivot('relation_notes', 'commonly_used', 'type');
+            ->withPivot('relation_notes', 'commonly_used', 'type', 'needs_review')
+            ->withTimestamps();
     }
 
     public function metricDecision(): BelongsToMany
     {
         return $this->belongsToMany(Metric::class, 'metric_scale')
-            ->withPivot('relation_notes', 'commonly_used', 'type')
-            ->wherePivot('type', '=', 'decision making');
+            ->withPivot('relation_notes', 'commonly_used', 'type', 'needs_review')
+            ->wherePivot('type', '=', 'decision making')
+            ->withTimestamps();
     }
 
     public function metricMeasurement(): BelongsToMany
     {
         return $this->belongsToMany(Metric::class, 'metric_scale')
-            ->withPivot('relation_notes', 'commonly_used', 'type')
-            ->wherePivot('type', '=', 'measurement');
+            ->withPivot('relation_notes', 'commonly_used', 'type', 'needs_review')
+            ->wherePivot('type', '=', 'measurement')
+            ->withTimestamps();
     }
 
     public function metricReporting(): BelongsToMany
     {
         return $this->belongsToMany(Metric::class, 'metric_scale')
-            ->withPivot('relation_notes', 'commonly_used', 'type')
-            ->wherePivot('type', '=', 'reporting');
+            ->withPivot('relation_notes', 'commonly_used', 'type', 'needs_review')
+            ->wherePivot('type', '=', 'reporting')
+            ->withTimestamps();
     }
 
     public function discussionPoints(): MorphMany
@@ -51,6 +55,12 @@ class Scale extends Model
     public function references(): MorphToMany
     {
         return $this->morphToMany(Reference::class, 'referencable')
-            ->withPivot('reference_type', 'relation_notes', 'id');
+            ->withPivot('reference_type', 'relation_notes', 'id')
+            ->withTimestamps();
+    }
+
+    public function tools(): BelongsToMany
+    {
+        return $this->belongsToMany(Tool::class)->withTimestamps();
     }
 }
