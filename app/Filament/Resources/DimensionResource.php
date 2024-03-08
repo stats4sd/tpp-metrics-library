@@ -62,8 +62,10 @@ class DimensionResource extends Resource
             Section::make('Key Info')
                 ->schema([
                     TextEntry::make('name')->inlineLabel(),
-                    TextEntry::make('definition')->inlineLabel(),
-                    TextEntry::make('notes')->inlineLabel(),
+                    TextEntry::make('definition')->inlineLabel()
+                    ->state(fn (Model $record): string => $record->definition ?? '-'),
+                    TextEntry::make('notes')->inlineLabel()
+                    ->state(fn (Model $record): string => $record->notes ?? '-'),
                 ])
                 ->columnSpanFull(),
         ])
@@ -103,7 +105,8 @@ class DimensionResource extends Resource
     {
         return [
             RelationManagers\DimensionMetricsRelationManager::class,
-            RelationManagers\ReferencesRelationManager::class
+            RelationManagers\ReferencesRelationManager::class,
+            RelationManagers\ToolsRelationManager::class,
         ];
     }
 

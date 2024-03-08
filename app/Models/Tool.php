@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -13,6 +14,28 @@ class Tool extends Model
     use HasFactory, SoftDeletes;
 
     protected $guarded = [];
+
+    public function acronym(): Attribute
+    {
+        return new Attribute(
+            get: fn($value) => $value !== "NA" ? strtoupper($value) : null,
+        );
+    }
+
+    public function author(): Attribute
+    {
+        return new Attribute(
+            get: fn($value) => $value !== "NA" ? $value : null,
+        );
+    }
+
+    public function widerUse(): Attribute
+    {
+        return new Attribute(
+            get: fn($value) => $value ?? false,
+        );
+    }
+
 
     public function metrics(): BelongsToMany
     {

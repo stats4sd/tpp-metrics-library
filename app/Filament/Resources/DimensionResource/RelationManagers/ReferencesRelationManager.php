@@ -19,7 +19,7 @@ class ReferencesRelationManager extends RelationManager
     public function infolist(Infolist $infolist): Infolist
     {
         return $infolist->schema([
-            Section::make(fn($record) => $record->title)
+            Section::make(fn(Reference $record) => $record->name)
                 ->schema([
                     TextEntry::make('ref')
                         ->label('REFERENCE:')
@@ -31,7 +31,7 @@ class ReferencesRelationManager extends RelationManager
                     TextEntry::make('url')->label('URL:')->inlineLabel()
                     ->url(fn(Reference $record): string => $record->url)
                     ->openUrlInNewTab(),
-                    TextEntry::make('language')->inlineLabel()->visible(fn(Reference $record): bool => $record->language),
+                    TextEntry::make('language')->inlineLabel()->visible(fn(Reference $record): bool => (bool) $record->language),
 
                 ]),
             Section::make('Abstract')
@@ -60,7 +60,7 @@ class ReferencesRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('name')
             ->columns([
-                Tables\Columns\TextColumn::make('title')
+                Tables\Columns\TextColumn::make('name')
                     ->wrap(),
                 Tables\Columns\IconColumn::make('has_url')
                     ->state(fn(Reference $record): bool => (bool)$record->url)
@@ -72,7 +72,8 @@ class ReferencesRelationManager extends RelationManager
             ->headerActions([
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
+                Tables\Actions\ViewAction::make()
+                ->modalHeading(''),
             ])
             ->bulkActions([
             ]);
