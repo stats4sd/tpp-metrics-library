@@ -102,12 +102,8 @@ class DimensionResource extends Resource
     public static function getRelations(): array
     {
         return [
-
-
             RelationManagers\DimensionMetricsRelationManager::class,
             RelationManagers\ReferencesRelationManager::class
-
-
         ];
     }
 

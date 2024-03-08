@@ -36,11 +36,11 @@ class ReferencesRelationManager extends RelationManager
                 ]),
             Section::make('Abstract')
                 ->schema([
-                    TextEntry::make('abstract'),
+                    TextEntry::make('abstract')->hiddenLabel(),
                 ]),
             Section::make('Notes')
                 ->schema([
-                    TextEntry::make('notes'),
+                    TextEntry::make('notes')->hiddenLabel(),
                 ]),
         ]);
     }
