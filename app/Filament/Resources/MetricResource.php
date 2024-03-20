@@ -2,55 +2,51 @@
 
 namespace App\Filament\Resources;
 
-use Filament\Tables;
-use App\Models\Metric;
-use App\Models\Property;
-use Filament\Forms\Form;
-use App\Models\Dimension;
-use Filament\Tables\Table;
-use App\Models\PropertyOption;
-use Filament\Resources\Resource;
-use Illuminate\Support\HtmlString;
-use Filament\Forms\Components\Tabs;
-use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\Tabs\Tab;
-use Filament\Forms\Components\Textarea;
-use Filament\Tables\Columns\IconColumn;
-use Illuminate\Database\Eloquent\Model;
-use Filament\Forms\Components\TextInput;
-use Illuminate\Database\Eloquent\Builder;
-use Filament\Forms\Components\Placeholder;
-use Filament\Tables\Filters\TrashedFilter;
-use Filament\Forms\Components\CheckboxList;
-use Filament\Forms\Components\Actions\Action;
 use App\Filament\Resources\MetricResource\Pages;
-use Awcodes\TableRepeater\Components\TableRepeater;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Awcodes\FilamentBadgeableColumn\Components\Badge;
-use App\Filament\Resources\Traits\HasDiscussionPoints;
-use Filament\Resources\RelationManagers\RelationGroup;
-use App\Filament\Table\Actions\DeduplicateRecordsAction;
-use Awcodes\FilamentBadgeableColumn\Components\BadgeableColumn;
-use App\Filament\Resources\MetricResource\RelationManagers\ToolsRelationManager;
-use App\Filament\Resources\MetricResource\RelationManagers\UnitsRelationManager;
-use App\Filament\Resources\MetricResource\RelationManagers\ReferenceRelationManager;
+use App\Filament\Resources\MetricResource\RelationManagers\ChildMetricsRelationManager;
+use App\Filament\Resources\MetricResource\RelationManagers\CollectionMethodsRelationManager;
 use App\Filament\Resources\MetricResource\RelationManagers\CollectorsRelationManager;
+use App\Filament\Resources\MetricResource\RelationManagers\ComplimentaryMetricsRelationManager;
+use App\Filament\Resources\MetricResource\RelationManagers\ComputationGuidanceRelationManager;
+use App\Filament\Resources\MetricResource\RelationManagers\DataSourcesRelationManager;
+use App\Filament\Resources\MetricResource\RelationManagers\DecisionMakerRelationManager;
 use App\Filament\Resources\MetricResource\RelationManagers\DimensionsRelationManager;
 use App\Filament\Resources\MetricResource\RelationManagers\FrameworksRelationManager;
-use App\Filament\Resources\MetricResource\RelationManagers\ImpactedByRelationManager;
-use App\Filament\Resources\MetricResource\RelationManagers\DataSourcesRelationManager;
 use App\Filament\Resources\MetricResource\RelationManagers\GeographiesRelationManager;
-use App\Filament\Resources\MetricResource\RelationManagers\ChildMetricsRelationManager;
-use App\Filament\Resources\MetricResource\RelationManagers\DecisionMakerRelationManager;
+use App\Filament\Resources\MetricResource\RelationManagers\ImpactedByRelationManager;
 use App\Filament\Resources\MetricResource\RelationManagers\ParentMetricsRelationManager;
+use App\Filament\Resources\MetricResource\RelationManagers\ReferenceRelationManager;
 use App\Filament\Resources\MetricResource\RelationManagers\ScaleDecisionRelationManager;
-use App\Filament\Resources\MetricResource\RelationManagers\ScaleReportingRelationManager;
 use App\Filament\Resources\MetricResource\RelationManagers\ScaleMeasurementRelationManager;
-use App\Filament\Resources\MetricResource\RelationManagers\CollectionMethodsRelationManager;
-use App\Filament\Resources\MetricResource\RelationManagers\ComputationGuidanceRelationManager;
-use App\Filament\Resources\MetricResource\RelationManagers\ComplimentaryMetricsRelationManager;
+use App\Filament\Resources\MetricResource\RelationManagers\ScaleReportingRelationManager;
+use App\Filament\Resources\MetricResource\RelationManagers\ToolsRelationManager;
+use App\Filament\Resources\MetricResource\RelationManagers\UnitsRelationManager;
+use App\Filament\Resources\Traits\HasDiscussionPoints;
+use App\Filament\Table\Actions\DeduplicateRecordsAction;
+use App\Models\Metric;
+use App\Models\Property;
+use App\Models\PropertyOption;
+use Awcodes\FilamentBadgeableColumn\Components\BadgeableColumn;
+use Awcodes\TableRepeater\Components\TableRepeater;
+use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\Tabs\Tab;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Form;
+use Filament\Resources\RelationManagers\RelationGroup;
+use Filament\Resources\Resource;
+use Filament\Tables;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Filters\TrashedFilter;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\HtmlString;
 
 class MetricResource extends Resource
 {
@@ -66,7 +62,6 @@ class MetricResource extends Resource
     {
         return $form
             ->schema([
-
                 Tabs::make('metrics-tabs')
                     ->columnSpanFull()
                     ->schema([

@@ -28,7 +28,7 @@ class RayyanReferenceSeeder extends Seeder
         foreach($references as $reference) {
             Reference::create([
                 'rayyan_key' => Str::replace('rayyan-', '', $reference['key']),
-                'name' => $reference['title'],
+                'title' => $reference['title'],
                 'url' => is_string($reference['url']) ? $reference['url'] : '',
                 'doi' => $reference['doi'],
                 'notes' => $reference['notes'],

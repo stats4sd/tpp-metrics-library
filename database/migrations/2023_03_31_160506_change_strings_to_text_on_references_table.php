@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('references', function (Blueprint $table) {
-            $table->text('name')->change();
+            $table->text('title')->change();
             $table->text('url')->change();
         });
     }

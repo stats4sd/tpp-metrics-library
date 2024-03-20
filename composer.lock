@@ -142,16 +142,16 @@
         },
         {
             "name": "awcodes/filament-table-repeater",
-            "version": "v3.0.0",
+            "version": "v3.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/awcodes/filament-table-repeater.git",
-                "reference": "15c031d8804f409654882bc32c76d3e4a7076f73"
+                "reference": "1b185a51d2e5d2d33cdea02ca33b4796fdb0f2d2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/awcodes/filament-table-repeater/zipball/15c031d8804f409654882bc32c76d3e4a7076f73",
-                "reference": "15c031d8804f409654882bc32c76d3e4a7076f73",
+                "url": "https://api.github.com/repos/awcodes/filament-table-repeater/zipball/1b185a51d2e5d2d33cdea02ca33b4796fdb0f2d2",
+                "reference": "1b185a51d2e5d2d33cdea02ca33b4796fdb0f2d2",
                 "shasum": ""
             },
             "require": {
@@ -205,7 +205,7 @@
             ],
             "support": {
                 "issues": "https://github.com/awcodes/filament-table-repeater/issues",
-                "source": "https://github.com/awcodes/filament-table-repeater/tree/v3.0.0"
+                "source": "https://github.com/awcodes/filament-table-repeater/tree/v3.0.2"
             },
             "funding": [
                 {
@@ -213,7 +213,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-02-01T16:37:16+00:00"
+            "time": "2024-02-22T14:14:45+00:00"
         },
         {
             "name": "backpack/basset",

@@ -2,30 +2,27 @@
 
 namespace App\Filament\Resources;
 
-use Filament\Tables;
-use Filament\Forms\Form;
+use App\Filament\Resources\DimensionResource\Pages;
+use App\Filament\Resources\DimensionResource\RelationManagers;
+use App\Filament\Table\Actions\DeduplicateRecordsAction;
 use App\Models\Dimension;
-use Filament\Tables\Table;
-use Filament\Resources\Resource;
 use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Infolist;
+use Filament\Resources\Resource;
+use Filament\Tables;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
-use Illuminate\Database\Eloquent\Model;
-use Filament\Forms\Components\TextInput;
-use Illuminate\Database\Eloquent\Builder;
-use Filament\Forms\Components\Placeholder;
 use Filament\Tables\Filters\TrashedFilter;
-use Filament\Forms\Components\CheckboxList;
-use App\Filament\Resources\DimensionResource\Pages;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Filament\Resources\RelationManagers\RelationGroup;
-use App\Filament\Table\Actions\DeduplicateRecordsAction;
-use App\Filament\Resources\DimensionResource\RelationManagers;
-use App\Filament\Resources\MetricResource\RelationManagers\MetricsRelationManager;
-use App\Filament\Resources\MetricResource\RelationManagers\DimensionMetricsRelationManager;
 
 class DimensionResource extends Resource
 {
@@ -45,18 +42,34 @@ class DimensionResource extends Resource
                         TextInput::make('name')->required(),
                         Textarea::make('definition'),
                         Textarea::make('notes'),
-                        Toggle::make('unreviewed_import')
-                            ->label('Mark this imported record as reviewed')
+                        Radio::make('unreviewed_import')
+                            ->options([
+                                0 => 'No - it has been reviewed',
+                                1 => 'Yes - Needs Review',
+                            ])
+                            ->label('Does this dimension entry need review?')
                             ->visible(function (Model $record): bool {
                                 $visible = $record->unreviewed_import == 1;
                                 return $visible;
                             })
-                            ->offColor('success')
-                            ->onColor('danger')
-                            ->offIcon('heroicon-s-check')
-                            ->onIcon('heroicon-s-exclamation-circle'),
                     ])
             ]);
+    }
+
+    public static function infoList(Infolist $infolist): Infolist
+    {
+        return $infolist->schema([
+            Section::make('Key Info')
+                ->schema([
+                    TextEntry::make('name')->inlineLabel(),
+                    TextEntry::make('definition')->inlineLabel()
+                    ->state(fn (Model $record): string => $record->definition ?? '-'),
+                    TextEntry::make('notes')->inlineLabel()
+                    ->state(fn (Model $record): string => $record->notes ?? '-'),
+                ])
+                ->columnSpanFull(),
+        ])
+            ->columns(3);
     }
 
     public static function table(Table $table): Table
@@ -67,13 +80,13 @@ class DimensionResource extends Resource
                 TextColumn::make('definition'),
                 TextColumn::make('metrics_count')->counts('metrics')->sortable(),
                 IconColumn::make('unreviewed_import')
-                    ->options(['heroicon-o-exclamation-circle' => fn ($state): bool => (bool)$state])
+                    ->options(['heroicon-o-exclamation-circle' => fn($state): bool => (bool)$state])
                     ->color('danger')
                     ->sortable(),
             ])
             ->filters([
                 Tables\Filters\Filter::make('unreviewed_import')
-                    ->query(fn (Builder $query): Builder => $query->where('unreviewed_import', true))
+                    ->query(fn(Builder $query): Builder => $query->where('unreviewed_import', true))
                     ->label('Unreviewed imported records'),
                 TrashedFilter::make(),
 
@@ -91,11 +104,9 @@ class DimensionResource extends Resource
     public static function getRelations(): array
     {
         return [
-
-            RelationGroup::make('Metrics', [
-                DimensionMetricsRelationManager::class,
-            ]),
-
+            RelationManagers\DimensionMetricsRelationManager::class,
+            RelationManagers\ReferencesRelationManager::class,
+            RelationManagers\ToolsRelationManager::class,
         ];
     }
 
@@ -103,8 +114,7 @@ class DimensionResource extends Resource
     {
         return [
             'index' => Pages\ListDimensions::route('/'),
-            'create' => Pages\CreateDimension::route('/create'),
-            'edit' => Pages\EditDimension::route('/{record}/edit'),
+            'view' => Pages\ViewDimension::route('/{record}'),
         ];
     }
 
