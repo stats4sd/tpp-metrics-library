@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Console\Commands;
+namespace App\Console\Commands\OneTimeScripts;
 
 use App\Models\Dimension;
 use App\Models\Metric;

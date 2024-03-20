@@ -3,14 +3,14 @@
 namespace App\Models;
 
 use App\Models\Traits\GetRelationships;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Metric extends Model
 {
@@ -223,7 +223,7 @@ class Metric extends Model
     public function themes(): BelongsToMany
     {
         return $this->belongsToMany(Theme::class, 'metric_theme')
-            ->withPivot('relation_notes', 'unreviewd_import', 'needs_review')
+            ->withPivot('relation_notes', 'unreviewed_import', 'needs_review')
             ->withTimestamps();
     }
 }
