@@ -2,10 +2,14 @@
 
 namespace App\Filament\Resources\DimensionResource\Pages;
 
-use App\Filament\Resources\DimensionResource;
 use Filament\Actions;
+use App\Models\Dimension;
+use Filament\Actions\Action;
+use Filament\Actions\ViewAction;
+use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\ViewRecord;
 use Illuminate\Contracts\Support\Htmlable;
+use App\Filament\Resources\DimensionResource;
 
 class ViewDimension extends ViewRecord
 {
@@ -28,6 +32,20 @@ class ViewDimension extends ViewRecord
     {
         return [
             Actions\EditAction::make(),
+
+            Action::make('delete')
+                ->action(fn (Dimension $record) => $record->delete())
+                ->requiresConfirmation(),
+
+            ViewAction::make('Show form 1')->form([
+                TextInput::make('name'),
+                TextInput::make('soundex'),
+            ]),
+
+            Action::make('Show form 2')->form([
+                TextInput::make('name'),
+                TextInput::make('soundex'),
+            ]),
         ];
     }
 }
