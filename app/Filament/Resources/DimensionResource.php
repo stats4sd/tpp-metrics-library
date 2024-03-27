@@ -7,6 +7,7 @@ use App\Filament\Resources\DimensionResource\RelationManagers;
 use App\Filament\Table\Actions\DeduplicateRecordsAction;
 use App\Models\Dimension;
 use Awcodes\Shout\Components\Shout;
+use Awcodes\Shout\Components\ShoutEntry;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Grid;
@@ -70,6 +71,26 @@ class DimensionResource extends Resource
                         ->state(fn(Model $record): string => $record->definition ?? '-'),
                     TextEntry::make('notes')->inlineLabel()
                         ->state(fn(Model $record): string => $record->notes ?? '-'),
+                ]),
+            \Filament\Infolists\Components\Section::make('Possible Duplicate Entries')
+                ->visible(fn(Model $record): bool => $record->hasPossibleDuplicates() || $record->hasLikelyDuplicates())
+                ->columns(1)
+                ->collapsible()
+                ->collapsed()
+                ->schema([
+
+                    ShoutEntry::make('possible_duplicates')
+                        ->content('The lists below are dimensions that have been identified as possible duplicates of this dimension, using the Soundex and Metaphone algorithms. Please review the list and select the dimensions you would like to merge into this record.'),
+                    TextEntry::make('likely_duplicates')
+                        ->formatStateUsing(fn(Dimension $state): string => $state->name)
+                        ->label('Likely Duplicates identified with metaphone algorithm')
+                        ->listWithLineBreaks()
+                        ->bulleted(),
+                    TextEntry::make('possible_duplicates')
+                        ->formatStateUsing(fn(Dimension $state): string => $state->name)
+                        ->label('Possible Duplicates identified with soundex algorithm')
+                        ->listWithLineBreaks()
+                        ->bulleted(),
                 ])
                 ->columnSpanFull(),
         ])
@@ -88,11 +109,9 @@ class DimensionResource extends Resource
                     ->color('danger')
                     ->sortable(),
                 IconColumn::make('possible_duplicates')
-                    ->boolean()
-                    ->sortable(),
+                    ->boolean(),
                 IconColumn::make('likely_duplicates')
-                    ->boolean()
-                    ->sortable(),
+                    ->boolean(),
             ])
             ->filters([
                 Tables\Filters\Filter::make('unreviewed_import')
@@ -109,11 +128,8 @@ class DimensionResource extends Resource
                     ->form([
                         Fieldset::make('Metaphone Algorithm')
                             ->columns(1)
-                            ->hidden(function (Model $record) {
-                                return Dimension::where('id', '!=', $record->id)
-                                        ->where('metaphone', '!=', 'NOT_DUPLICATE')
-                                        ->where('metaphone', $record->metaphone)
-                                        ->count() === 0;
+                            ->hidden(function (Dimension $record) {
+                                return !$record->has_likely_duplicates;
                             })
                             ->schema([
                                 Shout::make('metaphone')
@@ -130,15 +146,10 @@ class DimensionResource extends Resource
                             ]),
                         Fieldset::make('Soundex Algorithm')
                             ->columns(1)
-                            ->hidden(function (Model $record) {
-                                return Dimension::where('id', '!=', $record->id)
-                                        ->where('soundex', '!=', 'NOT_DUPLICATE')
-                                        ->where('soundex', $record->soundex)
-                                        ->count() === 0;
+                            ->hidden(function (Dimension $record) {
+                                return !$record->has_possible_duplicates;
                             })
                             ->schema([
-
-
                                 Shout::make('soundex')
                                     ->content('List created using the Soundex algorithm. (Soundex is a phonetic algorithm for indexing names by sound, as pronounced in English. The goal is for homophones to be encoded to the same representation so that they can be matched despite minor differences in spelling.)'),
                                 CheckboxList::make('selectedEntriesSoundex')
@@ -152,22 +163,10 @@ class DimensionResource extends Resource
                                     ->columns(2),
                             ]),
                     ])
-                    ->hidden((function (Model $record) {
+                    ->hidden((function (Dimension $record) {
 
                         // hide deduplicate button if no duplicates found from either approach.
-                        return Dimension::where('id', '!=', $record->id)
-                                ->where(function (Builder $query) use ($record) {
-                                    $query->where(function (Builder $query) use ($record) {
-                                        $query->where('soundex', '!=', 'NOT_DUPLICATE')
-                                            ->where('soundex', $record->soundex);
-
-                                    })
-                                        ->orWhere(function (Builder $query) use ($record) {
-                                            $query->where('metaphone', '!=', 'NOT_DUPLICATE')
-                                                ->where('metaphone', $record->metaphone);
-                                        });
-                                })
-                                ->count() == 0;
+                        return !$record->has_possible_duplicates && !$record->has_likely_duplicates;
                     })
                     )
                     ->action(function (array $data, Dimension $record): void {

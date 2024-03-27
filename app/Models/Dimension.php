@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Traits\GetRelationships;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -18,7 +19,7 @@ class Dimension extends Model
 
     // Soundex gives a lot of false positives, so should be billed as 'possible' duplicates.
     // A record has possible duplicates if there is another record with the same soundex value
-    public function possibleDuplicates(): Attribute
+    public function hasPossibleDuplicates(): Attribute
     {
         return new Attribute(
             get: function (): bool {
@@ -29,14 +30,36 @@ class Dimension extends Model
         );
     }
 
+    public function possibleDuplicates(): Attribute
+    {
+        return new Attribute(
+            get: function(): Collection {
+                return self::where('soundex', $this->soundex)
+                    ->where('id', '!=', $this->id)
+                    ->get();
+            }
+        );
+    }
+
     // metaphone strings are much closer to the real text, so if 2 entries have the same metaphone they should be shown as 'likely' duplicates.
-    public function likelyDuplicates(): Attribute
+    public function hasLikelyDuplicates(): Attribute
     {
         return new Attribute(
             get: function (): bool {
                 return self::where('metaphone', $this->metaphone)
                     ->where('id', '!=', $this->id)
                     ->exists();
+            }
+        );
+    }
+
+    public function likelyDuplicates(): Attribute
+    {
+        return new Attribute(
+            get: function(): Collection {
+                return self::where('metaphone', $this->metaphone)
+                    ->where('id', '!=', $this->id)
+                    ->get();
             }
         );
     }
