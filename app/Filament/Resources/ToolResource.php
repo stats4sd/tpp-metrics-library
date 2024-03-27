@@ -89,6 +89,11 @@ class ToolResource extends Resource
                                     ->columnSpan(2),
 
                             ])->columns(5),
+                        Fieldset::make('Development Process')
+                            ->schema([
+                                TextEntry::make('stakeholder_involved')
+                                ->label(''),
+                            ]),
                         TextEntry::make('conceptual_framing'),
                         TextEntry::make('framing_definition'),
                         TextEntry::make('framing_indicator_link'),
@@ -97,12 +102,8 @@ class ToolResource extends Resource
                         TextEntry::make('tool_orientiation'),
                         TextEntry::make('localisable'),
                         TextEntry::make('system_type'),
-                        TextEntry::make('visualise_framework'),
-                        TextEntry::make('intended_function'),
-                        TextEntry::make('comparison_type'),
                         TextEntry::make('verifiable'),
-                        TextEntry::make('local_indicators'),
-                        TextEntry::make('stakeholder_involved'),
+
                         TextEntry::make('complexity'),
                         TextEntry::make('access'),
                         TextEntry::make('paid_access'),
@@ -111,16 +112,13 @@ class ToolResource extends Resource
                         TextEntry::make('guide_analysis'),
                         TextEntry::make('guide_interpret'),
                         TextEntry::make('guide_data_gov'),
-                        TextEntry::make('informed_consent'),
                         TextEntry::make('visualise_result'),
                         TextEntry::make('visualise_type'),
                         TextEntry::make('assessment_results'),
                         TextEntry::make('metric_no'),
                         TextEntry::make('collection_time'),
-                        TextEntry::make('interval'),
                         TextEntry::make('interaction'),
                         TextEntry::make('interaction_expl'),
-                        TextEntry::make('scaleable'),
                         TextEntry::make('aggregation'),
                         TextEntry::make('weighting'),
                         TextEntry::make('weighting_preference'),
