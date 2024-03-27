@@ -101,11 +101,14 @@ class DimensionResource extends Resource
                 TrashedFilter::make(),
             ])
             ->actions([
-                Action::make('potential_duplicates')
+
+                // add table row button "Deduplicate"
+                Action::make('deduplicate')
+                    ->modalDescription('Please select other possible duplicates then click Submit button to de-duplicate them')
                     ->form([
                         CheckboxList::make('Other dimensions')
-                            ->options(function (Dimension $record) {
-                                return Dimension::where('soundex', $record->soundex)->pluck('name', 'id');
+                            ->options(function (Model $record) {
+                                return Dimension::where('id', '!=', $record->id)->where('soundex', $record->soundex)->pluck('name', 'id');
                             })
                             ->columns(2)
                             ->searchable()
@@ -115,6 +118,28 @@ class DimensionResource extends Resource
                         // TODO: Deduplicate user selected records and their relationships
                         logger($record);
                         logger($data);
+                    }),
+
+                // add table row button "Mark as not duplicate"
+                Action::make('mark_as_not_duplicate')
+                    ->modalDescription('Please select other possible duplicates then click Submit button to mark them as not duplicates')
+                    ->form([
+                        CheckboxList::make('selectedEntries')
+                            ->label('Other dimensions')
+                            ->options(function (Model $record) {
+                                return Dimension::where('soundex', $record->soundex)->pluck('name', 'id');
+                            })
+                            ->columns(2)
+                            ->searchable()
+                            ->bulkToggleable(),
+                    ])
+                    ->action(function (array $data, Dimension $record): void {
+                        // mark soundex column as "NOT_DUPLICATE"
+                        foreach ($data['selectedEntries'] as $entry) {
+                            $dimension = Dimension::find($entry);
+                            $dimension->soundex = 'NOT_DUPLICATE';
+                            $dimension->save();
+                        }
                     }),
 
                 Tables\Actions\ViewAction::make(),
