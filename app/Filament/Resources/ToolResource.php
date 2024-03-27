@@ -2,23 +2,24 @@
 
 namespace App\Filament\Resources;
 
-use Filament\Forms;
+use App\Filament\Resources\ToolResource\Pages;
+use App\Filament\Resources\ToolResource\RelationManagers;
 use App\Models\Tool;
-use Filament\Tables;
-use Filament\Forms\Form;
-use Filament\Tables\Table;
-use Filament\Resources\Resource;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Textarea;
-use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
-use Illuminate\Database\Eloquent\Builder;
+use Filament\Forms\Form;
+use Filament\Infolists\Components\Fieldset;
+use Filament\Infolists\Components\IconEntry;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Infolist;
+use Filament\Resources\Resource;
+use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\TrashedFilter;
-use App\Filament\Resources\ToolResource\Pages;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Filament\Resources\RelationManagers\RelationGroup;
-use App\Filament\Resources\ToolResource\RelationManagers;
-use App\Filament\Resources\MetricResource\RelationManagers\ToolMetricsRelationManager;
 
 class ToolResource extends Resource
 {
@@ -42,13 +43,101 @@ class ToolResource extends Resource
             ]);
     }
 
+    public static function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist
+            ->schema([
+                \Filament\Infolists\Components\Section::make('Information')
+                    ->schema([
+                        TextEntry::make('web_ref')->label('Website')
+                            ->inlineLabel()
+                            ->url(fn($record) => $record->web_ref),
+                        TextEntry::make('author')->inlineLabel(),
+
+                        Fieldset::make('Publication')
+                            ->schema([
+
+                                TextEntry::make('year_published'),
+                                TextEntry::make('year_updated')
+                                    ->visible(fn($record) => $record->updated),
+                                TextEntry::make('updated_ref')
+                                    ->visible(fn($record) => $record->updated),
+                            ]),
+                        Fieldset::make('Real World Application')
+                            ->schema([
+                                IconEntry::make('wider_use')
+                                    ->label('Has this tool seen wide use?')
+                                    ->boolean(),
+                                TextEntry::make('wider_use_evidence')
+                                    ->label('Evidence of wider use')
+                                    ->visible(fn($record) => $record->wider_use)
+                                    ->url(fn($record) => $record->wider_use_evidence)
+                                    ->columnSpan(2),
+                                TextEntry::make('wider_use_notes')
+                                    ->label('Notes on wider use')
+                                    ->columnSpan(2),
+                                IconEntry::make('adapted')
+                                    ->label('Has this tool been adapted to different use cases or contexts?')
+                                    ->boolean(),
+                                TextEntry::make('adapted_ref')
+                                    ->label('Evidence of adaptation')
+                                    ->visible(fn($record) => $record->adapted)
+                                    ->url(fn($record) => $record->adapted_ref)
+                                    ->columnSpan(2),
+                                TextEntry::make('adapted_notes')
+                                    ->label('Notes on adaptation')
+                                    ->columnSpan(2),
+
+                            ])->columns(5),
+                        TextEntry::make('conceptual_framing'),
+                        TextEntry::make('framing_definition'),
+                        TextEntry::make('framing_indicator_link'),
+                        TextEntry::make('indicator_convenience'),
+                        TextEntry::make('sustainability_view'),
+                        TextEntry::make('tool_orientiation'),
+                        TextEntry::make('localisable'),
+                        TextEntry::make('system_type'),
+                        TextEntry::make('visualise_framework'),
+                        TextEntry::make('intended_function'),
+                        TextEntry::make('comparison_type'),
+                        TextEntry::make('verifiable'),
+                        TextEntry::make('local_indicators'),
+                        TextEntry::make('stakeholder_involved'),
+                        TextEntry::make('complexity'),
+                        TextEntry::make('access'),
+                        TextEntry::make('paid_access'),
+                        TextEntry::make('online_platform'),
+                        TextEntry::make('guide_assess'),
+                        TextEntry::make('guide_analysis'),
+                        TextEntry::make('guide_interpret'),
+                        TextEntry::make('guide_data_gov'),
+                        TextEntry::make('informed_consent'),
+                        TextEntry::make('visualise_result'),
+                        TextEntry::make('visualise_type'),
+                        TextEntry::make('assessment_results'),
+                        TextEntry::make('metric_no'),
+                        TextEntry::make('collection_time'),
+                        TextEntry::make('interval'),
+                        TextEntry::make('interaction'),
+                        TextEntry::make('interaction_expl'),
+                        TextEntry::make('scaleable'),
+                        TextEntry::make('aggregation'),
+                        TextEntry::make('weighting'),
+                        TextEntry::make('weighting_preference'),
+                        TextEntry::make('comments'),
+                        TextEntry::make('once_multi'),
+                        TextEntry::make('metric_eval'),
+                    ])
+            ])
+            ->columns(1);
+    }
+
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
+                TextColumn::make('acronym')->searchable()->sortable(),
                 TextColumn::make('name')->searchable()->sortable(),
-                TextColumn::make('definition'),
-                TextColumn::make('notes'),
                 TextColumn::make('metrics_count')->counts('metrics')->sortable(),
             ])
             ->filters([
@@ -60,16 +149,21 @@ class ToolResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
-            ]);
+            ])
+            ->recordUrl(fn($record) => static::getUrl('view', [$record]));
     }
 
     public static function getRelations(): array
     {
         return [
+            RelationManagers\MetricsRelationManager::class,
+            RelationManagers\FrameworksRelationManager::class,
+            RelationManagers\ReferencesRelationManager::class,
+            RelationManagers\DimensionsRelationManager::class,
+            RelationManagers\MetricUsersRelationManager::class,
+            RelationManagers\ThemesRelationManager::class,
+            RelationManagers\ScalesRelationManager::class,
 
-            RelationGroup::make('Metrics', [
-                ToolMetricsRelationManager::class,
-            ]),
 
         ];
     }
@@ -79,6 +173,7 @@ class ToolResource extends Resource
         return [
             'index' => Pages\ListTools::route('/'),
             'create' => Pages\CreateTool::route('/create'),
+            'view' => Pages\ViewTool::route('/{record}'),
             'edit' => Pages\EditTool::route('/{record}/edit'),
         ];
     }

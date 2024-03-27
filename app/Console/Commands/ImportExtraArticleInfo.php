@@ -6,6 +6,7 @@ use App\Models\Reference;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
 
 class ImportExtraArticleInfo extends Command
 {
@@ -31,30 +32,13 @@ class ImportExtraArticleInfo extends Command
         $newData = $this->readCsvFileIntoCollection('storage/csv/articles.csv');
 
         $newData->each(function ($row) {
+            $this->updateReferenceFromRow($row);
+        });
 
-            $this->info('Updating Reference with key: ' . $row['key']);
+        $extraData = $this->readCsvFileIntoCollection('storage/csv/rayyan_holistic_articles.csv');
 
-            $reference = Reference::updateOrCreate(
-                ['rayyan_key' => $row['key']],
-                [
-                    'title' => $row['title'],
-                    'year' => (int) $row['year'],
-                    'journal' => $row['journal'],
-                    'volume' => (int) $row['volume'],
-                    'issue' => (int) $row['issue'],
-                    'pages' => (int) $row['pages'],
-                    'authors' => $row['authors'],
-                    'url' => $row['url'],
-                    'abstract' => $row['abstract'],
-                    'language' => $row['language'],
-                    'publisher' => $row['publisher'],
-                    'location' => $row['location'],
-                    'notes' => $row['notes'],
-                    'doi' => $row['doi'],
-                    'keywords' => $row['keywords'],
-                ]
-            );
-
+        $extraData->each(function ($row) {
+            $this->updateReferenceFromRow($row);
         });
 
 
@@ -81,6 +65,38 @@ class ImportExtraArticleInfo extends Command
         $data = $rows->map(fn($row) => $header->combine(str_getcsv($row)));
 
         return $data;
+    }
+
+    /**
+     * @param $row
+     * @return void
+     */
+    function updateReferenceFromRow($row): void
+    {
+        $this->info('Updating Reference with key: ' . $row['key']);
+
+        $key = Str::after($row['key'], 'rayyan-');
+
+        $reference = Reference::updateOrCreate(
+            ['rayyan_key' => $key],
+            [
+                'title' => $row['title'],
+                'year' => (int)$row['year'],
+                'journal' => $row['journal'],
+                'volume' => (int)$row['volume'],
+                'issue' => (int)$row['issue'],
+                'pages' => (int)$row['pages'],
+                'authors' => $row['authors'],
+                'url' => $row['url'],
+                'abstract' => $row['abstract'],
+                'language' => $row['language'],
+                'publisher' => $row['publisher'],
+                'location' => $row['location'],
+                'notes' => $row['notes'],
+                'doi' => $row['doi'],
+                'keywords' => $row['keywords'],
+            ]
+        );
     }
 
 }

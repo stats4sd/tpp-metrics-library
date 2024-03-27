@@ -37,6 +37,8 @@ class Tool extends Model
     }
 
 
+    //*** RELATIONS ***
+
     public function metrics(): BelongsToMany
     {
         return $this->belongsToMany(Metric::class, 'metric_tool')
@@ -51,14 +53,24 @@ class Tool extends Model
             ->withTimestamps();
     }
 
-
-    // ========== //
-
-
     public function references(): MorphToMany
     {
         return $this->morphToMany(Reference::class, 'referencable')
             ->withPivot('reference_type', 'relation_notes', 'id')
+            ->withTimestamps();
+    }
+
+    public function dimensions(): BelongsToMany
+    {
+        return $this->belongsToMany(Dimension::class, 'dimension_tool')
+            ->withPivot('relation_notes', 'unreviewed_import')
+            ->withTimestamps();
+    }
+
+    public function metricUsers(): BelongsToMany
+    {
+        return $this->belongsToMany(MetricUser::class, 'metric_user_tool')
+            ->withPivot('relation_notes', 'unreviewed_import')
             ->withTimestamps();
     }
 
@@ -76,10 +88,40 @@ class Tool extends Model
             ->withTimestamps();
     }
 
-    public function dimensions(): BelongsToMany
+    public function countries(): BelongsToMany
     {
-        return $this->belongsToMany(Dimension::class, 'dimension_tool')
+        return $this->belongsToMany(Country::class, 'country_tool')
             ->withPivot('relation_notes', 'unreviewed_import')
+            ->withTimestamps();
+    }
+
+    public function indicationSelections(): BelongsToMany
+    {
+        return $this->belongsToMany(IndicatorSelection::class, 'indication_selection_tool')
+            ->withPivot('relation_notes', 'unreviewed_import')
+            ->withTimestamps();
+    }
+
+    public function dataTypes(): BelongsToMany
+    {
+        return $this->belongsToMany(DataType::class, 'data_type_tool')
+            ->withPivot('relation_notes', 'unreviewed_import')
+            ->withTimestamps();
+    }
+
+    public function dataCollections(): BelongsToMany
+    {
+        return $this->belongsToMany(DataType::class, 'data_collection_tool')
+            ->withPivot('relation_notes', 'unreviewed_import')
+            ->withTimestamps();
+    }
+
+    //*** SUB_CATEGORIES OF RELATIONS ***
+
+    public function themes(): BelongsToMany
+    {
+        return $this->belongsToMany(Theme::class, 'theme_tool')
+            ->withPivot('relation_notes', 'unreviewed_import', 'type')
             ->withTimestamps();
     }
 
@@ -131,17 +173,10 @@ class Tool extends Model
             ->withTimestamps();
     }
 
-    public function sdgs(): BelongsToMany
+    public function scales(): BelongsToMany
     {
-        return $this->belongsToMany(Sdg::class, 'sdg_tool')
-            ->withPivot('relation_notes', 'unreviewed_import')
-            ->withTimestamps();
-    }
-
-    public function metricUsers(): BelongsToMany
-    {
-        return $this->belongsToMany(MetricUser::class, 'metric_user_tool')
-            ->withPivot('relation_notes', 'unreviewed_import')
+        return $this->belongsToMany(Scale::class, 'scale_tool')
+            ->withPivot('relation_notes', 'unreviewed_import', 'type')
             ->withTimestamps();
     }
 
@@ -158,34 +193,6 @@ class Tool extends Model
         return $this->belongsToMany(Scale::class, 'theme_tool')
             ->wherePivot('type', '=', 'reporting')
             ->withPivot('relation_notes', 'unreviewed_import', 'type')
-            ->withTimestamps();
-    }
-
-    public function countries(): BelongsToMany
-    {
-        return $this->belongsToMany(Country::class, 'country_tool')
-            ->withPivot('relation_notes', 'unreviewed_import')
-            ->withTimestamps();
-    }
-
-    public function indicationSelections(): BelongsToMany
-    {
-        return $this->belongsToMany(IndicatorSelection::class, 'indication_selection_tool')
-            ->withPivot('relation_notes', 'unreviewed_import')
-            ->withTimestamps();
-    }
-
-    public function dataTypes(): BelongsToMany
-    {
-        return $this->belongsToMany(DataType::class, 'data_type_tool')
-            ->withPivot('relation_notes', 'unreviewed_import')
-            ->withTimestamps();
-    }
-
-    public function dataCollections(): BelongsToMany
-    {
-        return $this->belongsToMany(DataType::class, 'data_collection_tool')
-            ->withPivot('relation_notes', 'unreviewed_import')
             ->withTimestamps();
     }
 }
