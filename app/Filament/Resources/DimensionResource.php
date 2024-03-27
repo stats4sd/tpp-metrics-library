@@ -104,20 +104,121 @@ class DimensionResource extends Resource
 
                 // add table row button "Deduplicate"
                 Action::make('deduplicate')
-                    ->modalDescription('Please select other possible duplicates then click Submit button to de-duplicate them')
+                    ->modalDescription('Please select possible duplicates then click Submit button for de-duplication')
                     ->form([
-                        CheckboxList::make('Other dimensions')
+                        CheckboxList::make('selectedEntries')
+                            ->label('Other dimensions')
                             ->options(function (Model $record) {
-                                return Dimension::where('id', '!=', $record->id)->where('soundex', $record->soundex)->pluck('name', 'id');
+                                return Dimension::where('id', '!=', $record->id)
+                                    ->where('soundex', '!=', 'NOT_DUPLICATE')
+                                    ->where('soundex', $record->soundex)
+                                    ->pluck('name', 'id');
                             })
                             ->columns(2)
                             ->searchable()
                             ->bulkToggleable(),
                     ])
+                    ->disabled((function (Model $record) {
+                            return Dimension::where('id', '!=', $record->id)
+                                ->where('soundex', '!=', 'NOT_DUPLICATE')
+                                ->where('soundex', $record->soundex)
+                                ->count() == 0;
+                        })
+                    )
                     ->action(function (array $data, Dimension $record): void {
-                        // TODO: Deduplicate user selected records and their relationships
-                        logger($record);
-                        logger($data);
+
+                        // assume to merge selected entries into current entry
+                        $record_remain_id = $record->id;
+                        $records_remove = $data['selectedEntries'];
+
+                        $recordsId = $data['selectedEntries'];
+                        array_push($recordsId, $record->id);
+
+                        $records = Dimension::whereIn('id', $recordsId)->get();
+                        $relations = array_keys($records[0]->getAvailableManyToManyRelations());
+
+                        // pre-load relations to avoid too many db calls
+                        $records->load($relations);
+                        $class = get_class($records->first());
+                        $remaining_record = $class::findOrFail($record_remain_id);
+
+                        // work 1 relation at a time
+                        foreach ($relations as $relation) {
+
+                            // records
+                            $all_related_records = $records->mapWithKeys(function (Model $record) use ($relation) {
+                                $related_entities = $record->$relation;
+
+                                $pivot_vars = $record->$relation()->getPivotColumns();
+
+                                // we have 'id' as a pivot Column on relationships where a single 'related' model can be linked to an entry multiple times via different relationships. (E.g. "references" vs "computation guidance" on Metrics).
+                                // this cannot be duplicated to a new pivot table entry, so filter it out.
+                                $pivot_vars = collect($pivot_vars)->filter(fn ($var) => $var !== 'id');
+
+
+                                $values = $related_entities->mapWithKeys(function (Model $related_entity) use ($pivot_vars) {
+                                    $pivot_values = $pivot_vars->mapWithKeys(function ($pivot_var) use ($related_entity) {
+                                        return [$pivot_var => $related_entity->pivot->$pivot_var];
+                                    });
+
+                                    return [$related_entity->id => $pivot_values];
+                                });
+
+                                // cast record ID as string so merging doesn't remove them later.
+                                return [(string)$record->id => $values];
+                            })->reduce(function ($carry, $item) use ($relation) {
+
+                                return $item->mapWithKeys(function (\Illuminate\Support\Collection $pivot_values, int $model_id) use ($carry) {
+
+                                    // if model is already linked via relationship
+                                    if (isset($carry[$model_id])) {
+
+                                        $pivot_values = $pivot_values->mergeRecursive($carry[$model_id])
+                                            ->mapWithKeys(function ($value, $key) {
+
+                                                // if value now has multiple entries from the merge, merge/reduce them to a single value;
+                                                if (is_array($value)) {
+                                                    $value = collect($value)->reduce(function ($current, $new) {
+                                                        // if entries are identical, merge
+                                                        if ($current === $new) {
+                                                            return $current;
+                                                        }
+
+                                                        // if entries are non-identical strings, concatenate;
+                                                        if (is_string($new)) {
+                                                            return collect([$current, $new])->filter(fn ($i) => $i !== null)->join('. ');
+                                                        }
+
+                                                        // for numeric, abritrarily return highest value (???)
+                                                        if ($current && $current > $new) {
+                                                            return $current;
+                                                        }
+
+                                                        return $new;
+                                                    });
+                                                }
+
+                                                return [$key => $value];
+                                            });
+                                    }
+
+                                    return [$model_id => $pivot_values];
+                                })
+                                    ->union($carry)
+
+                                    // reduce to array for final sync()
+                                    ->toArray();
+                            }, collect([]));
+
+
+                            $remaining_record->$relation()->sync($all_related_records);
+                        }
+
+
+                        $class::whereIn('id', $records_remove)->delete();
+
+                        // }
+
                     }),
 
                 // add table row button "Mark as not duplicate"
@@ -127,12 +228,20 @@ class DimensionResource extends Resource
                         CheckboxList::make('selectedEntries')
                             ->label('Other dimensions')
                             ->options(function (Model $record) {
-                                return Dimension::where('soundex', $record->soundex)->pluck('name', 'id');
+                                return Dimension::where('soundex', '!=', 'NOT_DUPLICATE')
+                                    ->where('soundex', $record->soundex)
+                                    ->pluck('name', 'id');
                             })
                             ->columns(2)
                             ->searchable()
                             ->bulkToggleable(),
                     ])
+                    ->disabled((function (Model $record) {
+                            return Dimension::where('soundex', '!=', 'NOT_DUPLICATE')
+                                ->where('soundex', $record->soundex)
+                                ->count() <= 1;
+                        })
+                    )
                     ->action(function (array $data, Dimension $record): void {
                         // mark soundex column as "NOT_DUPLICATE"
                         foreach ($data['selectedEntries'] as $entry) {
