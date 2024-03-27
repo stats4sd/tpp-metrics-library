@@ -2,17 +2,9 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Tool;
-use App\Models\Unit;
-use App\Models\Scale;
-use App\Models\Theme;
-use App\Models\Metric;
 use App\Models\Dimension;
-use App\Models\Framework;
-use App\Models\Geography;
-use App\Models\MetricUser;
+use App\Models\Metric;
 use Illuminate\Console\Command;
-use App\Models\CollectionMethod;
 
 class AddSoundexToEntities extends Command
 {
@@ -37,15 +29,15 @@ class AddSoundexToEntities extends Command
     {
         $this->info('start');
 
-        $this->addSoundex(CollectionMethod::class, 'title');
+       // $this->addSoundex(CollectionMethod::class, 'title');
         $this->addSoundex(Dimension::class, 'name');
-        $this->addSoundex(Scale::class, 'name');
-        $this->addSoundex(Tool::class, 'name');
-        $this->addSoundex(Framework::class, 'name');
-        $this->addSoundex(Unit::class, 'name');
-        $this->addSoundex(MetricUser::class, 'name');
-        $this->addSoundex(Geography::class, 'name');
-        $this->addSoundex(Theme::class, 'name');
+//        $this->addSoundex(Scale::class, 'name');
+//        $this->addSoundex(Tool::class, 'name');
+//        $this->addSoundex(Framework::class, 'name');
+//        $this->addSoundex(Unit::class, 'name');
+//        $this->addSoundex(MetricUser::class, 'name');
+//        $this->addSoundex(Geography::class, 'name');
+//        $this->addSoundex(Theme::class, 'name');
 
         $this->info('done!');
     }

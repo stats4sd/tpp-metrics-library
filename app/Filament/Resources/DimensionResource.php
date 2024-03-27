@@ -2,37 +2,31 @@
 
 namespace App\Filament\Resources;
 
-use Filament\Tables;
-use Filament\Forms\Form;
+use App\Filament\Resources\DimensionResource\Pages;
+use App\Filament\Resources\DimensionResource\RelationManagers;
+use App\Filament\Table\Actions\DeduplicateRecordsAction;
 use App\Models\Dimension;
-use Filament\Tables\Table;
+use Awcodes\Shout\Components\Shout;
+use Filament\Forms\Components\CheckboxList;
+use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Radio;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
-use Filament\Forms\Components\Grid;
+use Filament\Tables;
 use Filament\Tables\Actions\Action;
-use Filament\Forms\Components\Radio;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
-use Illuminate\Database\Eloquent\Model;
-use Filament\Forms\Components\TextInput;
-use Filament\Tables\Filters\QueryBuilder;
-use Illuminate\Database\Eloquent\Builder;
-use Filament\Infolists\Components\Section;
 use Filament\Tables\Filters\TrashedFilter;
-use Filament\Forms\Components\CheckboxList;
-use Filament\Infolists\Components\TextEntry;
-use App\Filament\Resources\DimensionResource\Pages;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Filament\Resources\RelationManagers\RelationGroup;
-use App\Filament\Table\Actions\DeduplicateRecordsAction;
-use App\Filament\Resources\DimensionResource\RelationManagers;
-use Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint;
-use Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint;
-use Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint\Operators\IsRelatedToOperator;
 
 class DimensionResource extends Resource
 {
@@ -73,9 +67,9 @@ class DimensionResource extends Resource
                 ->schema([
                     TextEntry::make('name')->inlineLabel(),
                     TextEntry::make('definition')->inlineLabel()
-                        ->state(fn (Model $record): string => $record->definition ?? '-'),
+                        ->state(fn(Model $record): string => $record->definition ?? '-'),
                     TextEntry::make('notes')->inlineLabel()
-                        ->state(fn (Model $record): string => $record->notes ?? '-'),
+                        ->state(fn(Model $record): string => $record->notes ?? '-'),
                 ])
                 ->columnSpanFull(),
         ])
@@ -90,13 +84,19 @@ class DimensionResource extends Resource
                 TextColumn::make('definition'),
                 TextColumn::make('metrics_count')->counts('metrics')->sortable(),
                 IconColumn::make('unreviewed_import')
-                    ->options(['heroicon-o-exclamation-circle' => fn ($state): bool => (bool)$state])
+                    ->options(['heroicon-o-exclamation-circle' => fn($state): bool => (bool)$state])
                     ->color('danger')
+                    ->sortable(),
+                IconColumn::make('possible_duplicates')
+                    ->boolean()
+                    ->sortable(),
+                IconColumn::make('likely_duplicates')
+                    ->boolean()
                     ->sortable(),
             ])
             ->filters([
                 Tables\Filters\Filter::make('unreviewed_import')
-                    ->query(fn (Builder $query): Builder => $query->where('unreviewed_import', true))
+                    ->query(fn(Builder $query): Builder => $query->where('unreviewed_import', true))
                     ->label('Unreviewed imported records'),
                 TrashedFilter::make(),
             ])
@@ -104,32 +104,78 @@ class DimensionResource extends Resource
 
                 // add table row button "Deduplicate"
                 Action::make('deduplicate')
-                    ->modalDescription('Please select possible duplicates then click Submit button for de-duplication')
+                    ->modalHeading(fn(Dimension $record): string => "Possible Duplicates for {$record->name}")
+                    ->modalDescription(fn(Dimension $record): string => "The list below are dimensions that have been identified as possible duplicates of '{$record->name}', using the Soundex algorithm. Please review the list and select the dimensions you would like to merge into the current record ({$record->name}).")
                     ->form([
-                        CheckboxList::make('selectedEntries')
-                            ->label('Other dimensions')
-                            ->options(function (Model $record) {
+                        Fieldset::make('Metaphone Algorithm')
+                            ->columns(1)
+                            ->hidden(function (Model $record) {
                                 return Dimension::where('id', '!=', $record->id)
-                                    ->where('soundex', '!=', 'NOT_DUPLICATE')
-                                    ->where('soundex', $record->soundex)
-                                    ->pluck('name', 'id');
+                                        ->where('metaphone', '!=', 'NOT_DUPLICATE')
+                                        ->where('metaphone', $record->metaphone)
+                                        ->count() === 0;
                             })
-                            ->columns(2)
-                            ->searchable()
-                            ->bulkToggleable(),
+                            ->schema([
+                                Shout::make('metaphone')
+                                    ->content('List created using the Metaphone algorithm. (Metaphone is a phonetic algorithm, published by Lawrence Philips in 1990, for indexing words by their English pronunciation. It fundamentally improves on the Soundex algorithm by using information about variations and inconsistencies in English spelling and pronunciation to produce a more accurate encoding, which does a better job of matching words and names which sound similar.)'),
+                                CheckboxList::make('selectedEntriesMetaphone')
+                                    ->label('Possible Duplicate Dimension Entries')
+                                    ->options(function (Model $record) {
+                                        return Dimension::where('id', '!=', $record->id)
+                                            ->where('metaphone', '!=', 'NOT_DUPLICATE')
+                                            ->where('metaphone', $record->metaphone)
+                                            ->pluck('name', 'id');
+                                    })
+                                    ->columns(2),
+                            ]),
+                        Fieldset::make('Soundex Algorithm')
+                            ->columns(1)
+                            ->hidden(function (Model $record) {
+                                return Dimension::where('id', '!=', $record->id)
+                                        ->where('soundex', '!=', 'NOT_DUPLICATE')
+                                        ->where('soundex', $record->soundex)
+                                        ->count() === 0;
+                            })
+                            ->schema([
+
+
+                                Shout::make('soundex')
+                                    ->content('List created using the Soundex algorithm. (Soundex is a phonetic algorithm for indexing names by sound, as pronounced in English. The goal is for homophones to be encoded to the same representation so that they can be matched despite minor differences in spelling.)'),
+                                CheckboxList::make('selectedEntriesSoundex')
+                                    ->label('Possible Duplicate Dimension Entries')
+                                    ->options(function (Model $record) {
+                                        return Dimension::where('id', '!=', $record->id)
+                                            ->where('soundex', '!=', 'NOT_DUPLICATE')
+                                            ->where('soundex', $record->soundex)
+                                            ->pluck('name', 'id');
+                                    })
+                                    ->columns(2),
+                            ]),
                     ])
-                    ->disabled((function (Model $record) {
-                            return Dimension::where('id', '!=', $record->id)
-                                ->where('soundex', '!=', 'NOT_DUPLICATE')
-                                ->where('soundex', $record->soundex)
+                    ->hidden((function (Model $record) {
+
+                        // hide deduplicate button if no duplicates found from either approach.
+                        return Dimension::where('id', '!=', $record->id)
+                                ->where(function (Builder $query) use ($record) {
+                                    $query->where(function (Builder $query) use ($record) {
+                                        $query->where('soundex', '!=', 'NOT_DUPLICATE')
+                                            ->where('soundex', $record->soundex);
+
+                                    })
+                                        ->orWhere(function (Builder $query) use ($record) {
+                                            $query->where('metaphone', '!=', 'NOT_DUPLICATE')
+                                                ->where('metaphone', $record->metaphone);
+                                        });
+                                })
                                 ->count() == 0;
-                        })
+                    })
                     )
                     ->action(function (array $data, Dimension $record): void {
 
                         // assume to merge selected entries into current entry
                         $record_remain_id = $record->id;
-                        $records_remove = $data['selectedEntries'];
+                        $records_remove = array_merge($data['selectedEntriesSoundex'], $data['selectedEntriesMetaphone']);
+
 
                         $recordsId = $data['selectedEntries'];
                         array_push($recordsId, $record->id);
@@ -153,7 +199,7 @@ class DimensionResource extends Resource
 
                                 // we have 'id' as a pivot Column on relationships where a single 'related' model can be linked to an entry multiple times via different relationships. (E.g. "references" vs "computation guidance" on Metrics).
                                 // this cannot be duplicated to a new pivot table entry, so filter it out.
-                                $pivot_vars = collect($pivot_vars)->filter(fn ($var) => $var !== 'id');
+                                $pivot_vars = collect($pivot_vars)->filter(fn($var) => $var !== 'id');
 
 
                                 $values = $related_entities->mapWithKeys(function (Model $related_entity) use ($pivot_vars) {
@@ -186,7 +232,7 @@ class DimensionResource extends Resource
 
                                                         // if entries are non-identical strings, concatenate;
                                                         if (is_string($new)) {
-                                                            return collect([$current, $new])->filter(fn ($i) => $i !== null)->join('. ');
+                                                            return collect([$current, $new])->filter(fn($i) => $i !== null)->join('. ');
                                                         }
 
                                                         // for numeric, abritrarily return highest value (???)
@@ -221,46 +267,14 @@ class DimensionResource extends Resource
 
                     }),
 
-                // add table row button "Mark as not duplicate"
-                Action::make('mark_as_not_duplicate')
-                    ->modalDescription('Please select other possible duplicates then click Submit button to mark them as not duplicates')
-                    ->form([
-                        CheckboxList::make('selectedEntries')
-                            ->label('Other dimensions')
-                            ->options(function (Model $record) {
-                                return Dimension::where('soundex', '!=', 'NOT_DUPLICATE')
-                                    ->where('soundex', $record->soundex)
-                                    ->pluck('name', 'id');
-                            })
-                            ->columns(2)
-                            ->searchable()
-                            ->bulkToggleable(),
-                    ])
-                    ->disabled((function (Model $record) {
-                            return Dimension::where('soundex', '!=', 'NOT_DUPLICATE')
-                                ->where('soundex', $record->soundex)
-                                ->count() <= 1;
-                        })
-                    )
-                    ->action(function (array $data, Dimension $record): void {
-                        // mark soundex column as "NOT_DUPLICATE"
-                        foreach ($data['selectedEntries'] as $entry) {
-                            $dimension = Dimension::find($entry);
-                            $dimension->soundex = 'NOT_DUPLICATE';
-                            $dimension->save();
-                        }
-                    }),
-
                 Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
-            ])
-            ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
-                DeduplicateRecordsAction::make(),
-            ]);
+                Tables\Actions\EditAction::make(),])
+            ->bulkActions([Tables\Actions\DeleteBulkAction::make(),
+                DeduplicateRecordsAction::make(),]);
     }
 
-    public static function getRelations(): array
+    public
+    static function getRelations(): array
     {
         return [
             RelationManagers\DimensionMetricsRelationManager::class,
@@ -269,7 +283,8 @@ class DimensionResource extends Resource
         ];
     }
 
-    public static function getPages(): array
+    public
+    static function getPages(): array
     {
         return [
             'index' => Pages\ListDimensions::route('/'),
@@ -277,7 +292,8 @@ class DimensionResource extends Resource
         ];
     }
 
-    public static function getEloquentQuery(): Builder
+    public
+    static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
             ->withoutGlobalScopes([
