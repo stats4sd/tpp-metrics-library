@@ -32,20 +32,6 @@ class ViewDimension extends ViewRecord
     {
         return [
             Actions\EditAction::make(),
-
-            Action::make('delete')
-                ->action(fn (Dimension $record) => $record->delete())
-                ->requiresConfirmation(),
-
-            ViewAction::make('Show form 1')->form([
-                TextInput::make('name'),
-                TextInput::make('soundex'),
-            ]),
-
-            Action::make('Show form 2')->form([
-                TextInput::make('name'),
-                TextInput::make('soundex'),
-            ]),
         ];
     }
 }
