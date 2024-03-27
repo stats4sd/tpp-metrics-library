@@ -2,27 +2,37 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\DimensionResource\Pages;
-use App\Filament\Resources\DimensionResource\RelationManagers;
-use App\Filament\Table\Actions\DeduplicateRecordsAction;
-use App\Models\Dimension;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Radio;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
+use Filament\Tables;
 use Filament\Forms\Form;
-use Filament\Infolists\Components\Section;
-use Filament\Infolists\Components\TextEntry;
+use App\Models\Dimension;
+use Filament\Tables\Table;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Forms\Components\Grid;
+use Filament\Tables\Actions\Action;
+use Filament\Forms\Components\Radio;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\TrashedFilter;
-use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Filament\Forms\Components\TextInput;
+use Filament\Tables\Filters\QueryBuilder;
+use Illuminate\Database\Eloquent\Builder;
+use Filament\Infolists\Components\Section;
+use Filament\Tables\Filters\TrashedFilter;
+use Filament\Forms\Components\CheckboxList;
+use Filament\Infolists\Components\TextEntry;
+use App\Filament\Resources\DimensionResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Resources\RelationManagers\RelationGroup;
+use App\Filament\Table\Actions\DeduplicateRecordsAction;
+use App\Filament\Resources\DimensionResource\RelationManagers;
+use Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint;
+use Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint;
+use Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint\Operators\IsRelatedToOperator;
 
 class DimensionResource extends Resource
 {
@@ -63,9 +73,9 @@ class DimensionResource extends Resource
                 ->schema([
                     TextEntry::make('name')->inlineLabel(),
                     TextEntry::make('definition')->inlineLabel()
-                    ->state(fn (Model $record): string => $record->definition ?? '-'),
+                        ->state(fn (Model $record): string => $record->definition ?? '-'),
                     TextEntry::make('notes')->inlineLabel()
-                    ->state(fn (Model $record): string => $record->notes ?? '-'),
+                        ->state(fn (Model $record): string => $record->notes ?? '-'),
                 ])
                 ->columnSpanFull(),
         ])
@@ -80,18 +90,33 @@ class DimensionResource extends Resource
                 TextColumn::make('definition'),
                 TextColumn::make('metrics_count')->counts('metrics')->sortable(),
                 IconColumn::make('unreviewed_import')
-                    ->options(['heroicon-o-exclamation-circle' => fn($state): bool => (bool)$state])
+                    ->options(['heroicon-o-exclamation-circle' => fn ($state): bool => (bool)$state])
                     ->color('danger')
                     ->sortable(),
             ])
             ->filters([
                 Tables\Filters\Filter::make('unreviewed_import')
-                    ->query(fn(Builder $query): Builder => $query->where('unreviewed_import', true))
+                    ->query(fn (Builder $query): Builder => $query->where('unreviewed_import', true))
                     ->label('Unreviewed imported records'),
                 TrashedFilter::make(),
-
             ])
             ->actions([
+                Action::make('potential_duplicates')
+                    ->form([
+                        CheckboxList::make('Other dimensions')
+                            ->options(function (Dimension $record) {
+                                return Dimension::where('soundex', $record->soundex)->pluck('name', 'id');
+                            })
+                            ->columns(2)
+                            ->searchable()
+                            ->bulkToggleable(),
+                    ])
+                    ->action(function (array $data, Dimension $record): void {
+                        // TODO: Deduplicate user selected records and their relationships
+                        logger($record);
+                        logger($data);
+                    }),
+
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
             ])
