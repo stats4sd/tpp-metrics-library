@@ -2,27 +2,32 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\DimensionResource\Pages;
-use App\Filament\Resources\DimensionResource\RelationManagers;
-use App\Filament\Table\Actions\DeduplicateRecordsAction;
-use App\Models\Dimension;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Radio;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
+use Filament\Tables;
 use Filament\Forms\Form;
-use Filament\Infolists\Components\Section;
-use Filament\Infolists\Components\TextEntry;
+use App\Models\Dimension;
+use Filament\Tables\Table;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Illuminate\Support\Facades\DB;
+use Filament\Forms\Components\Grid;
+use Filament\Tables\Filters\Filter;
+use Filament\Forms\Components\Radio;
+use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\TrashedFilter;
-use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Filament\Forms\Components\TextInput;
+use Filament\Tables\Filters\QueryBuilder;
+use Illuminate\Database\Eloquent\Builder;
+use Filament\Infolists\Components\Section;
+use Filament\Tables\Filters\TrashedFilter;
+use Filament\Infolists\Components\TextEntry;
+use App\Filament\Resources\DimensionResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Table\Actions\DeduplicateRecordsAction;
+use App\Filament\Resources\DimensionResource\RelationManagers;
+use Filament\Tables\Filters\QueryBuilder\Constraints\BooleanConstraint;
+use Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint;
 
 class DimensionResource extends Resource
 {
@@ -87,8 +92,19 @@ class DimensionResource extends Resource
                 Tables\Filters\Filter::make('unreviewed_import')
                     ->query(fn (Builder $query): Builder => $query->where('unreviewed_import', true))
                     ->label('Unreviewed imported records'),
+                Tables\Filters\Filter::make('with_tools')
+                    ->query(fn (Builder $query): Builder => $query->has('tools'))
+                    ->label('With tools'),
+                Tables\Filters\Filter::make('without_tools')
+                    ->query(fn (Builder $query): Builder => $query->doesntHave('tools'))
+                    ->label('Without tools'),
+                Tables\Filters\Filter::make('with_references')
+                    ->query(fn (Builder $query): Builder => $query->has('references'))
+                    ->label('With references'),
+                Tables\Filters\Filter::make('without_references')
+                    ->query(fn (Builder $query): Builder => $query->doesntHave('references'))
+                    ->label('Without references'),
                 TrashedFilter::make(),
-
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
