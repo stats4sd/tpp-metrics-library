@@ -20,8 +20,9 @@ class ViewDimension extends ViewRecord
     {
         $metricCount =  '# Metrics: ' . $this->getRecord()->metrics->count();
         $referenceCount = '# References: ' . $this->getRecord()->references->count();
+        $toolCount =  '# Tools: ' . $this->getRecord()->tools->count();
 
-        return $metricCount . ' | ' . $referenceCount;
+        return $metricCount . ' | ' . $referenceCount . ' | ' . $toolCount;
     }
 
     protected function getHeaderActions(): array

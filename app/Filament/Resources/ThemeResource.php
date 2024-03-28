@@ -11,12 +11,9 @@ use Filament\Resources\Resource;
 use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
-use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\ThemeResource\Pages;
-use Filament\Resources\RelationManagers\RelationGroup;
 use App\Filament\Table\Actions\DeduplicateRecordsAction;
 use App\Filament\Resources\ThemeResource\RelationManagers;
-use App\Filament\Resources\MetricResource\RelationManagers\ThemeMetricsRelationManager;
 
 class ThemeResource extends Resource
 {
@@ -64,11 +61,9 @@ class ThemeResource extends Resource
     public static function getRelations(): array
     {
         return [
-
-            RelationGroup::make('Metrics', [
-                ThemeMetricsRelationManager::class,
-            ]),
-
+            RelationManagers\MetricsRelationManager::class,
+            RelationManagers\ThemeTypesRelationManager::class,
+            RelationManagers\ToolsRelationManager::class,
         ];
     }
 
@@ -78,6 +73,7 @@ class ThemeResource extends Resource
             'index' => Pages\ListThemes::route('/'),
             'create' => Pages\CreateTheme::route('/create'),
             'edit' => Pages\EditTheme::route('/{record}/edit'),
+            'view' => Pages\ViewTheme::route('/{record}'),
         ];
     }
 }

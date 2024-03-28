@@ -25,4 +25,11 @@ class Theme extends Model
             ->withPivot('relation_notes', 'needs_review')
             ->withTimestamps();
     }
+
+    public function themeTypes(): BelongsToMany
+    {
+        return $this->belongsToMany(ThemeType::class)
+            ->withPivot('unreviewed_import', 'relation_notes')
+            ->withTimestamps();
+    }
 }
