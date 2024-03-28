@@ -63,9 +63,9 @@ class DimensionResource extends Resource
                 ->schema([
                     TextEntry::make('name')->inlineLabel(),
                     TextEntry::make('definition')->inlineLabel()
-                    ->state(fn (Model $record): string => $record->definition ?? '-'),
+                        ->state(fn (Model $record): string => $record->definition ?? '-'),
                     TextEntry::make('notes')->inlineLabel()
-                    ->state(fn (Model $record): string => $record->notes ?? '-'),
+                        ->state(fn (Model $record): string => $record->notes ?? '-'),
                 ])
                 ->columnSpanFull(),
         ])
@@ -77,16 +77,15 @@ class DimensionResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('name')->searchable()->sortable(),
-                TextColumn::make('definition'),
                 TextColumn::make('metrics_count')->counts('metrics')->sortable(),
                 IconColumn::make('unreviewed_import')
-                    ->options(['heroicon-o-exclamation-circle' => fn($state): bool => (bool)$state])
+                    ->options(['heroicon-o-exclamation-circle' => fn ($state): bool => (bool)$state])
                     ->color('danger')
                     ->sortable(),
             ])
             ->filters([
                 Tables\Filters\Filter::make('unreviewed_import')
-                    ->query(fn(Builder $query): Builder => $query->where('unreviewed_import', true))
+                    ->query(fn (Builder $query): Builder => $query->where('unreviewed_import', true))
                     ->label('Unreviewed imported records'),
                 TrashedFilter::make(),
 
