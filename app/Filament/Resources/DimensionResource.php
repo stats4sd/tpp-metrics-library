@@ -92,18 +92,18 @@ class DimensionResource extends Resource
                 Tables\Filters\Filter::make('unreviewed_import')
                     ->query(fn (Builder $query): Builder => $query->where('unreviewed_import', true))
                     ->label('Unreviewed imported records'),
-                Tables\Filters\Filter::make('with_tools')
-                    ->query(fn (Builder $query): Builder => $query->has('tools'))
-                    ->label('With tools'),
-                Tables\Filters\Filter::make('without_tools')
-                    ->query(fn (Builder $query): Builder => $query->doesntHave('tools'))
-                    ->label('Without tools'),
                 Tables\Filters\Filter::make('with_references')
                     ->query(fn (Builder $query): Builder => $query->has('references'))
                     ->label('With references'),
                 Tables\Filters\Filter::make('without_references')
                     ->query(fn (Builder $query): Builder => $query->doesntHave('references'))
                     ->label('Without references'),
+                Tables\Filters\Filter::make('with_tools')
+                    ->query(fn (Builder $query): Builder => $query->has('tools'))
+                    ->label('With tools'),
+                Tables\Filters\Filter::make('without_tools')
+                    ->query(fn (Builder $query): Builder => $query->doesntHave('tools'))
+                    ->label('Without tools'),
                 TrashedFilter::make(),
             ])
             ->actions([
