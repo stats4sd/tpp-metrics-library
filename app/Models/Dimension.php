@@ -5,7 +5,6 @@ namespace App\Models;
 use App\Models\Traits\GetRelationships;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -15,6 +14,20 @@ class Dimension extends Model
     use HasFactory, SoftDeletes, GetRelationships;
 
     protected $guarded = [];
+
+    public function childDimensions(): BelongsToMany
+    {
+        return $this->belongsToMany(__CLASS__, 'dimension_parent_child', 'parent_id', 'child_id')
+            ->withPivot('relation_notes')
+            ->withTimestamps();
+    }
+
+    public function parentDimensions(): BelongsToMany
+    {
+        return $this->belongsToMany(__CLASS__, 'dimension_parent_child', 'child_id', 'parent_id')
+            ->withPivot('relation_notes')
+            ->withTimestamps();
+    }
 
     public function metrics(): BelongsToMany
     {
