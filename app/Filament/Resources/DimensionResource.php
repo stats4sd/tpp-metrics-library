@@ -122,6 +122,8 @@ class DimensionResource extends Resource
             RelationManagers\DimensionMetricsRelationManager::class,
             RelationManagers\ReferencesRelationManager::class,
             RelationManagers\ToolsRelationManager::class,
+            RelationManagers\ParentDimensionsRelationManager::class,
+            RelationManagers\ChildDimensionsRelationManager::class,
         ];
     }
 
