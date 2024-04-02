@@ -18,7 +18,7 @@ class ParentDimensionsRelationManager extends RelationManager
 {
     protected static string $relationship = 'parentDimensions';
 
-    protected static ?string $recordTitleAttribute = 'title';
+    protected static ?string $recordTitleAttribute = 'name';
 
     public function getTableHeading(): string
     {
@@ -53,6 +53,7 @@ class ParentDimensionsRelationManager extends RelationManager
             ->columns([
                 Tables\Columns\TextColumn::make('name'),
             ])
+            ->inverseRelationship('parentDimensions')
             ->filters([
                 //
             ])

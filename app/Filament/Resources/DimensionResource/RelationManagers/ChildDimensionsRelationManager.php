@@ -18,11 +18,16 @@ class ChildDimensionsRelationManager extends RelationManager
 {
     protected static string $relationship = 'childDimensions';
 
-    protected static ?string $recordTitleAttribute = 'title';
+    protected static ?string $recordTitleAttribute = 'name';
 
     public function getTableHeading(): string
     {
         return 'Child dimensions for ' . $this->ownerRecord->name;
+    }
+
+    public function isReadOnly(): bool
+    {
+        return false;
     }
 
     public function form(Form $form): Form
@@ -48,6 +53,7 @@ class ChildDimensionsRelationManager extends RelationManager
             ->columns([
                 Tables\Columns\TextColumn::make('name'),
             ])
+            ->inverseRelationship('childDimensions')
             ->filters([
                 //
             ])
