@@ -12,7 +12,7 @@ class RemoveDuplicateLinkTableEntries extends Command
      *
      * @var string
      */
-    protected $signature = 'app:remove-duplicate-link-table-entries';
+    protected $signature = 'app:remove-duplicate-link-table-entries {start_metric_id} {end_metric_id}';
 
     /**
      * The console command description.
@@ -26,8 +26,13 @@ class RemoveDuplicateLinkTableEntries extends Command
      */
     public function handle()
     {
+        // $metrics = Metric::all();
 
-        $metrics = Metric::all();
+        $startMetricId =  $this->argument('start_metric_id');
+        $endMetricId =  $this->argument('end_metric_id');
+        $metrics = Metric::whereBetween('id', [$startMetricId, $endMetricId])->get();
+
+        $this->info('Handling ' . count($metrics) . ' metrics between metrics ID ' . $startMetricId . ' and ' . $endMetricId . '...');
 
         $metrics->each(function (Metric $metric) {
 
@@ -50,8 +55,6 @@ class RemoveDuplicateLinkTableEntries extends Command
 
             }
         });
-
-
     }
 
     /**
@@ -77,7 +80,7 @@ class RemoveDuplicateLinkTableEntries extends Command
 
         $newCount = $metric->$relationship()->count();
 
-        if($count !== $newCount) {
+        if ($count !== $newCount) {
             $this->comment('Removed ' . ($count - $newCount) . ' duplicate entries from ' . $relationship);
         }
     }
