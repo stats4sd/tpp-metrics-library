@@ -2,8 +2,9 @@
 
 namespace App\Filament\Resources\ThemeResource\Pages;
 
-use App\Filament\Resources\ThemeResource;
+use App\Models\Theme;
 use Filament\Actions;
+use App\Filament\Resources\ThemeResource;
 use Filament\Resources\Pages\ListRecords;
 
 class ListThemes extends ListRecords
@@ -12,7 +13,7 @@ class ListThemes extends ListRecords
 
     public function getSubheading(): string
     {
-        return 'This page is a placeholder. It will eventually allow a review of the information within the library per theme.';
+        return '# Themes: ' . Theme::count();
     }
 
     protected function getHeaderActions(): array

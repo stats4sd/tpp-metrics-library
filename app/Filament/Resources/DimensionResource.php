@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+
 use App\Filament\Resources\DimensionResource\Pages;
 use App\Filament\Resources\DimensionResource\RelationManagers;
 use App\Filament\Table\Actions\DeduplicateRecordsAction;
@@ -102,10 +103,9 @@ class DimensionResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('name')->searchable()->sortable(),
-                TextColumn::make('definition'),
                 TextColumn::make('metrics_count')->counts('metrics')->sortable(),
                 IconColumn::make('unreviewed_import')
-                    ->options(['heroicon-o-exclamation-circle' => fn($state): bool => (bool)$state])
+                    ->options(['heroicon-o-exclamation-circle' => fn ($state): bool => (bool)$state])
                     ->color('danger')
                     ->sortable(),
                 IconColumn::make('possible_duplicates')
@@ -115,8 +115,20 @@ class DimensionResource extends Resource
             ])
             ->filters([
                 Tables\Filters\Filter::make('unreviewed_import')
-                    ->query(fn(Builder $query): Builder => $query->where('unreviewed_import', true))
+                    ->query(fn (Builder $query): Builder => $query->where('unreviewed_import', true))
                     ->label('Unreviewed imported records'),
+                Tables\Filters\Filter::make('with_references')
+                    ->query(fn (Builder $query): Builder => $query->has('references'))
+                    ->label('With references'),
+                Tables\Filters\Filter::make('without_references')
+                    ->query(fn (Builder $query): Builder => $query->doesntHave('references'))
+                    ->label('Without references'),
+                Tables\Filters\Filter::make('with_tools')
+                    ->query(fn (Builder $query): Builder => $query->has('tools'))
+                    ->label('With tools'),
+                Tables\Filters\Filter::make('without_tools')
+                    ->query(fn (Builder $query): Builder => $query->doesntHave('tools'))
+                    ->label('Without tools'),
                 TrashedFilter::make(),
             ])
             ->actions([
@@ -279,6 +291,8 @@ class DimensionResource extends Resource
             RelationManagers\DimensionMetricsRelationManager::class,
             RelationManagers\ReferencesRelationManager::class,
             RelationManagers\ToolsRelationManager::class,
+            RelationManagers\ParentDimensionsRelationManager::class,
+            RelationManagers\ChildDimensionsRelationManager::class,
         ];
     }
 

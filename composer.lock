@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "03f11e662aabc76a9a528136ce2e6063",
+    "content-hash": "f806996eeeb5cc39cb4a3313efb6e46e",
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -217,16 +217,16 @@
         },
         {
             "name": "awcodes/shout",
-            "version": "v2.0.2",
+            "version": "v2.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/awcodes/shout.git",
-                "reference": "5329bdb635f215bd7f37097d5052a64396834040"
+                "reference": "10fa7dac88feda1671acf10e3b527d6370c6474e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/awcodes/shout/zipball/5329bdb635f215bd7f37097d5052a64396834040",
-                "reference": "5329bdb635f215bd7f37097d5052a64396834040",
+                "url": "https://api.github.com/repos/awcodes/shout/zipball/10fa7dac88feda1671acf10e3b527d6370c6474e",
+                "reference": "10fa7dac88feda1671acf10e3b527d6370c6474e",
                 "shasum": ""
             },
             "require": {
@@ -279,7 +279,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-11-14T14:07:24+00:00"
+            "time": "2024-03-29T20:28:36+00:00"
         },
         {
             "name": "backpack/basset",

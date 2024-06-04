@@ -2,14 +2,10 @@
 
 namespace App\Filament\Resources\DimensionResource\Pages;
 
+use App\Filament\Resources\DimensionResource;
 use Filament\Actions;
-use App\Models\Dimension;
-use Filament\Actions\Action;
-use Filament\Actions\ViewAction;
-use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\ViewRecord;
 use Illuminate\Contracts\Support\Htmlable;
-use App\Filament\Resources\DimensionResource;
 
 class ViewDimension extends ViewRecord
 {
@@ -24,7 +20,8 @@ class ViewDimension extends ViewRecord
     {
         $metricCount =  '# Metrics: ' . $this->getRecord()->metrics->count();
         $referenceCount = '# References: ' . $this->getRecord()->references->count();
-        $toolCount = '# Tools: ' . $this->getRecord()->tools->count();
+        $toolCount =  '# Tools: ' . $this->getRecord()->tools->count();
+
 
         return $metricCount . ' | ' . $referenceCount . ' | ' . $toolCount;
     }

@@ -17,6 +17,21 @@ class Dimension extends Model
 
     protected $guarded = [];
 
+
+    public function childDimensions(): BelongsToMany
+    {
+        return $this->belongsToMany(__CLASS__, 'dimension_parent_child', 'parent_id', 'child_id')
+            ->withPivot('relation_notes')
+            ->withTimestamps();
+    }
+
+    public function parentDimensions(): BelongsToMany
+    {
+        return $this->belongsToMany(__CLASS__, 'dimension_parent_child', 'child_id', 'parent_id')
+            ->withPivot('relation_notes')
+            ->withTimestamps();
+    }
+
     // Soundex gives a lot of false positives, so should be billed as 'possible' duplicates.
     // A record has possible duplicates if there is another record with the same soundex value
     public function hasPossibleDuplicates(): Attribute
