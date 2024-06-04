@@ -22,6 +22,7 @@ class ViewDimension extends ViewRecord
         $referenceCount = '# References: ' . $this->getRecord()->references->count();
         $toolCount =  '# Tools: ' . $this->getRecord()->tools->count();
 
+
         return $metricCount . ' | ' . $referenceCount . ' | ' . $toolCount;
     }
 
